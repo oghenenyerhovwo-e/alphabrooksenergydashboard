@@ -1,0 +1,155 @@
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 920px;
+  font-size: 13px;
+}
+
+.table th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--grey-600);
+  border-bottom: 1px solid var(--border);
+  background: var(--grey-100);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.row {
+  cursor: pointer;
+}
+
+.row:hover {
+  background: var(--grey-100);
+}
+
+.row:focus-within {
+  background: var(--grey-100);
+}
+
+.taskCell {
+  max-width: 260px;
+}
+
+.taskTitleBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.taskTitleBtn:hover {
+  color: var(--green-dark);
+  text-decoration: underline;
+}
+
+.bucketCell {
+  white-space: nowrap;
+  color: var(--ink-soft);
+}
+
+.assigneeCell {
+  max-width: 200px;
+}
+
+.unassigned {
+  color: var(--grey-500);
+  font-style: italic;
+}
+
+.dateCell {
+  white-space: nowrap;
+  color: var(--grey-600);
+}
+
+.progressCell {
+  min-width: 130px;
+}
+
+.progressWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progressTrack {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--grey-200);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 999px;
+}
+
+.progressFill[data-complete="true"] {
+  background: var(--green-dark);
+}
+
+.progressLabel {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--grey-600);
+  white-space: nowrap;
+}
+
+.chevronCell {
+  color: var(--grey-400);
+  text-align: right;
+  font-size: 16px;
+}
+
+.empty {
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.emptyTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.emptyDetail {
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: var(--grey-500);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

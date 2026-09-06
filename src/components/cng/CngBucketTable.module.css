@@ -1,0 +1,138 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 16px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search {
+  width: 240px;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+.search:focus-visible {
+  outline: 2px solid var(--green-dark);
+  outline-offset: 1px;
+}
+
+.noResults {
+  padding: 24px;
+  text-align: center;
+  color: var(--grey-500);
+  font-size: 13px;
+}
+
+.tableScroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th,
+.table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft);
+  white-space: nowrap;
+}
+
+.table thead th {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--grey-600);
+  border-bottom: 1px solid var(--border);
+}
+
+.bucketName {
+  font-weight: 600;
+  color: var(--ink);
+  white-space: normal;
+}
+
+.groupCell {
+  color: var(--grey-600);
+}
+
+.sortButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--grey-600);
+}
+
+.sortButton:hover {
+  color: var(--ink);
+}
+
+.sortArrow {
+  font-size: 9px;
+}
+
+.overdueValue {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.notPopulated {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--grey-500);
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.statusBadge[data-status="NOT_YET_POPULATED"] {
+  background: var(--grey-200);
+  color: var(--grey-600);
+}
+
+.statusBadge[data-status="NOT_STARTED"] {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+
+.statusBadge[data-status="IN_PROGRESS"] {
+  background: var(--blue-bg);
+  color: var(--blue);
+}
+
+.statusBadge[data-status="COMPLETE"] {
+  background: var(--green-status-bg);
+  color: var(--green-dark);
+}

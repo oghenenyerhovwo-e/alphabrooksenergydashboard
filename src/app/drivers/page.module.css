@@ -1,0 +1,42 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pageTitle {
+  font-size: 20px;
+}
+
+.subtitle {
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: var(--grey-600);
+}
+
+.mapWrap {
+  position: relative;
+  flex: 1;
+  height: calc(100vh - 220px);
+  min-height: 480px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 900px) {
+  .mapWrap {
+    height: 60vh;
+    min-height: 360px;
+  }
+}

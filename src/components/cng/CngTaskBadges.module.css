@@ -1,0 +1,92 @@
+.statusBadge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.statusBadge[data-status="not-started"] {
+  background: var(--grey-100);
+  color: var(--grey-600);
+  border: 1px solid var(--grey-300);
+}
+.statusBadge[data-status="in-progress"] {
+  background: var(--blue-bg);
+  color: var(--blue);
+}
+.statusBadge[data-status="completed"] {
+  background: var(--green-status-bg);
+  color: var(--green-dark);
+}
+
+.priorityBadge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.priorityBadge[data-tone="urgent"] {
+  background: var(--red-bg);
+  color: var(--red);
+}
+.priorityBadge[data-tone="important"] {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+.priorityBadge[data-tone="neutral"] {
+  background: var(--grey-100);
+  color: var(--ink-soft);
+  border: 1px solid var(--border);
+}
+
+.noValue {
+  color: var(--grey-400);
+}
+
+.deadlineCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.deadlineBadge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.deadlineBadge[data-tone="overdue"] {
+  background: var(--red-bg);
+  color: var(--red);
+}
+.deadlineBadge[data-tone="due-today"] {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+.deadlineBadge[data-tone="due-soon"] {
+  background: var(--blue-bg);
+  color: var(--blue);
+}
+.deadlineBadge[data-tone="upcoming"] {
+  background: var(--grey-100);
+  color: var(--grey-600);
+}
+.deadlineBadge[data-tone="no-due-date"] {
+  background: var(--grey-100);
+  color: var(--grey-500);
+}
+.deadlineBadge[data-tone="completed"] {
+  background: var(--green-status-bg);
+  color: var(--green-dark);
+}
+.deadlineDate {
+  font-size: 12px;
+  color: var(--grey-600);
+  white-space: nowrap;
+}

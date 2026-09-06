@@ -1,0 +1,117 @@
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: #12190f;
+  color: #e9efe3;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 40;
+  transition: transform 0.25s ease;
+}
+
+.brand {
+  padding: 24px 22px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: linear-gradient(155deg, var(--green) 0%, var(--green-darker) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #0d1509;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+.name {
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  color: #f4f7f0;
+}
+.sub {
+  margin-top: 6px;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: #8fa184;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.nav {
+  flex: 1;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+.dividedSection {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.navItem {
+  display: flex;
+  align-items: center;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: #b7c2ad;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f1f4ec;
+}
+.active {
+  background: var(--green);
+  color: #0d1509;
+}
+
+.foot {
+  padding: 16px 20px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.footLabel {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7e9074;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.footRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #c6d0bc;
+  margin-bottom: 4px;
+}
+.footRow b {
+  color: #f1f4ec;
+  font-weight: 700;
+}
+.stamp {
+  margin-top: 10px;
+  font-size: 10.5px;
+  color: #697a5f;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .open {
+    transform: translateX(0);
+  }
+}

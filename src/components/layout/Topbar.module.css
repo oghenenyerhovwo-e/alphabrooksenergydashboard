@@ -1,0 +1,51 @@
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(245, 246, 241, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.mobileToggle {
+  display: none;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 8px;
+}
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--green-dark);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.title {
+  font-size: 19px;
+}
+.meta {
+  text-align: right;
+  font-size: 12px;
+  color: var(--grey-600);
+  padding-top: 2px;
+}
+.metaLabel {
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .mobileToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

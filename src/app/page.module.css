@@ -1,0 +1,186 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.timer{
+  grid-column: span 3;
+}
+
+.hero {
+  grid-column: span 3;
+  background: linear-gradient(120deg, #16240f 0%, #1d3313 55%, #234012 100%);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #f4f7f0;
+}
+.heroLabel {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a9c79c;
+}
+.heroNote {
+  font-size: 12.5px;
+  color: #c7dab9;
+  text-align: center;
+  max-width: 420px;
+}
+.heroLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 30px 0;
+}
+.heroSpinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 4px solid rgba(244, 247, 240, 0.18);
+  border-top-color: var(--green);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.card {
+  grid-column: span 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.card:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--grey-300);
+  transform: translateY(-1px);
+}
+.card:focus-visible {
+  outline: 2px solid var(--green-dark);
+  outline-offset: 3px;
+}
+
+.cardTitle {
+  font-size: 14px;
+}
+
+.cardLink {
+  margin-top: auto;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--green-dark);
+}
+.card:hover .cardLink {
+  color: var(--green-darker);
+}
+
+.statusRow {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.statusPercentage {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.statusPill {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--grey-100);
+  color: var(--ink-soft);
+}
+.statusPill[data-tone="on_track"] {
+  background: var(--green-status-bg);
+  color: var(--green-darker);
+}
+.statusPill[data-tone="needs_attention"] {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+.statusPill[data-tone="critical"] {
+  background: var(--red-bg);
+  color: var(--red);
+}
+.statusPill[data-tone="complete"] {
+  background: var(--green-status-bg);
+  color: var(--green-darker);
+}
+.statusPill[data-tone="data_insufficient"] {
+  background: var(--grey-100);
+  color: var(--grey-600);
+}
+
+.attentionRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-soft);
+  background: var(--grey-100);
+}
+.attentionTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.attentionDetail {
+  font-size: 12px;
+  color: var(--grey-600);
+}
+.attentionRow[data-tone="critical"] {
+  background: var(--red-bg);
+  border-color: transparent;
+}
+.attentionRow[data-tone="critical"] .attentionTitle {
+  color: var(--red);
+}
+.attentionRow[data-tone="warning"] {
+  background: var(--amber-bg);
+  border-color: transparent;
+}
+.attentionRow[data-tone="warning"] .attentionTitle {
+  color: var(--amber);
+}
+.attentionRow[data-tone="info"] {
+  background: var(--blue-bg);
+  border-color: transparent;
+}
+.attentionRow[data-tone="info"] .attentionTitle {
+  color: var(--blue);
+}
+.attentionRow[data-tone="positive"] {
+  background: var(--green-status-bg);
+  border-color: transparent;
+}
+.attentionRow[data-tone="positive"] .attentionTitle {
+  color: var(--green-darker);
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .hero {
+    grid-column: span 1;
+  }
+}

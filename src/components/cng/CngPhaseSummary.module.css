@@ -1,0 +1,87 @@
+.wrap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 22px 20px;
+}
+.title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.row {
+  border-bottom: 1px solid var(--border-soft);
+  padding-bottom: 12px;
+}
+.row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.rowHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.status {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--grey-600);
+  white-space: nowrap;
+}
+.row[data-status="COMPLETE"] .status {
+  color: var(--green-dark);
+}
+.row[data-status="IN_PROGRESS"] .status {
+  color: var(--amber);
+}
+.row[data-status="NOT_STARTED"] .status {
+  color: var(--grey-500);
+}
+.row[data-status="NOT_YET_POPULATED"] .status {
+  color: var(--grey-400);
+  font-style: italic;
+}
+.barTrack {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--grey-200);
+  overflow: hidden;
+}
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--green);
+  transition: width 0.4s ease;
+}
+.row[data-status="COMPLETE"] .barFill {
+  background: var(--green-dark);
+}
+.emptyBar {
+  height: 8px;
+  border-radius: 999px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--grey-200),
+    var(--grey-200) 4px,
+    var(--grey-100) 4px,
+    var(--grey-100) 8px
+  );
+}
+.meta {
+  font-size: 11.5px;
+  color: var(--grey-500);
+  margin-top: 6px;
+}
