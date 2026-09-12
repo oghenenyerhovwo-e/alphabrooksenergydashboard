@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { fetchCngPlannerData, CngGraphApiError } from "@/lib/graph/planner";
 import { normalizeCngData, CngNormalizationError } from "@/lib/cng/normalize";
 import { CngConfigError, CngAuthError } from "@/lib/graph/client";
+import { getCurrentUser } from "@/lib/auth/session";
 import type { CngData } from "@/types/cng";
 
 // msal-node requires Node APIs, and this data should never be cached.
@@ -21,6 +22,11 @@ function emptyResponse(status: CngData["status"], message?: string): CngData {
 }
 
 export async function GET() {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
   try {
     const raw = await fetchCngPlannerData();
     const normalized = normalizeCngData(raw);

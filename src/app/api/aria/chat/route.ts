@@ -4,12 +4,38 @@ import { normalizeCngData, CngNormalizationError } from "@/lib/cng/normalize";
 import { CngConfigError, CngAuthError } from "@/lib/graph/client";
 import { buildAriaContext, type AriaBusinessContext } from "@/lib/aria/context";
 import { generateAriaReply, AriaProviderError, type AriaChatMessage } from "@/lib/aria/provider";
+import { getCurrentUser } from "@/lib/auth/session";
+import { isSameOriginRequest } from "@/lib/auth/origin";
 import type { CngData } from "@/types/cng";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_HISTORY_MESSAGES = 8;
+const MAX_MESSAGE_LENGTH = 4000;
+
+/**
+ * Best-effort, per-instance rate limit — NOT a distributed guarantee.
+ * Vercel serverless functions don't share memory across instances, so
+ * under real concurrent load this only throttles requests that happen to
+ * land on the same warm instance. It's a cheap deterrent against a single
+ * runaway client, not a hard cap. If ARIA chat abuse becomes a real cost
+ * problem, the fix is a shared store (e.g. Upstash Redis) — a new
+ * dependency, so that's a call for you, not something to add silently.
+ */
+const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 20;
+const requestLog = new Map<string, number[]>();
+
+function isRateLimited(userId: string): boolean {
+  const now = Date.now();
+  const recent = (requestLog.get(userId) ?? []).filter(
+    (timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS
+  );
+  recent.push(now);
+  requestLog.set(userId, recent);
+  return recent.length > RATE_LIMIT_MAX_REQUESTS;
+}
 
 function buildSystemPrompt(context: AriaBusinessContext): string {
   return `You are ARIA — Alpha Brooks Real-time Intelligence Assistant, the internal AI operations assistant for Alpha Brooks Energy LTD's CNG project.
@@ -29,6 +55,22 @@ ${JSON.stringify(context)}`;
 }
 
 export async function POST(req: Request) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
+  if (!isSameOriginRequest(req)) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
+  if (isRateLimited(currentUser.id)) {
+    return NextResponse.json(
+      { error: "Too many messages in a short time. Please wait a moment and try again." },
+      { status: 429 }
+    );
+  }
+
   let body: { message?: string; history?: AriaChatMessage[] };
   try {
     body = await req.json();
@@ -40,7 +82,13 @@ export async function POST(req: Request) {
   if (!message) {
     return NextResponse.json({ error: "A message is required." }, { status: 400 });
   }
-  const history = (body.history ?? []).slice(-MAX_HISTORY_MESSAGES);
+  if (message.length > MAX_MESSAGE_LENGTH) {
+    return NextResponse.json(
+      { error: `Message is too long (max ${MAX_MESSAGE_LENGTH} characters).` },
+      { status: 400 }
+    );
+  }
+  const history = (Array.isArray(body.history) ? body.history : []).slice(-MAX_HISTORY_MESSAGES);
 
   let cngData: CngData;
   try {

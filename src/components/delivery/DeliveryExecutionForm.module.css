@@ -1,0 +1,205 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--grey-600);
+}
+
+.error,
+.success {
+  border-radius: var(--radius);
+  padding: 12px;
+  font-size: 13px;
+}
+
+.error {
+  border: 1px solid var(--red);
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.success {
+  border: 1px solid var(--green);
+  background: var(--green-tint);
+  color: var(--green-dark);
+}
+
+.grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.labelSm {
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.input,
+.textarea {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: var(--green-dark);
+  outline: none;
+}
+
+.inputDisabled {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--grey-100);
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.fieldError {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--red);
+}
+
+.panel {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 16px;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+.checkboxLabel {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.panelBody {
+  margin-top: 12px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sectionHint {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--grey-600);
+}
+
+.sigGrid {
+  margin-top: 16px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .sigGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.sigName {
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.sigCanvasWrap {
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+
+.sigCanvas {
+  height: 160px;
+  width: 100%;
+}
+
+.clearButton {
+  margin-top: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--grey-600);
+}
+
+.clearButton:hover {
+  color: var(--ink);
+}
+
+.submitButton {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.submitButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

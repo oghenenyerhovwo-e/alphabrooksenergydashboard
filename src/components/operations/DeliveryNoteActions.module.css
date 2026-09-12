@@ -1,0 +1,42 @@
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.printButton,
+.emailButton {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(17, 24, 39, 0.15);
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.emailButton {
+  background: #111827;
+  color: #fff;
+  border-color: #111827;
+}
+
+.emailButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.emailForm {
+  display: inline-flex;
+}
+
+.error {
+  font-size: 12px;
+  color: #b91c1c;
+}
+
+.success {
+  font-size: 12px;
+  color: #15803d;
+}

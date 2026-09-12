@@ -1,0 +1,266 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DeliveryProduct {
+  CNG
+  AGO
+  PMS
+  LPG_BULK
+  LPG_CYLINDERS
+  OTHER
+}
+
+enum DeliveryUnit {
+  SCM
+  KG
+  MT
+  LITRES
+  OTHER
+}
+
+enum DeliveryStatus {
+  DRAFT
+  ASSIGNED
+  DISPATCHED
+  IN_TRANSIT
+  DELIVERED
+  PARTIALLY_DELIVERED
+  REJECTED
+  FAILED
+  RETURNED
+  CANCELLED
+}
+
+enum VehicleInspectionStatus {
+  READY_TO_DEPART
+  NOT_READY_TO_DEPART
+}
+
+enum UserRole {
+  ADMIN
+  BUSINESS_DEVELOPMENT
+  SALES
+  OPERATIONS
+  FINANCE
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model DeliveryNoteCounter {
+  year         Int @id
+  lastSequence Int @default(0)
+}
+
+model Driver {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deliveries                Delivery[]
+  vehiclePreTripInspections VehiclePreTripInspection[]
+
+  @@index([name])
+  @@index([active])
+}
+
+model Vehicle {
+  id          String   @id @default(cuid())
+  plateNumber String   @unique
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  deliveries                Delivery[]
+  vehiclePreTripInspections VehiclePreTripInspection[]
+
+  @@index([plateNumber])
+  @@index([active])
+}
+
+model Delivery {
+  id                 String @id @default(cuid())
+  deliveryNoteNumber String @unique
+
+  // Customer
+  customer         String
+  customerLocation String?
+  deliveryAddress  String
+  contactEmail     String
+
+  // Product / quantity
+  product           DeliveryProduct
+  unit              DeliveryUnit
+  quantityLoaded    Float?
+  quantityDelivered Float?
+  quantityReturned  Float?
+  loadingPoint      String?
+  deliveryPoint     String?
+
+  // Driver & vehicle
+  driverId String?
+  driver   Driver? @relation(fields: [driverId], references: [id], onDelete: SetNull)
+
+  vehicleId String?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+
+  trailerNumber  String?
+  odometerBefore Float?
+  odometerAfter  Float?
+
+  // Journey
+  departureLocation  String?
+  destination        String
+  departureAt        DateTime?
+  arrivalAt          DateTime?
+  routeTaken         String?
+  distanceTravelled  Float?
+  routeDeviation     Boolean   @default(false)
+  routeDeviationNote String?
+
+  // Delivery confirmation
+  status          DeliveryStatus @default(DRAFT)
+  receiverName    String?
+  receiverPhone   String?
+  deliveryRemarks String?
+
+  // Issue reporting
+  hasIssue         Boolean @default(false)
+  issueType        String?
+  issueDescription String?
+  needsAttention   Boolean @default(false)
+
+  // Signatures (captured at delivery completion)
+  driverSignatureUrl   String?
+  receiverSignatureUrl String?
+
+  // Related records
+  auditLogs         DeliveryAuditLog[]
+  preTripInspection VehiclePreTripInspection?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([driverId])
+  @@index([vehicleId])
+  @@index([createdAt])
+}
+
+model DeliveryAuditLog {
+  id String @id @default(cuid())
+
+  deliveryId String
+  delivery   Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+
+  actorName String
+  actorRole String
+  action    String
+  details   String?
+
+  createdAt DateTime @default(now())
+
+  @@index([deliveryId])
+  @@index([createdAt])
+}
+
+model VehiclePreTripInspection {
+  id String @id @default(cuid())
+
+  deliveryId String   @unique
+  delivery   Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+
+  driverId String?
+  driver   Driver? @relation(fields: [driverId], references: [id], onDelete: SetNull)
+
+  vehicleId String?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+
+  driverName    String
+  vehicleNumber String
+
+  inspectionDate  DateTime
+  odometerReading Float
+
+  tyresSatisfactory              Boolean
+  brakesSatisfactory             Boolean
+  lightsSatisfactory             Boolean
+  hornSatisfactory               Boolean
+  mirrorsSatisfactory            Boolean
+  vehicleBodySatisfactory        Boolean
+  fireExtinguisherSatisfactory   Boolean
+  firstAidKitSatisfactory        Boolean
+  emergencyEquipmentSatisfactory Boolean
+  vehicleDocumentsSatisfactory   Boolean
+
+  hasDefect         Boolean
+  defectDescription String?
+  defectPhotoUrl    String?
+
+  inspectionStatus VehicleInspectionStatus
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([driverId])
+  @@index([vehicleId])
+  @@index([vehicleNumber])
+  @@index([driverName])
+  @@index([inspectionDate])
+  @@index([inspectionStatus])
+}
+
+/// A staff member who can sign in. `entraId` is their Microsoft Entra ID
+/// (Azure AD) object ID — the same identifier already used informally in
+/// src/config/users.ts to label Planner task assignees.
+model User {
+  id      String @id @default(cuid())
+  entraId String @unique
+
+  email  String? @unique
+  name   String
+  role   UserRole
+  status UserStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions Session[]
+
+  @@index([role])
+  @@index([status])
+}
+
+/// Server-side session record. The cookie holds only a random opaque
+/// token; `tokenHash` is a SHA-256 hash of that token, so a leaked
+/// database row alone cannot be replayed as a valid session.
+model Session {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tokenHash String @unique
+
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime @default(now())
+
+  userAgent String?
+  ipAddress String?
+
+  @@index([userId])
+  @@index([expiresAt])
+}

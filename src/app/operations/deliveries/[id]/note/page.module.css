@@ -1,0 +1,195 @@
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px 24px 60px;
+}
+
+.screenOnlyActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.backLink {
+  font-size: 12px;
+  font-weight: 700;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.6;
+}
+
+.notReady {
+  max-width: 480px;
+  margin: 80px auto;
+  text-align: center;
+}
+
+.notReadySub {
+  margin-top: 8px;
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+.note {
+  background: #fff;
+  color: #111;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 12px;
+  padding: 48px;
+}
+
+.noteHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 2px solid #111;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+.brandName {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.brandSub {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.noteNumberBlock {
+  text-align: right;
+}
+
+.noteNumberLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+  text-transform: uppercase;
+}
+
+.noteNumber {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0 0 20px;
+}
+
+.dateLine {
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.paragraph {
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.acknowledgement {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 28px 0;
+  padding: 14px 16px;
+  background: rgba(17, 24, 39, 0.04);
+  border-radius: 8px;
+}
+
+.signatureGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 32px;
+}
+
+.signatureBlock {
+  border-top: 1px solid rgba(17, 24, 39, 0.15);
+  padding-top: 16px;
+}
+
+.signatureBlockTitle {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+
+.signatureRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(17, 24, 39, 0.15);
+}
+
+.signatureLabel {
+  opacity: 0.55;
+}
+
+.signatureValue {
+  font-weight: 600;
+}
+
+.signatureImageWrap {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0;
+  border: 1px dashed rgba(17, 24, 39, 0.2);
+  border-radius: 6px;
+}
+
+.signatureImage {
+  max-height: 60px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.signatureMissing {
+  font-size: 11px;
+  opacity: 0.4;
+}
+
+/*
+ * Print handling: the page is still wrapped by the app's AppShell
+ * (sidebar/topbar), so we don't fight that layout — instead, when
+ * printing, hide the entire document and reveal only the note.
+ * This is why the note div in page.tsx has id="delivery-note-printable".
+ */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #delivery-note-printable,
+  #delivery-note-printable * {
+    visibility: visible;
+  }
+
+  #delivery-note-printable {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border: none;
+    padding: 0;
+  }
+
+  .page {
+    padding: 0;
+    max-width: 100%;
+  }
+}

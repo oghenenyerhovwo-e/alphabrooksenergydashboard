@@ -6,16 +6,23 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {
     "@azure/msal-node": "^6.0.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "@vercel/blob": "^2.8.0",
+    "dotenv": "^17.4.2",
     "leaflet": "^1.9.4",
     "next": "16.3.4",
+    "pg": "^8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-leaflet": "^5.0.0",
+    "react-signature-canvas": "^1.0.7",
     "recharts": "^3.10.1"
   },
   "devDependencies": {
@@ -23,9 +30,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-signature-canvas": "^1.0.7",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
+    "prisma": "^7.10.0",
+    "tsx": "^4.23.13",
     "typescript": "^5"
   }
 }

@@ -6,7 +6,13 @@ import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import styles from "./AppShell.module.css";
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  user,
+}: {
+  children: React.ReactNode;
+  user: { name: string; role: string };
+}) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -14,7 +20,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
       {mobileOpen && <div className={styles.scrim} onClick={() => setMobileOpen(false)} />}
       <div className={styles.main}>
-        <Topbar onMobileToggle={() => setMobileOpen(true)} />
+        <Topbar onMobileToggle={() => setMobileOpen(true)} user={user} />
         <div className={styles.content}>{children}</div>
          <AriaWidget />
       </div>
