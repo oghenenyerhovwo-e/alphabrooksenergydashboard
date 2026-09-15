@@ -58,7 +58,12 @@ export const ModelName = {
   DeliveryAuditLog: 'DeliveryAuditLog',
   VehiclePreTripInspection: 'VehiclePreTripInspection',
   User: 'User',
-  Session: 'Session'
+  Session: 'Session',
+  LeadReferenceCounter: 'LeadReferenceCounter',
+  QuoteRequestReferenceCounter: 'QuoteRequestReferenceCounter',
+  Lead: 'Lead',
+  QuoteRequest: 'QuoteRequest',
+  CommercialAuditLog: 'CommercialAuditLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -221,6 +226,84 @@ export const SessionScalarFieldEnum = {
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const LeadReferenceCounterScalarFieldEnum = {
+  year: 'year',
+  lastSequence: 'lastSequence'
+} as const
+
+export type LeadReferenceCounterScalarFieldEnum = (typeof LeadReferenceCounterScalarFieldEnum)[keyof typeof LeadReferenceCounterScalarFieldEnum]
+
+
+export const QuoteRequestReferenceCounterScalarFieldEnum = {
+  year: 'year',
+  lastSequence: 'lastSequence'
+} as const
+
+export type QuoteRequestReferenceCounterScalarFieldEnum = (typeof QuoteRequestReferenceCounterScalarFieldEnum)[keyof typeof QuoteRequestReferenceCounterScalarFieldEnum]
+
+
+export const LeadScalarFieldEnum = {
+  id: 'id',
+  referenceNumber: 'referenceNumber',
+  companyName: 'companyName',
+  contactPerson: 'contactPerson',
+  phone: 'phone',
+  email: 'email',
+  location: 'location',
+  source: 'source',
+  productInterest: 'productInterest',
+  notes: 'notes',
+  status: 'status',
+  qualificationState: 'qualificationState',
+  qualificationReason: 'qualificationReason',
+  qualifiedAt: 'qualifiedAt',
+  qualifiedById: 'qualifiedById',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
+
+
+export const QuoteRequestScalarFieldEnum = {
+  id: 'id',
+  referenceNumber: 'referenceNumber',
+  leadId: 'leadId',
+  requestedProduct: 'requestedProduct',
+  requestedQuantity: 'requestedQuantity',
+  unit: 'unit',
+  deliveryLocation: 'deliveryLocation',
+  requestedDeliveryDate: 'requestedDeliveryDate',
+  description: 'description',
+  notes: 'notes',
+  status: 'status',
+  qualificationState: 'qualificationState',
+  qualificationReason: 'qualificationReason',
+  qualifiedAt: 'qualifiedAt',
+  qualifiedById: 'qualifiedById',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuoteRequestScalarFieldEnum = (typeof QuoteRequestScalarFieldEnum)[keyof typeof QuoteRequestScalarFieldEnum]
+
+
+export const CommercialAuditLogScalarFieldEnum = {
+  id: 'id',
+  leadId: 'leadId',
+  quoteRequestId: 'quoteRequestId',
+  actorName: 'actorName',
+  actorRole: 'actorRole',
+  action: 'action',
+  details: 'details',
+  createdAt: 'createdAt'
+} as const
+
+export type CommercialAuditLogScalarFieldEnum = (typeof CommercialAuditLogScalarFieldEnum)[keyof typeof CommercialAuditLogScalarFieldEnum]
 
 
 export const SortOrder = {

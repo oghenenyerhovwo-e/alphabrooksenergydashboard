@@ -61,3 +61,28 @@ export type User = Prisma.UserModel
  * database row alone cannot be replayed as a valid session.
  */
 export type Session = Prisma.SessionModel
+/**
+ * Model LeadReferenceCounter
+ * 
+ */
+export type LeadReferenceCounter = Prisma.LeadReferenceCounterModel
+/**
+ * Model QuoteRequestReferenceCounter
+ * 
+ */
+export type QuoteRequestReferenceCounter = Prisma.QuoteRequestReferenceCounterModel
+/**
+ * Model Lead
+ * 
+ */
+export type Lead = Prisma.LeadModel
+/**
+ * Model QuoteRequest
+ * 
+ */
+export type QuoteRequest = Prisma.QuoteRequestModel
+/**
+ * Model CommercialAuditLog
+ * 
+ */
+export type CommercialAuditLog = Prisma.CommercialAuditLogModel

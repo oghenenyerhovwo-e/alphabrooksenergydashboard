@@ -404,7 +404,12 @@ export const ModelName = {
   DeliveryAuditLog: 'DeliveryAuditLog',
   VehiclePreTripInspection: 'VehiclePreTripInspection',
   User: 'User',
-  Session: 'Session'
+  Session: 'Session',
+  LeadReferenceCounter: 'LeadReferenceCounter',
+  QuoteRequestReferenceCounter: 'QuoteRequestReferenceCounter',
+  Lead: 'Lead',
+  QuoteRequest: 'QuoteRequest',
+  CommercialAuditLog: 'CommercialAuditLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -420,7 +425,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "deliveryNoteCounter" | "driver" | "vehicle" | "delivery" | "deliveryAuditLog" | "vehiclePreTripInspection" | "user" | "session"
+    modelProps: "deliveryNoteCounter" | "driver" | "vehicle" | "delivery" | "deliveryAuditLog" | "vehiclePreTripInspection" | "user" | "session" | "leadReferenceCounter" | "quoteRequestReferenceCounter" | "lead" | "quoteRequest" | "commercialAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1016,6 +1021,376 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    LeadReferenceCounter: {
+      payload: Prisma.$LeadReferenceCounterPayload<ExtArgs>
+      fields: Prisma.LeadReferenceCounterFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LeadReferenceCounterFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadReferenceCounterPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LeadReferenceCounterFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadReferenceCounterPayload>
+        }
+        findFirst: {
+          args: Prisma.LeadReferenceCounterFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadReferenceCounterPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LeadReferenceCounterFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadReferenceCounterPayload>
+        }
+        findMany: {
+          args: Prisma.LeadReferenceCounterFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadReferenceCounterPayload>[]
+        }
+        create: {
+          args: Prisma.LeadReferenceCounterCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadReferenceCounterPayload>
+        }
+        createMany: {
+          args: Prisma.LeadReferenceCounterCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LeadReferenceCounterCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadReferenceCounterPayload>[]
+        }
+        delete: {
+          args: Prisma.LeadReferenceCounterDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadReferenceCounterPayload>
+        }
+        update: {
+          args: Prisma.LeadReferenceCounterUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadReferenceCounterPayload>
+        }
+        deleteMany: {
+          args: Prisma.LeadReferenceCounterDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LeadReferenceCounterUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LeadReferenceCounterUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadReferenceCounterPayload>[]
+        }
+        upsert: {
+          args: Prisma.LeadReferenceCounterUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadReferenceCounterPayload>
+        }
+        aggregate: {
+          args: Prisma.LeadReferenceCounterAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLeadReferenceCounter>
+        }
+        groupBy: {
+          args: Prisma.LeadReferenceCounterGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LeadReferenceCounterGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LeadReferenceCounterCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LeadReferenceCounterCountAggregateOutputType> | number
+        }
+      }
+    }
+    QuoteRequestReferenceCounter: {
+      payload: Prisma.$QuoteRequestReferenceCounterPayload<ExtArgs>
+      fields: Prisma.QuoteRequestReferenceCounterFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.QuoteRequestReferenceCounterFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestReferenceCounterPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.QuoteRequestReferenceCounterFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestReferenceCounterPayload>
+        }
+        findFirst: {
+          args: Prisma.QuoteRequestReferenceCounterFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestReferenceCounterPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.QuoteRequestReferenceCounterFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestReferenceCounterPayload>
+        }
+        findMany: {
+          args: Prisma.QuoteRequestReferenceCounterFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestReferenceCounterPayload>[]
+        }
+        create: {
+          args: Prisma.QuoteRequestReferenceCounterCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestReferenceCounterPayload>
+        }
+        createMany: {
+          args: Prisma.QuoteRequestReferenceCounterCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.QuoteRequestReferenceCounterCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestReferenceCounterPayload>[]
+        }
+        delete: {
+          args: Prisma.QuoteRequestReferenceCounterDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestReferenceCounterPayload>
+        }
+        update: {
+          args: Prisma.QuoteRequestReferenceCounterUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestReferenceCounterPayload>
+        }
+        deleteMany: {
+          args: Prisma.QuoteRequestReferenceCounterDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.QuoteRequestReferenceCounterUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.QuoteRequestReferenceCounterUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestReferenceCounterPayload>[]
+        }
+        upsert: {
+          args: Prisma.QuoteRequestReferenceCounterUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestReferenceCounterPayload>
+        }
+        aggregate: {
+          args: Prisma.QuoteRequestReferenceCounterAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateQuoteRequestReferenceCounter>
+        }
+        groupBy: {
+          args: Prisma.QuoteRequestReferenceCounterGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.QuoteRequestReferenceCounterGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.QuoteRequestReferenceCounterCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.QuoteRequestReferenceCounterCountAggregateOutputType> | number
+        }
+      }
+    }
+    Lead: {
+      payload: Prisma.$LeadPayload<ExtArgs>
+      fields: Prisma.LeadFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LeadFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LeadFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>
+        }
+        findFirst: {
+          args: Prisma.LeadFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LeadFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>
+        }
+        findMany: {
+          args: Prisma.LeadFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>[]
+        }
+        create: {
+          args: Prisma.LeadCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>
+        }
+        createMany: {
+          args: Prisma.LeadCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LeadCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>[]
+        }
+        delete: {
+          args: Prisma.LeadDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>
+        }
+        update: {
+          args: Prisma.LeadUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>
+        }
+        deleteMany: {
+          args: Prisma.LeadDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LeadUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LeadUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>[]
+        }
+        upsert: {
+          args: Prisma.LeadUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>
+        }
+        aggregate: {
+          args: Prisma.LeadAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLead>
+        }
+        groupBy: {
+          args: Prisma.LeadGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LeadGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LeadCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LeadCountAggregateOutputType> | number
+        }
+      }
+    }
+    QuoteRequest: {
+      payload: Prisma.$QuoteRequestPayload<ExtArgs>
+      fields: Prisma.QuoteRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.QuoteRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.QuoteRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.QuoteRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.QuoteRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestPayload>
+        }
+        findMany: {
+          args: Prisma.QuoteRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestPayload>[]
+        }
+        create: {
+          args: Prisma.QuoteRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestPayload>
+        }
+        createMany: {
+          args: Prisma.QuoteRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.QuoteRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.QuoteRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestPayload>
+        }
+        update: {
+          args: Prisma.QuoteRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.QuoteRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.QuoteRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.QuoteRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.QuoteRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuoteRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.QuoteRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateQuoteRequest>
+        }
+        groupBy: {
+          args: Prisma.QuoteRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.QuoteRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.QuoteRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.QuoteRequestCountAggregateOutputType> | number
+        }
+      }
+    }
+    CommercialAuditLog: {
+      payload: Prisma.$CommercialAuditLogPayload<ExtArgs>
+      fields: Prisma.CommercialAuditLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommercialAuditLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommercialAuditLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommercialAuditLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommercialAuditLogPayload>
+        }
+        findFirst: {
+          args: Prisma.CommercialAuditLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommercialAuditLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommercialAuditLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommercialAuditLogPayload>
+        }
+        findMany: {
+          args: Prisma.CommercialAuditLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommercialAuditLogPayload>[]
+        }
+        create: {
+          args: Prisma.CommercialAuditLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommercialAuditLogPayload>
+        }
+        createMany: {
+          args: Prisma.CommercialAuditLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommercialAuditLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommercialAuditLogPayload>[]
+        }
+        delete: {
+          args: Prisma.CommercialAuditLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommercialAuditLogPayload>
+        }
+        update: {
+          args: Prisma.CommercialAuditLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommercialAuditLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommercialAuditLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommercialAuditLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommercialAuditLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommercialAuditLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommercialAuditLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommercialAuditLogPayload>
+        }
+        aggregate: {
+          args: Prisma.CommercialAuditLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommercialAuditLog>
+        }
+        groupBy: {
+          args: Prisma.CommercialAuditLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommercialAuditLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommercialAuditLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommercialAuditLogCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1201,6 +1576,84 @@ export const SessionScalarFieldEnum = {
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
 
 
+export const LeadReferenceCounterScalarFieldEnum = {
+  year: 'year',
+  lastSequence: 'lastSequence'
+} as const
+
+export type LeadReferenceCounterScalarFieldEnum = (typeof LeadReferenceCounterScalarFieldEnum)[keyof typeof LeadReferenceCounterScalarFieldEnum]
+
+
+export const QuoteRequestReferenceCounterScalarFieldEnum = {
+  year: 'year',
+  lastSequence: 'lastSequence'
+} as const
+
+export type QuoteRequestReferenceCounterScalarFieldEnum = (typeof QuoteRequestReferenceCounterScalarFieldEnum)[keyof typeof QuoteRequestReferenceCounterScalarFieldEnum]
+
+
+export const LeadScalarFieldEnum = {
+  id: 'id',
+  referenceNumber: 'referenceNumber',
+  companyName: 'companyName',
+  contactPerson: 'contactPerson',
+  phone: 'phone',
+  email: 'email',
+  location: 'location',
+  source: 'source',
+  productInterest: 'productInterest',
+  notes: 'notes',
+  status: 'status',
+  qualificationState: 'qualificationState',
+  qualificationReason: 'qualificationReason',
+  qualifiedAt: 'qualifiedAt',
+  qualifiedById: 'qualifiedById',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
+
+
+export const QuoteRequestScalarFieldEnum = {
+  id: 'id',
+  referenceNumber: 'referenceNumber',
+  leadId: 'leadId',
+  requestedProduct: 'requestedProduct',
+  requestedQuantity: 'requestedQuantity',
+  unit: 'unit',
+  deliveryLocation: 'deliveryLocation',
+  requestedDeliveryDate: 'requestedDeliveryDate',
+  description: 'description',
+  notes: 'notes',
+  status: 'status',
+  qualificationState: 'qualificationState',
+  qualificationReason: 'qualificationReason',
+  qualifiedAt: 'qualifiedAt',
+  qualifiedById: 'qualifiedById',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuoteRequestScalarFieldEnum = (typeof QuoteRequestScalarFieldEnum)[keyof typeof QuoteRequestScalarFieldEnum]
+
+
+export const CommercialAuditLogScalarFieldEnum = {
+  id: 'id',
+  leadId: 'leadId',
+  quoteRequestId: 'quoteRequestId',
+  actorName: 'actorName',
+  actorRole: 'actorRole',
+  action: 'action',
+  details: 'details',
+  createdAt: 'createdAt'
+} as const
+
+export type CommercialAuditLogScalarFieldEnum = (typeof CommercialAuditLogScalarFieldEnum)[keyof typeof CommercialAuditLogScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1377,6 +1830,62 @@ export type EnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
 export type ListEnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserStatus[]'>
     
 
+
+/**
+ * Reference to a field of type 'LeadSource'
+ */
+export type EnumLeadSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeadSource'>
+    
+
+
+/**
+ * Reference to a field of type 'LeadSource[]'
+ */
+export type ListEnumLeadSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeadSource[]'>
+    
+
+
+/**
+ * Reference to a field of type 'LeadStatus'
+ */
+export type EnumLeadStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeadStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'LeadStatus[]'
+ */
+export type ListEnumLeadStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeadStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'QualificationState'
+ */
+export type EnumQualificationStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QualificationState'>
+    
+
+
+/**
+ * Reference to a field of type 'QualificationState[]'
+ */
+export type ListEnumQualificationStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QualificationState[]'>
+    
+
+
+/**
+ * Reference to a field of type 'QuoteRequestStatus'
+ */
+export type EnumQuoteRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuoteRequestStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'QuoteRequestStatus[]'
+ */
+export type ListEnumQuoteRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuoteRequestStatus[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -1536,6 +2045,11 @@ export type GlobalOmitConfig = {
   vehiclePreTripInspection?: Prisma.VehiclePreTripInspectionOmit
   user?: Prisma.UserOmit
   session?: Prisma.SessionOmit
+  leadReferenceCounter?: Prisma.LeadReferenceCounterOmit
+  quoteRequestReferenceCounter?: Prisma.QuoteRequestReferenceCounterOmit
+  lead?: Prisma.LeadOmit
+  quoteRequest?: Prisma.QuoteRequestOmit
+  commercialAuditLog?: Prisma.CommercialAuditLogOmit
 }
 
 /* Types for Logging */

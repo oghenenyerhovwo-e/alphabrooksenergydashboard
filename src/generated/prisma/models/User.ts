@@ -209,6 +209,10 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   sessions?: Prisma.SessionListRelationFilter
+  createdLeads?: Prisma.LeadListRelationFilter
+  qualifiedLeads?: Prisma.LeadListRelationFilter
+  createdQuoteRequests?: Prisma.QuoteRequestListRelationFilter
+  qualifiedQuoteRequests?: Prisma.QuoteRequestListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -221,6 +225,10 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   sessions?: Prisma.SessionOrderByRelationAggregateInput
+  createdLeads?: Prisma.LeadOrderByRelationAggregateInput
+  qualifiedLeads?: Prisma.LeadOrderByRelationAggregateInput
+  createdQuoteRequests?: Prisma.QuoteRequestOrderByRelationAggregateInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -236,6 +244,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   sessions?: Prisma.SessionListRelationFilter
+  createdLeads?: Prisma.LeadListRelationFilter
+  qualifiedLeads?: Prisma.LeadListRelationFilter
+  createdQuoteRequests?: Prisma.QuoteRequestListRelationFilter
+  qualifiedQuoteRequests?: Prisma.QuoteRequestListRelationFilter
 }, "id" | "entraId" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -276,6 +288,10 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -288,6 +304,10 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
 }
 
 export type UserUpdateInput = {
@@ -300,6 +320,10 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -312,6 +336,10 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -385,6 +413,11 @@ export type UserScalarRelationFilter = {
   isNot?: Prisma.UserWhereInput
 }
 
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null
+  isNot?: Prisma.UserWhereInput | null
+}
+
 export type EnumUserRoleFieldUpdateOperationsInput = {
   set?: $Enums.UserRole
 }
@@ -407,6 +440,66 @@ export type UserUpdateOneRequiredWithoutSessionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSessionsInput, Prisma.UserUpdateWithoutSessionsInput>, Prisma.UserUncheckedUpdateWithoutSessionsInput>
 }
 
+export type UserCreateNestedOneWithoutQualifiedLeadsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutQualifiedLeadsInput, Prisma.UserUncheckedCreateWithoutQualifiedLeadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutQualifiedLeadsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutCreatedLeadsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedLeadsInput, Prisma.UserUncheckedCreateWithoutCreatedLeadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedLeadsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutQualifiedLeadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutQualifiedLeadsInput, Prisma.UserUncheckedCreateWithoutQualifiedLeadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutQualifiedLeadsInput
+  upsert?: Prisma.UserUpsertWithoutQualifiedLeadsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutQualifiedLeadsInput, Prisma.UserUpdateWithoutQualifiedLeadsInput>, Prisma.UserUncheckedUpdateWithoutQualifiedLeadsInput>
+}
+
+export type UserUpdateOneRequiredWithoutCreatedLeadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedLeadsInput, Prisma.UserUncheckedCreateWithoutCreatedLeadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedLeadsInput
+  upsert?: Prisma.UserUpsertWithoutCreatedLeadsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedLeadsInput, Prisma.UserUpdateWithoutCreatedLeadsInput>, Prisma.UserUncheckedUpdateWithoutCreatedLeadsInput>
+}
+
+export type UserCreateNestedOneWithoutQualifiedQuoteRequestsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutQualifiedQuoteRequestsInput, Prisma.UserUncheckedCreateWithoutQualifiedQuoteRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutQualifiedQuoteRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutCreatedQuoteRequestsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedQuoteRequestsInput, Prisma.UserUncheckedCreateWithoutCreatedQuoteRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedQuoteRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutQualifiedQuoteRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutQualifiedQuoteRequestsInput, Prisma.UserUncheckedCreateWithoutQualifiedQuoteRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutQualifiedQuoteRequestsInput
+  upsert?: Prisma.UserUpsertWithoutQualifiedQuoteRequestsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutQualifiedQuoteRequestsInput, Prisma.UserUpdateWithoutQualifiedQuoteRequestsInput>, Prisma.UserUncheckedUpdateWithoutQualifiedQuoteRequestsInput>
+}
+
+export type UserUpdateOneRequiredWithoutCreatedQuoteRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedQuoteRequestsInput, Prisma.UserUncheckedCreateWithoutCreatedQuoteRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedQuoteRequestsInput
+  upsert?: Prisma.UserUpsertWithoutCreatedQuoteRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedQuoteRequestsInput, Prisma.UserUpdateWithoutCreatedQuoteRequestsInput>, Prisma.UserUncheckedUpdateWithoutCreatedQuoteRequestsInput>
+}
+
 export type UserCreateWithoutSessionsInput = {
   id?: string
   entraId: string
@@ -416,6 +509,10 @@ export type UserCreateWithoutSessionsInput = {
   status?: $Enums.UserStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -427,6 +524,10 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   status?: $Enums.UserStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -454,6 +555,10 @@ export type UserUpdateWithoutSessionsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -465,6 +570,314 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+}
+
+export type UserCreateWithoutQualifiedLeadsInput = {
+  id?: string
+  entraId: string
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+}
+
+export type UserUncheckedCreateWithoutQualifiedLeadsInput = {
+  id?: string
+  entraId: string
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+}
+
+export type UserCreateOrConnectWithoutQualifiedLeadsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutQualifiedLeadsInput, Prisma.UserUncheckedCreateWithoutQualifiedLeadsInput>
+}
+
+export type UserCreateWithoutCreatedLeadsInput = {
+  id?: string
+  entraId: string
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+}
+
+export type UserUncheckedCreateWithoutCreatedLeadsInput = {
+  id?: string
+  entraId: string
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+}
+
+export type UserCreateOrConnectWithoutCreatedLeadsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedLeadsInput, Prisma.UserUncheckedCreateWithoutCreatedLeadsInput>
+}
+
+export type UserUpsertWithoutQualifiedLeadsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutQualifiedLeadsInput, Prisma.UserUncheckedUpdateWithoutQualifiedLeadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutQualifiedLeadsInput, Prisma.UserUncheckedCreateWithoutQualifiedLeadsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutQualifiedLeadsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutQualifiedLeadsInput, Prisma.UserUncheckedUpdateWithoutQualifiedLeadsInput>
+}
+
+export type UserUpdateWithoutQualifiedLeadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutQualifiedLeadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+}
+
+export type UserUpsertWithoutCreatedLeadsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedLeadsInput, Prisma.UserUncheckedUpdateWithoutCreatedLeadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedLeadsInput, Prisma.UserUncheckedCreateWithoutCreatedLeadsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedLeadsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedLeadsInput, Prisma.UserUncheckedUpdateWithoutCreatedLeadsInput>
+}
+
+export type UserUpdateWithoutCreatedLeadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedLeadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+}
+
+export type UserCreateWithoutQualifiedQuoteRequestsInput = {
+  id?: string
+  entraId: string
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutQualifiedQuoteRequestsInput = {
+  id?: string
+  entraId: string
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutQualifiedQuoteRequestsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutQualifiedQuoteRequestsInput, Prisma.UserUncheckedCreateWithoutQualifiedQuoteRequestsInput>
+}
+
+export type UserCreateWithoutCreatedQuoteRequestsInput = {
+  id?: string
+  entraId: string
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+}
+
+export type UserUncheckedCreateWithoutCreatedQuoteRequestsInput = {
+  id?: string
+  entraId: string
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+}
+
+export type UserCreateOrConnectWithoutCreatedQuoteRequestsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedQuoteRequestsInput, Prisma.UserUncheckedCreateWithoutCreatedQuoteRequestsInput>
+}
+
+export type UserUpsertWithoutQualifiedQuoteRequestsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutQualifiedQuoteRequestsInput, Prisma.UserUncheckedUpdateWithoutQualifiedQuoteRequestsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutQualifiedQuoteRequestsInput, Prisma.UserUncheckedCreateWithoutQualifiedQuoteRequestsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutQualifiedQuoteRequestsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutQualifiedQuoteRequestsInput, Prisma.UserUncheckedUpdateWithoutQualifiedQuoteRequestsInput>
+}
+
+export type UserUpdateWithoutQualifiedQuoteRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutQualifiedQuoteRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUpsertWithoutCreatedQuoteRequestsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedQuoteRequestsInput, Prisma.UserUncheckedUpdateWithoutCreatedQuoteRequestsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedQuoteRequestsInput, Prisma.UserUncheckedCreateWithoutCreatedQuoteRequestsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedQuoteRequestsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedQuoteRequestsInput, Prisma.UserUncheckedUpdateWithoutCreatedQuoteRequestsInput>
+}
+
+export type UserUpdateWithoutCreatedQuoteRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedQuoteRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
 }
 
 
@@ -474,10 +887,18 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
 
 export type UserCountOutputType = {
   sessions: number
+  createdLeads: number
+  qualifiedLeads: number
+  createdQuoteRequests: number
+  qualifiedQuoteRequests: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
+  createdLeads?: boolean | UserCountOutputTypeCountCreatedLeadsArgs
+  qualifiedLeads?: boolean | UserCountOutputTypeCountQualifiedLeadsArgs
+  createdQuoteRequests?: boolean | UserCountOutputTypeCountCreatedQuoteRequestsArgs
+  qualifiedQuoteRequests?: boolean | UserCountOutputTypeCountQualifiedQuoteRequestsArgs
 }
 
 /**
@@ -497,6 +918,34 @@ export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.SessionWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreatedLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeadWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountQualifiedLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeadWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreatedQuoteRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.QuoteRequestWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountQualifiedQuoteRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.QuoteRequestWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -508,6 +957,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
+  createdLeads?: boolean | Prisma.User$createdLeadsArgs<ExtArgs>
+  qualifiedLeads?: boolean | Prisma.User$qualifiedLeadsArgs<ExtArgs>
+  createdQuoteRequests?: boolean | Prisma.User$createdQuoteRequestsArgs<ExtArgs>
+  qualifiedQuoteRequests?: boolean | Prisma.User$qualifiedQuoteRequestsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -547,6 +1000,10 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "entraId" | "email" | "name" | "role" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
+  createdLeads?: boolean | Prisma.User$createdLeadsArgs<ExtArgs>
+  qualifiedLeads?: boolean | Prisma.User$qualifiedLeadsArgs<ExtArgs>
+  createdQuoteRequests?: boolean | Prisma.User$createdQuoteRequestsArgs<ExtArgs>
+  qualifiedQuoteRequests?: boolean | Prisma.User$qualifiedQuoteRequestsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -556,6 +1013,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     sessions: Prisma.$SessionPayload<ExtArgs>[]
+    createdLeads: Prisma.$LeadPayload<ExtArgs>[]
+    qualifiedLeads: Prisma.$LeadPayload<ExtArgs>[]
+    createdQuoteRequests: Prisma.$QuoteRequestPayload<ExtArgs>[]
+    qualifiedQuoteRequests: Prisma.$QuoteRequestPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -961,6 +1422,10 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdLeads<T extends Prisma.User$createdLeadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdLeadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  qualifiedLeads<T extends Prisma.User$qualifiedLeadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$qualifiedLeadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdQuoteRequests<T extends Prisma.User$createdQuoteRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdQuoteRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuoteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  qualifiedQuoteRequests<T extends Prisma.User$qualifiedQuoteRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$qualifiedQuoteRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuoteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1412,6 +1877,102 @@ export type User$sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.SessionScalarFieldEnum | Prisma.SessionScalarFieldEnum[]
+}
+
+/**
+ * User.createdLeads
+ */
+export type User$createdLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lead
+   */
+  select?: Prisma.LeadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lead
+   */
+  omit?: Prisma.LeadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadInclude<ExtArgs> | null
+  where?: Prisma.LeadWhereInput
+  orderBy?: Prisma.LeadOrderByWithRelationInput | Prisma.LeadOrderByWithRelationInput[]
+  cursor?: Prisma.LeadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeadScalarFieldEnum | Prisma.LeadScalarFieldEnum[]
+}
+
+/**
+ * User.qualifiedLeads
+ */
+export type User$qualifiedLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lead
+   */
+  select?: Prisma.LeadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lead
+   */
+  omit?: Prisma.LeadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadInclude<ExtArgs> | null
+  where?: Prisma.LeadWhereInput
+  orderBy?: Prisma.LeadOrderByWithRelationInput | Prisma.LeadOrderByWithRelationInput[]
+  cursor?: Prisma.LeadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeadScalarFieldEnum | Prisma.LeadScalarFieldEnum[]
+}
+
+/**
+ * User.createdQuoteRequests
+ */
+export type User$createdQuoteRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the QuoteRequest
+   */
+  select?: Prisma.QuoteRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the QuoteRequest
+   */
+  omit?: Prisma.QuoteRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QuoteRequestInclude<ExtArgs> | null
+  where?: Prisma.QuoteRequestWhereInput
+  orderBy?: Prisma.QuoteRequestOrderByWithRelationInput | Prisma.QuoteRequestOrderByWithRelationInput[]
+  cursor?: Prisma.QuoteRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.QuoteRequestScalarFieldEnum | Prisma.QuoteRequestScalarFieldEnum[]
+}
+
+/**
+ * User.qualifiedQuoteRequests
+ */
+export type User$qualifiedQuoteRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the QuoteRequest
+   */
+  select?: Prisma.QuoteRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the QuoteRequest
+   */
+  omit?: Prisma.QuoteRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QuoteRequestInclude<ExtArgs> | null
+  where?: Prisma.QuoteRequestWhereInput
+  orderBy?: Prisma.QuoteRequestOrderByWithRelationInput | Prisma.QuoteRequestOrderByWithRelationInput[]
+  cursor?: Prisma.QuoteRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.QuoteRequestScalarFieldEnum | Prisma.QuoteRequestScalarFieldEnum[]
 }
 
 /**

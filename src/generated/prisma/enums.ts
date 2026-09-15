@@ -74,3 +74,42 @@ export const UserStatus = {
 } as const
 
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
+
+
+export const LeadSource = {
+  WEBSITE: 'WEBSITE',
+  REFERRAL: 'REFERRAL',
+  SALES: 'SALES',
+  BUSINESS_DEVELOPMENT: 'BUSINESS_DEVELOPMENT',
+  PHONE: 'PHONE',
+  EMAIL: 'EMAIL',
+  WHATSAPP: 'WHATSAPP',
+  OTHER: 'OTHER'
+} as const
+
+export type LeadSource = (typeof LeadSource)[keyof typeof LeadSource]
+
+
+export const LeadStatus = {
+  ACTIVE: 'ACTIVE',
+  CLOSED: 'CLOSED'
+} as const
+
+export type LeadStatus = (typeof LeadStatus)[keyof typeof LeadStatus]
+
+
+export const QualificationState = {
+  PENDING: 'PENDING',
+  QUALIFIED: 'QUALIFIED',
+  DISQUALIFIED: 'DISQUALIFIED'
+} as const
+
+export type QualificationState = (typeof QualificationState)[keyof typeof QualificationState]
+
+
+export const QuoteRequestStatus = {
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED'
+} as const
+
+export type QuoteRequestStatus = (typeof QuoteRequestStatus)[keyof typeof QuoteRequestStatus]

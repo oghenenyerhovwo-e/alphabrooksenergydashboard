@@ -239,6 +239,11 @@ model User {
 
   sessions Session[]
 
+  createdLeads           Lead[]         @relation("LeadCreatedBy")
+  qualifiedLeads         Lead[]         @relation("LeadQualifiedBy")
+  createdQuoteRequests   QuoteRequest[] @relation("QuoteRequestCreatedBy")
+  qualifiedQuoteRequests QuoteRequest[] @relation("QuoteRequestQualifiedBy")
+
   @@index([role])
   @@index([status])
 }
@@ -263,4 +268,141 @@ model Session {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+enum LeadSource {
+  WEBSITE
+  REFERRAL
+  SALES
+  BUSINESS_DEVELOPMENT
+  PHONE
+  EMAIL
+  WHATSAPP
+  OTHER
+}
+
+enum LeadStatus {
+  ACTIVE
+  CLOSED
+}
+
+enum QualificationState {
+  PENDING
+  QUALIFIED
+  DISQUALIFIED
+}
+
+enum QuoteRequestStatus {
+  OPEN
+  CLOSED
+}
+
+model LeadReferenceCounter {
+  year         Int @id
+  lastSequence Int @default(0)
+}
+
+model QuoteRequestReferenceCounter {
+  year         Int @id
+  lastSequence Int @default(0)
+}
+
+model Lead {
+  id              String @id @default(cuid())
+  referenceNumber String @unique
+
+  companyName   String
+  contactPerson String?
+  phone         String?
+  email         String?
+  location      String?
+
+  source          LeadSource
+  productInterest DeliveryProduct?
+  notes           String?
+
+  status              LeadStatus         @default(ACTIVE)
+  qualificationState  QualificationState @default(PENDING)
+  qualificationReason String?
+  qualifiedAt         DateTime?
+
+  qualifiedById String?
+  qualifiedBy   User?   @relation("LeadQualifiedBy", fields: [qualifiedById], references: [id], onDelete: SetNull)
+
+  createdById String
+  createdBy   User   @relation("LeadCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quoteRequests QuoteRequest[]
+  auditLogs     CommercialAuditLog[]
+
+  @@index([status])
+  @@index([qualificationState])
+  @@index([source])
+  @@index([createdAt])
+  @@index([createdById])
+  @@index([qualifiedById])
+}
+
+model QuoteRequest {
+  id              String @id @default(cuid())
+  referenceNumber String @unique
+
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  requestedProduct  DeliveryProduct
+  requestedQuantity Float?
+  unit              DeliveryUnit?
+
+  deliveryLocation      String?
+  requestedDeliveryDate DateTime?
+  description           String?
+  notes                 String?
+
+  status              QuoteRequestStatus @default(OPEN)
+  qualificationState  QualificationState @default(PENDING)
+  qualificationReason String?
+  qualifiedAt         DateTime?
+
+  qualifiedById String?
+  qualifiedBy   User?   @relation("QuoteRequestQualifiedBy", fields: [qualifiedById], references: [id], onDelete: SetNull)
+
+  createdById String
+  createdBy   User   @relation("QuoteRequestCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  auditLogs CommercialAuditLog[]
+
+  @@index([leadId])
+  @@index([status])
+  @@index([qualificationState])
+  @@index([createdAt])
+  @@index([createdById])
+  @@index([qualifiedById])
+}
+
+model CommercialAuditLog {
+  id String @id @default(cuid())
+
+  leadId String?
+  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  quoteRequestId String?
+  quoteRequest   QuoteRequest? @relation(fields: [quoteRequestId], references: [id], onDelete: Cascade)
+
+  actorName String
+  actorRole String
+  action    String
+  details   String?
+
+  createdAt DateTime @default(now())
+
+  @@index([leadId])
+  @@index([quoteRequestId])
+  @@index([createdAt])
 }

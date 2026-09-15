@@ -14,6 +14,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: "Overview", href: "/" },
       { label: "CNG Operations", href: "/cng" },
       { label: "Main Operations", href: "/operations" },
+      { label: "Commercial", href: "/commercial" },
       { label: "Drivers", href: "/drivers" },
     ],
   },

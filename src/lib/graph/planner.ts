@@ -1,6 +1,7 @@
 import type { Client } from "@microsoft/microsoft-graph-client";
 import { CngConfigError, readGraphConfig, getGraphClient } from "./client";
 import type { RawPlannerBucket, RawPlannerTask, RawGraphUser } from "@/types/cng";
+import type { RawPlannerTaskDetails } from "@/types/operations";
 
 /** Thrown when a Microsoft Graph call itself fails (network, 4xx/5xx, bad shape). */
 export class CngGraphApiError extends Error {
@@ -139,6 +140,79 @@ export async function fetchGraphUsersByIds(
     } catch (e) {
       console.error("[CNG Graph] fetchGraphUsersByIds batch failed:", e);
       throw new CngGraphApiError("Failed to resolve assigned users from Microsoft Graph.");
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Fetches a single Planner task's details (Notes/Description). The task
+ * list endpoint (`fetchPlannerTasks`) does NOT include this field — it
+ * requires this separate Graph call. Prefer `fetchPlannerTaskDetailsBatch`
+ * when fetching details for more than a handful of tasks.
+ */
+export async function fetchPlannerTaskDetails(
+  client: Client,
+  taskId: string
+): Promise<RawPlannerTaskDetails> {
+  try {
+    const details: { id: string; description?: string } = await client
+      .api(`/planner/tasks/${taskId}/details`)
+      .get();
+    return { id: details.id, description: details.description };
+  } catch (e) {
+    console.error("[Planner Graph] fetchPlannerTaskDetails failed:", e);
+    throw new CngGraphApiError(`Failed to retrieve Planner task details for task ${taskId}.`);
+  }
+}
+
+/**
+ * Fetches task details (Notes/Description) for many tasks at once using
+ * $batch (20 sub-requests per call — same cap and pattern as
+ * fetchGraphUsersByIds), instead of one HTTP request per task. A task
+ * whose details request doesn't come back 200 (e.g. deleted mid-fetch)
+ * is skipped rather than failing the whole batch — the caller treats a
+ * missing entry as "no notes", not as an error.
+ */
+export async function fetchPlannerTaskDetailsBatch(
+  client: Client,
+  taskIds: string[]
+): Promise<RawPlannerTaskDetails[]> {
+  const uniqueIds = Array.from(new Set(taskIds)).filter(Boolean);
+  if (uniqueIds.length === 0) return [];
+
+  const BATCH_SIZE = 20;
+  const results: RawPlannerTaskDetails[] = [];
+
+  for (let i = 0; i < uniqueIds.length; i += BATCH_SIZE) {
+    const chunk = uniqueIds.slice(i, i + BATCH_SIZE);
+
+    const batchBody = {
+      requests: chunk.map((id) => ({
+        id,
+        method: "GET",
+        url: `/planner/tasks/${id}/details`,
+      })),
+    };
+
+    try {
+      const batchResponse: {
+        responses: {
+          id: string;
+          status: number;
+          body?: { id: string; description?: string };
+        }[];
+      } = await client.api("/$batch").post(batchBody);
+
+      for (const r of batchResponse.responses) {
+        if (r.status === 200 && r.body) {
+          results.push({ id: r.body.id, description: r.body.description });
+        }
+      }
+    } catch (e) {
+      console.error("[Planner Graph] fetchPlannerTaskDetailsBatch failed:", e);
+      throw new CngGraphApiError("Failed to retrieve Planner task details from Microsoft Graph.");
     }
   }
 
