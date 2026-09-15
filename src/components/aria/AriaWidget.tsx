@@ -12,15 +12,17 @@ interface AriaMessage {
 
 const INTRO_MESSAGE = `Hello, I'm ARIA — Alpha Brooks Real-time Intelligence Assistant.
 
-I'm the AI operations assistant for Alpha Brooks Energy LTD's CNG operations. I can help you understand the current project position, monitor task progress, identify pending and overdue work, and provide concise operational insights.
+I'm the AI operations assistant for Alpha Brooks Energy LTD. I can answer questions about the Main Operations daily team work (from Planner) and about the CNG project.
 
 You can ask me things like:
-- Where are we?
-- What have we completed?
-- What is overdue?
-- What needs management attention?
+- Who has the lowest completion?
+- Who has overdue tasks?
+- What are the current bottlenecks?
+- What did John complete?
+- What needs my attention today?
+- Where are we on the CNG project?
 
-I use the available project data to answer — nothing invented.`;
+I use the available Planner and project data to answer — nothing invented.`;
 
 function createMessage(role: AriaMessage["role"], content: string, isError = false): AriaMessage {
   return { id: `${role}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, role, content, isError };
@@ -108,7 +110,7 @@ export function AriaWidget() {
 
           <div className={styles.messages} ref={scrollRef}>
             {messages.length === 0 ? (
-              <div className={styles.empty}>Ask ARIA about current CNG project status.</div>
+              <div className={styles.empty}>Ask ARIA about Main Operations team work or the CNG project.</div>
             ) : (
               messages.map((m) => (
                 <div
@@ -137,7 +139,7 @@ export function AriaWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask ARIA about the CNG project…"
+              placeholder="Ask ARIA about team work or CNG…"
               rows={1}
               disabled={loading}
             />

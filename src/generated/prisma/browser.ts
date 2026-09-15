@@ -86,3 +86,19 @@ export type QuoteRequest = Prisma.QuoteRequestModel
  * 
  */
 export type CommercialAuditLog = Prisma.CommercialAuditLogModel
+/**
+ * Model OperationsDailyReport
+ * MAIN OPERATIONS — HISTORICAL DAILY REPORT SNAPSHOT (Phase 6).
+ * 
+ * One row per Africa/Lagos reporting date. This is a REPORTING ARCHIVE,
+ * not a task store: the whole report tree lives in a single immutable
+ * JSON document, there are no per-task rows to update, and nothing here
+ * is ever written back to Planner. Microsoft Planner remains the source
+ * of truth for all task state.
+ * 
+ * `reportDate` is a plain "YYYY-MM-DD" string rather than a DateTime on
+ * purpose — a DateTime column round-trips through UTC and would let a
+ * Lagos reporting date silently shift to the previous day on a UTC
+ * server. A string cannot drift.
+ */
+export type OperationsDailyReport = Prisma.OperationsDailyReportModel

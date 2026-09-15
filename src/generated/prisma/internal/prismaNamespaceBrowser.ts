@@ -63,7 +63,8 @@ export const ModelName = {
   QuoteRequestReferenceCounter: 'QuoteRequestReferenceCounter',
   Lead: 'Lead',
   QuoteRequest: 'QuoteRequest',
-  CommercialAuditLog: 'CommercialAuditLog'
+  CommercialAuditLog: 'CommercialAuditLog',
+  OperationsDailyReport: 'OperationsDailyReport'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -306,12 +307,39 @@ export const CommercialAuditLogScalarFieldEnum = {
 export type CommercialAuditLogScalarFieldEnum = (typeof CommercialAuditLogScalarFieldEnum)[keyof typeof CommercialAuditLogScalarFieldEnum]
 
 
+export const OperationsDailyReportScalarFieldEnum = {
+  id: 'id',
+  reportDate: 'reportDate',
+  timezone: 'timezone',
+  capturedAt: 'capturedAt',
+  connectionStatus: 'connectionStatus',
+  totalUniqueTasks: 'totalUniqueTasks',
+  completedUniqueTasks: 'completedUniqueTasks',
+  completionPercentage: 'completionPercentage',
+  completedCount: 'completedCount',
+  inProgressCount: 'inProgressCount',
+  pendingCount: 'pendingCount',
+  overdueCount: 'overdueCount',
+  blockerCount: 'blockerCount',
+  snapshot: 'snapshot'
+} as const
+
+export type OperationsDailyReportScalarFieldEnum = (typeof OperationsDailyReportScalarFieldEnum)[keyof typeof OperationsDailyReportScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -328,4 +356,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

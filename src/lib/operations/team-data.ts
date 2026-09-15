@@ -1,20 +1,50 @@
 /**
- * MAIN OPERATIONS — DAILY TEAM REPORT DATA LAYER (Phase 2)
+ * MAIN OPERATIONS — NORMALIZED PLANNER DATA
  *
- * Deterministic Planner -> Daily Team Data pipeline. No AI involved here —
- * every count, percentage, and blocker below is computed by plain code.
- * This file is intentionally independent of src/lib/cng/** — it never
- * imports CNG business logic (buckets, phases, readiness), only the
- * shared Graph/Planner technical infrastructure.
+ * Main Operations has its own Microsoft Planner plan.
+ *
+ * Architecture:
+ *
+ * Microsoft Planner
+ *       ↓
+ * fetchPlannerTasks()
+ * fetchPlannerBuckets()
+ * fetchGraphUsersByIds()
+ *       ↓
+ * normalize (buckets get shortName/group from OPERATIONS_BUCKET_CONFIG,
+ *            tasks carry a full bucket object, assignees carry role)
+ *       ↓
+ * OperationsTeamData
+ *       ↓
+ * /api/operations/data
+ *       ↓
+ * OperationsDataProvider
+ *       ↓
+ * Main Operations components
+ *
+ * This deliberately mirrors the CNG architecture (src/lib/cng/normalize.ts)
+ * while keeping Main Operations completely separate from CNG business logic.
+ * Buckets and users are resolved the same way CNG resolves them — there is
+ * no separate "department" lookup anywhere in this file.
  */
 
 import { getGraphClient, CngConfigError } from "@/lib/graph/client";
 import {
   fetchPlannerTasks,
+  fetchPlannerBuckets,
   fetchGraphUsersByIds,
   fetchPlannerTaskDetailsBatch,
 } from "@/lib/graph/planner";
-import type { RawPlannerTask, RawGraphUser } from "@/types/cng";
+import { resolveUserName, resolveUserRole } from "@/config/users";
+import { OPERATIONS_BUCKET_CONFIG } from "@/config/buckets";
+import { extractBlockers, parseNoteSections } from "./notes";
+
+import type {
+  RawPlannerTask,
+  RawPlannerBucket,
+  RawGraphUser,
+} from "@/types/cng";
+
 import type {
   OperationsTask,
   OperationsTaskStatus,
@@ -22,9 +52,14 @@ import type {
   OperationsOverallSummary,
   OperationsTeamData,
   OperationsConnectionStatus,
+  OperationsBucket,
+  OperationsUser,
 } from "@/types/operations";
 
-/** Thrown when raw Planner/Graph data can't be turned into Daily Team Data. */
+/* ============================================================
+   ERRORS
+   ============================================================ */
+
 export class OperationsNormalizationError extends Error {
   constructor(message: string) {
     super(message);
@@ -32,27 +67,32 @@ export class OperationsNormalizationError extends Error {
   }
 }
 
+/* ============================================================
+   PLAN CONFIGURATION
+   ============================================================ */
+
 /**
- * Which Planner plan the Daily Team Report reads from.
+ * Main Operations has its OWN Planner plan.
  *
- * Reuses CNG_PLANNER_PLAN_ID by default so Phase 2 doesn't force a second
- * Planner configuration just to exist. Set OPERATIONS_PLANNER_PLAN_ID
- * explicitly once Main Operations should read from a different plan than
- * CNG — until then both features point at the same plan with no config
- * change required.
+ * Do not fall back to CNG_PLANNER_PLAN_ID.
+ *
+ * CNG and Main Operations are separate Planner plans and therefore must
+ * remain separate sources of truth.
  */
 function resolveOperationsPlanId(): string {
-  const planId = process.env.OPERATIONS_PLANNER_PLAN_ID || process.env.CNG_PLANNER_PLAN_ID;
+  const planId = process.env.OPERATIONS_PLANNER_PLAN_ID;
+
   if (!planId) {
     throw new CngConfigError(
-      "Missing required configuration: set OPERATIONS_PLANNER_PLAN_ID (or CNG_PLANNER_PLAN_ID as a shared fallback)."
+      "Missing required configuration: set OPERATIONS_PLANNER_PLAN_ID for the Main Operations Planner plan."
     );
   }
+
   return planId;
 }
 
 /* ============================================================
-   STATUS / OVERDUE — deterministic, no AI
+   STATUS
    ============================================================ */
 
 function computeStatus(percentComplete: number): OperationsTaskStatus {
@@ -61,7 +101,10 @@ function computeStatus(percentComplete: number): OperationsTaskStatus {
   return "not-started";
 }
 
-/** Raw ISO-8601 UTC timestamp comparison — never local browser/server time. A completed task is never overdue. */
+/* ============================================================
+   OVERDUE
+   ============================================================ */
+
 function computeIsOverdue(
   dueDate: string | undefined,
   status: OperationsTaskStatus,
@@ -74,127 +117,191 @@ function computeIsOverdue(
 }
 
 /* ============================================================
-   BLOCKER EXTRACTION — deterministic, no AI
-   ============================================================ */
-
-/**
- * A blocker is any line in the task Notes/Description whose trimmed text
- * starts with "BLOCKER:" (case-insensitive). Everything after the prefix,
- * trimmed, is kept as the blocker text. Lines like "UPDATE:" or "NEXT:"
- * are never treated as blockers.
- */
-const BLOCKER_PREFIX = /^blocker:\s*/i;
-
-export function extractBlockers(notes: string | null | undefined): string[] {
-  if (!notes) return [];
-
-  return notes
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => BLOCKER_PREFIX.test(line))
-    .map((line) => line.replace(BLOCKER_PREFIX, "").trim())
-    .filter((text) => text.length > 0);
-}
-
-/* ============================================================
-   RAW GRAPH FETCH
+   RAW DATA
    ============================================================ */
 
 interface RawOperationsPlannerData {
   tasks: RawPlannerTask[];
+  buckets: RawPlannerBucket[];
   users: RawGraphUser[];
   taskNotesById: Map<string, string | undefined>;
 }
 
 /**
- * Pulls the full Planner task list (all pages, via the existing shared
- * pagination), resolves only the assignees that actually appear, and
- * fetches task details/Notes for every task via the batched Graph
- * endpoint (20 requests per $batch call) — not one request per task.
- * Buckets are not needed for the Daily Team Report and are intentionally
- * not fetched here.
+ * Fetches the complete Main Operations Planner dataset.
+ *
+ * This is the Main Operations equivalent of fetchCngPlannerData().
  */
 async function fetchRawOperationsPlannerData(): Promise<RawOperationsPlannerData> {
   const planId = resolveOperationsPlanId();
   const client = getGraphClient();
 
-  const tasks = await fetchPlannerTasks(client, planId);
+  const [tasks, buckets] = await Promise.all([
+    fetchPlannerTasks(client, planId),
+    fetchPlannerBuckets(client, planId),
+  ]);
 
   const assigneeIds = new Set<string>();
+
   for (const task of tasks) {
-    if (task.assignments) {
-      for (const userId of Object.keys(task.assignments)) {
-        assigneeIds.add(userId);
-      }
+    if (!task.assignments) continue;
+    for (const userId of Object.keys(task.assignments)) {
+      assigneeIds.add(userId);
     }
   }
+
   const users = await fetchGraphUsersByIds(client, Array.from(assigneeIds));
 
-  const taskIds = tasks.map((t) => t.id);
+  const taskIds = tasks.map((task) => task.id);
   const details = await fetchPlannerTaskDetailsBatch(client, taskIds);
-  const taskNotesById = new Map(details.map((d) => [d.id, d.description]));
 
-  return { tasks, users, taskNotesById };
+  const taskNotesById = new Map(
+    details.map((detail) => [detail.id, detail.description])
+  );
+
+  return { tasks, buckets, users, taskNotesById };
 }
 
 /* ============================================================
-   NORMALIZATION — Raw Graph -> OperationsTask
+   NORMALIZE BUCKETS
+   ============================================================ */
+
+/**
+ * Builds an OperationsBucket straight from the live Graph bucket — id,
+ * name, and orderHint all come from the API. OPERATIONS_BUCKET_CONFIG
+ * only ever adds an optional shortName/group (the "role" label); it
+ * never filters or invents buckets. Mirrors CNG's normalizeBucket
+ * exactly.
+ */
+function normalizeBucket(raw: RawPlannerBucket): OperationsBucket {
+  const config = OPERATIONS_BUCKET_CONFIG[raw.id];
+  return {
+    id: raw.id,
+    name: raw.name,
+    orderHint: raw.orderHint,
+    shortName: config?.shortName,
+    group: config?.group,
+  };
+}
+
+/* ============================================================
+   NORMALIZE USERS
+   ============================================================ */
+
+function normalizeUser(
+  userId: string,
+  graphUsersById: Map<string, RawGraphUser>
+): OperationsUser {
+  const graphUser = graphUsersById.get(userId);
+  const { name, isUnmapped } = resolveUserName(userId, graphUser?.displayName);
+  const role = resolveUserRole(userId);
+
+  return {
+    id: userId,
+    name,
+    role,
+    isUnmapped: isUnmapped || undefined,
+  };
+}
+
+/* ============================================================
+   NORMALIZE TASK
    ============================================================ */
 
 function normalizeOperationsTask(
   raw: RawPlannerTask,
+  bucketsById: Map<string, OperationsBucket>,
   graphUsersById: Map<string, RawGraphUser>,
   notes: string | undefined,
   nowMs: number
 ): OperationsTask {
   const status = computeStatus(raw.percentComplete ?? 0);
+
   const assigneeIds = raw.assignments ? Object.keys(raw.assignments) : [];
 
   const assignees = assigneeIds.map((id) => {
-    const graphUser = graphUsersById.get(id);
-    return { id, name: graphUser?.displayName || "Unmapped User" };
+    const user = normalizeUser(id, graphUsersById);
+    return {
+      id: user.id,
+      name: user.name,
+      role: user.role,
+      isUnmapped: user.isUnmapped,
+    };
   });
+
+  const bucket = bucketsById.get(raw.bucketId);
 
   return {
     id: raw.id,
     title: raw.title || "(Untitled task)",
+
     assignees,
+
+    startDate: raw.startDateTime,
     dueDate: raw.dueDateTime,
+    completedDate: raw.completedDateTime,
+
     priority: raw.priority,
+
     percentComplete: raw.percentComplete ?? 0,
+
     status,
+
     isOverdue: computeIsOverdue(raw.dueDateTime, status, nowMs),
+
+    /**
+     * The full normalized bucket, straight from the Main Operations
+     * Planner plan — id/name from Graph, shortName/group from
+     * OPERATIONS_BUCKET_CONFIG. This is what the Team Tracker groups by.
+     */
+    bucket: bucket
+      ? {
+          id: bucket.id,
+          name: bucket.name,
+          shortName: bucket.shortName,
+          group: bucket.group,
+        }
+      : { id: raw.bucketId, name: "Unknown Bucket" },
+
     notes: notes ?? null,
+    noteSections: parseNoteSections(notes),
     blockers: extractBlockers(notes),
   };
 }
 
 /* ============================================================
-   EMPLOYEE GROUPING + AGGREGATION
+   EMPLOYEE SUMMARY
    ============================================================ */
 
 function summarizeEmployeeTasks(
   userId: string,
   name: string,
+  role: string | undefined,
   tasks: OperationsTask[]
 ): OperationsEmployeeSummary {
   const totalTasks = tasks.length;
-  const completedTasks = tasks.filter((t) => t.status === "completed").length;
-  const inProgressTasks = tasks.filter((t) => t.status === "in-progress").length;
-  const pendingTasks = tasks.filter((t) => t.status === "not-started").length;
-  const overdueTasks = tasks.filter((t) => t.isOverdue);
+  const completedTasks = tasks.filter((task) => task.status === "completed").length;
+  const inProgressTasks = tasks.filter((task) => task.status === "in-progress").length;
+  const pendingTasks = tasks.filter((task) => task.status === "not-started").length;
+  const overdueTasks = tasks.filter((task) => task.isOverdue);
 
-  const blockers = tasks.flatMap((t) => t.blockers.map((text) => ({ taskTitle: t.title, text })));
+  const blockers = tasks.flatMap((task) =>
+    task.blockers.map((text) => ({ taskTitle: task.title, text }))
+  );
 
   return {
     userId,
     name,
+    role,
+
     totalTasks,
     completedTasks,
     inProgressTasks,
     pendingTasks,
-    // null (never 0) when the employee has no assigned tasks — "No tasks assigned yet."
-    completionPercentage: totalTasks === 0 ? null : Math.round((completedTasks / totalTasks) * 100),
+
+    completionPercentage:
+      totalTasks === 0 ? null : Math.round((completedTasks / totalTasks) * 100),
+
     overdueTasks,
     blockers,
     tasks,
@@ -202,63 +309,129 @@ function summarizeEmployeeTasks(
 }
 
 /* ============================================================
-   TOP-LEVEL: RAW GRAPH DATA -> DAILY TEAM DATA
+   BUILD NORMALIZED MAIN OPERATIONS DATA
    ============================================================ */
 
 export function buildOperationsTeamData(
-  raw: { tasks: RawPlannerTask[]; users: RawGraphUser[]; taskNotesById: Map<string, string | undefined> },
+  raw: {
+    tasks: RawPlannerTask[];
+    buckets: RawPlannerBucket[];
+    users: RawGraphUser[];
+    taskNotesById: Map<string, string | undefined>;
+  },
   now: Date = new Date()
 ): Omit<OperationsTeamData, "status" | "message"> {
   try {
     const nowMs = now.getTime();
-    const graphUsersById = new Map(raw.users.map((u) => [u.id, u]));
 
-    const tasks = raw.tasks.map((t) =>
-      normalizeOperationsTask(t, graphUsersById, raw.taskNotesById.get(t.id), nowMs)
+    const graphUsersById = new Map(raw.users.map((user) => [user.id, user]));
+
+    /**
+     * Normalize EVERY bucket returned by Graph. No hardcoded bucket
+     * list, no filtering, no invented bucket IDs — same rule CNG follows.
+     */
+    const buckets: OperationsBucket[] = raw.buckets
+      .map(normalizeBucket)
+      .sort((a, b) => {
+        const orderA = Number(a.orderHint);
+        const orderB = Number(b.orderHint);
+
+        if (Number.isFinite(orderA) && Number.isFinite(orderB) && orderA !== orderB) {
+          return orderA - orderB;
+        }
+
+        return a.name.localeCompare(b.name);
+      });
+
+    const bucketsById = new Map(buckets.map((bucket) => [bucket.id, bucket]));
+
+    /**
+     * Normalize EVERY Graph user that was resolved from Planner
+     * assignments. This is the single roster the rest of the app reads
+     * from — the Team Tracker's employee/assignee list comes from here,
+     * not from a separate table.
+     */
+    const users: OperationsUser[] = Array.from(new Set(raw.users.map((user) => user.id)))
+      .map((userId) => normalizeUser(userId, graphUsersById))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    const usersById = new Map(users.map((user) => [user.id, user]));
+
+    /**
+     * Normalize EVERY Planner task.
+     */
+    const tasks = raw.tasks.map((task) =>
+      normalizeOperationsTask(
+        task,
+        bucketsById,
+        graphUsersById,
+        raw.taskNotesById.get(task.id),
+        nowMs
+      )
     );
 
-    // Employee roster = every distinct assignee that actually appears on a
-    // task — no invented employees, nobody who isn't in Planner.
-    const employeeNamesById = new Map<string, string>();
+    /* --------------------------------------------------------
+       EMPLOYEE ROSTER — built from the normalized `users` list,
+       not re-derived from task titles/names a second time.
+       -------------------------------------------------------- */
+
+    const assignedUserIds = new Set<string>();
     for (const task of tasks) {
-      for (const assignee of task.assignees) {
-        if (!employeeNamesById.has(assignee.id)) {
-          employeeNamesById.set(assignee.id, assignee.name);
-        }
-      }
+      for (const assignee of task.assignees) assignedUserIds.add(assignee.id);
     }
 
-    const employees: OperationsEmployeeSummary[] = Array.from(employeeNamesById.entries())
-      .map(([userId, name]) => {
-        const employeeTasks = tasks.filter((t) => t.assignees.some((a) => a.id === userId));
-        return summarizeEmployeeTasks(userId, name, employeeTasks);
+    const employees: OperationsEmployeeSummary[] = Array.from(assignedUserIds)
+      .map((userId) => {
+        const user = usersById.get(userId);
+        const employeeTasks = tasks.filter((task) =>
+          task.assignees.some((assignee) => assignee.id === userId)
+        );
+
+        return summarizeEmployeeTasks(
+          userId,
+          user?.name ?? "Unmapped User",
+          user?.role,
+          employeeTasks
+        );
       })
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    const unassignedTasks = tasks.filter((t) => t.assignees.length === 0);
+    /* --------------------------------------------------------
+       UNASSIGNED
+       -------------------------------------------------------- */
 
-    // Overall completion is computed over unique Planner tasks — a task
-    // assigned to more than one person is counted once here even though
-    // it appears in each of those employees' individual `tasks` arrays.
+    const unassignedTasks = tasks.filter((task) => task.assignees.length === 0);
+
+    /* --------------------------------------------------------
+       OVERALL
+       -------------------------------------------------------- */
+
     const totalUniqueTasks = tasks.length;
-    const completedUniqueTasks = tasks.filter((t) => t.status === "completed").length;
+    const completedUniqueTasks = tasks.filter((task) => task.status === "completed").length;
 
     const overall: OperationsOverallSummary = {
       totalUniqueTasks,
       completedUniqueTasks,
       completionPercentage:
-        totalUniqueTasks === 0 ? null : Math.round((completedUniqueTasks / totalUniqueTasks) * 100),
+        totalUniqueTasks === 0
+          ? null
+          : Math.round((completedUniqueTasks / totalUniqueTasks) * 100),
     };
 
     return {
       lastUpdated: new Date().toISOString(),
+      buckets,
+      users,
+      tasks,
       employees,
       unassignedTasks,
       overall,
     };
   } catch (e) {
     console.error("[Operations Team Data] normalization failed:", e);
-    throw new OperationsNormalizationError("Failed to build Daily Team Data from Planner data.");
+    throw new OperationsNormalizationError(
+      "Failed to build Main Operations normalized data from Planner."
+    );
   }
 }
 
@@ -267,24 +440,25 @@ export function buildOperationsTeamData(
    ============================================================ */
 
 /**
- * Fetches live Planner data and returns fully normalized Daily Team Data.
- * Mirrors the existing fetchCngPlannerData() + normalizeCngData() shape,
- * but reads only what the Daily Team Report needs (no buckets) and adds
- * task Notes/blocker extraction on top.
+ * Retrieves and normalizes the Main Operations Planner plan.
  *
- * On any failure, returns a connection-status result rather than throwing
- * past this boundary — same convention as the existing CNG API route —
- * so callers (Phase 3's report builder, a future status check) can render
- * a clear "not connected" / "error" state instead of crashing.
+ * This is the Main Operations equivalent of the CNG data pipeline.
  */
 export async function getOperationsTeamData(): Promise<OperationsTeamData> {
   try {
     const raw = await fetchRawOperationsPlannerData();
     const data = buildOperationsTeamData(raw);
-    return { status: "connected", ...data };
+
+    return {
+      status: "connected",
+      ...data,
+    };
   } catch (e) {
-    const status: OperationsConnectionStatus = e instanceof CngConfigError ? "not_connected" : "error";
-    const message = e instanceof Error ? e.message : "Unexpected error retrieving Planner data.";
+    const status: OperationsConnectionStatus =
+      e instanceof CngConfigError ? "not_connected" : "error";
+
+    const message =
+      e instanceof Error ? e.message : "Unexpected error retrieving Main Operations Planner data.";
 
     console.error("[Operations Team Data] getOperationsTeamData failed:", e);
 
@@ -292,9 +466,16 @@ export async function getOperationsTeamData(): Promise<OperationsTeamData> {
       status,
       message,
       lastUpdated: null,
+      buckets: [],
+      users: [],
+      tasks: [],
       employees: [],
       unassignedTasks: [],
-      overall: { totalUniqueTasks: 0, completedUniqueTasks: 0, completionPercentage: null },
+      overall: {
+        totalUniqueTasks: 0,
+        completedUniqueTasks: 0,
+        completionPercentage: null,
+      },
     };
   }
 }

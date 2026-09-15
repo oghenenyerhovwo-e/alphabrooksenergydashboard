@@ -18,6 +18,7 @@ import {
   calculateAttentionMetrics,
 } from "@/lib/cng/calculations";
 import { buildCngIntelligence } from "@/lib/cng/intelligence";
+import type { OperationsTeamData, OperationsOverallSummary } from "@/types/operations";
 
 /** Caps on list sizes sent to ARIA, so a large Planner plan can't blow up context size. */
 const MAX_LISTED_TASKS = 15;
@@ -236,5 +237,106 @@ export function buildAriaContext(
       unknownBucketTaskCount: overview.dataIntegrity.unknownBucketTaskCount,
       unmappedUserCount: overview.dataIntegrity.unmappedUserCount,
     },
+  };
+}
+
+/* ============================================================
+   MAIN OPERATIONS — ARIA CONTEXT BUILDER (Phase 5)
+
+   Independent of everything above: no shared state, no shared prompt
+   shape, no CNG imports. Consumes the existing Phase 2 data layer
+   (OperationsTeamData from lib/operations/team-data.ts) and reshapes it
+   into a compact, capped object for ARIA chat. Every figure here is
+   already computed by team-data.ts — this function only selects,
+   caps, and relabels; it never recalculates a percentage or status.
+   ============================================================ */
+
+/** Caps so a large Planner plan can't blow up the ARIA chat prompt. */
+const MAX_OPERATIONS_EMPLOYEES = 30;
+const MAX_OPERATIONS_TASK_TITLES = 10;
+
+export interface AriaOperationsEmployeeContext {
+  name: string;
+  /** False only if this employee somehow has zero assigned tasks — see note below. */
+  hasTasks: boolean;
+  totalTasks: number;
+  completedTasks: number;
+  inProgressTasks: number;
+  pendingTasks: number;
+  overdueCount: number;
+  /** null only when hasTasks is false — render as "No tasks assigned yet.", never 0%. */
+  completionPercentage: number | null;
+  completedTaskTitles: string[];
+  inProgressTaskTitles: string[];
+  pendingTaskTitles: string[];
+  overdueTaskTitles: string[];
+  /** "<blocker text> (task: <task title>)", capped. Empty = no blocker for this person. */
+  blockers: string[];
+}
+
+export interface AriaOperationsContext {
+  generatedAt: string;
+  connectionStatus: OperationsTeamData["status"];
+  lastUpdated: string | null;
+  /** True only when Graph is connected AND there is at least one task (assigned or unassigned). */
+  hasUsableData: boolean;
+  employees: AriaOperationsEmployeeContext[];
+  unassignedTaskCount: number;
+  unassignedTaskTitles: string[];
+  overall: OperationsOverallSummary;
+}
+
+/**
+ * Reshapes the Phase 2 Main Operations data layer for ARIA chat.
+ *
+ * NOTE ON "employees with no tasks": today's roster (team-data.ts) is
+ * built only from Planner task assignees, so every entry in
+ * data.employees necessarily has totalTasks >= 1. The hasTasks /
+ * completionPercentage-null path below is kept so this stays correct
+ * if the roster is ever sourced independently of Planner tasks in the
+ * future — it is not reachable with the current data layer.
+ */
+export function buildOperationsAriaContext(data: OperationsTeamData): AriaOperationsContext {
+  const hasUsableData =
+    data.status === "connected" && (data.employees.length > 0 || data.unassignedTasks.length > 0);
+
+  const employees: AriaOperationsEmployeeContext[] = data.employees
+    .slice(0, MAX_OPERATIONS_EMPLOYEES)
+    .map((e) => ({
+      name: e.name,
+      hasTasks: e.totalTasks > 0,
+      totalTasks: e.totalTasks,
+      completedTasks: e.completedTasks,
+      inProgressTasks: e.inProgressTasks,
+      pendingTasks: e.pendingTasks,
+      overdueCount: e.overdueTasks.length,
+      completionPercentage: e.completionPercentage,
+      completedTaskTitles: e.tasks
+        .filter((t) => t.status === "completed")
+        .slice(0, MAX_OPERATIONS_TASK_TITLES)
+        .map((t) => t.title),
+      inProgressTaskTitles: e.tasks
+        .filter((t) => t.status === "in-progress")
+        .slice(0, MAX_OPERATIONS_TASK_TITLES)
+        .map((t) => t.title),
+      pendingTaskTitles: e.tasks
+        .filter((t) => t.status === "not-started")
+        .slice(0, MAX_OPERATIONS_TASK_TITLES)
+        .map((t) => t.title),
+      overdueTaskTitles: e.overdueTasks.slice(0, MAX_OPERATIONS_TASK_TITLES).map((t) => t.title),
+      blockers: e.blockers
+        .slice(0, MAX_OPERATIONS_TASK_TITLES)
+        .map((b) => `${b.text} (task: ${b.taskTitle})`),
+    }));
+
+  return {
+    generatedAt: new Date().toISOString(),
+    connectionStatus: data.status,
+    lastUpdated: data.lastUpdated,
+    hasUsableData,
+    employees,
+    unassignedTaskCount: data.unassignedTasks.length,
+    unassignedTaskTitles: data.unassignedTasks.slice(0, MAX_OPERATIONS_TASK_TITLES).map((t) => t.title),
+    overall: data.overall,
   };
 }

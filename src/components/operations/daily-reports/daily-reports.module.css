@@ -1,0 +1,1898 @@
+/* ============================================================
+   ALPHA BROOKS ENERGY
+   MAIN OPERATIONS — DAILY REPORTS
+   Premium / Spacious / Clear Hierarchy
+   ============================================================ */
+
+
+/* ============================================================
+   01. PAGE LAYOUT
+   ============================================================ */
+
+.layout {
+  display: grid;
+  grid-template-columns: 292px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  width: 100%;
+  transition: grid-template-columns 200ms ease;
+}
+
+/* Minimized calendar needs far less width, so the report content grows
+   into the space it gives back — see ReportCalendar's collapsed state. */
+.layout[data-calendar-collapsed="true"] {
+  grid-template-columns: 236px minmax(0, 1fr);
+}
+
+@media (max-width: 1040px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .layout[data-calendar-collapsed="true"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+
+/* ============================================================
+   02. CALENDAR
+   ============================================================ */
+
+.calendarCard {
+  position: sticky;
+  top: 24px;
+  min-width: 0;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: padding 160ms ease;
+}
+
+.calendarCard[data-collapsed="true"] {
+  padding: 16px;
+}
+
+.calendarHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.calendarCollapseButton {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--grey-600);
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+
+.calendarCollapseButton:hover {
+  background: var(--grey-100);
+  border-color: var(--grey-300);
+  color: var(--ink);
+}
+
+.monthNav {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--ink-soft);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease;
+}
+
+.monthNav:hover:not(:disabled) {
+  background: var(--grey-100);
+  border-color: var(--grey-300);
+}
+
+.monthNav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.monthLabelWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.monthLabel {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.monthLoading {
+  font-size: 10.5px;
+  color: var(--grey-500);
+}
+
+.calendarActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.todayButton {
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 7px 15px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease;
+}
+
+.todayButton:hover {
+  background: var(--grey-100);
+  border-color: var(--grey-300);
+}
+
+.weekdayRow,
+.dayGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.weekdayRow {
+  margin-top: 24px;
+}
+
+.weekday {
+  padding-bottom: 6px;
+  text-align: center;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--grey-500);
+}
+
+.dayGrid {
+  margin-top: 4px;
+}
+
+.dayBlank {
+  aspect-ratio: 1;
+}
+
+.day {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    border-color 140ms ease;
+}
+
+.day:hover:not(:disabled) {
+  background: var(--grey-100);
+}
+
+.day:disabled {
+  color: var(--grey-400);
+  cursor: not-allowed;
+}
+
+.day[data-today="true"] {
+  border-color: var(--border);
+}
+
+.day[data-has-report="true"] {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.day[data-selected="true"] {
+  background: var(--green-dark);
+  color: #ffffff;
+  border-color: var(--green-dark);
+}
+
+.dayNumber {
+  line-height: 1;
+}
+
+.dayDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--green);
+}
+
+.day[data-selected="true"] .dayDot {
+  background: #ffffff;
+}
+
+.calendarLegend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--grey-600);
+}
+
+.legendDot {
+  width: 5px;
+  height: 5px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--green);
+}
+
+
+/* ----------------------------------------------------------
+   02b. CALENDAR — MINIMIZED STATE
+   A compact, intentionally-designed control that replaces the
+   full grid when the user collapses the calendar. Never just a
+   clipped version of the expanded card.
+   ---------------------------------------------------------- */
+
+.calendarMini {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.calendarMiniNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.calendarMiniMonth {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--ink);
+  text-align: center;
+  flex: 1;
+}
+
+.calendarMiniSelected {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 13px;
+  background: var(--grey-100);
+  border-radius: var(--radius-sm);
+}
+
+.calendarMiniSelectedLabel {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--grey-500);
+}
+
+.calendarMiniSelectedValue {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.calendarExpandButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease;
+}
+
+.calendarExpandButton:hover {
+  background: var(--grey-100);
+  border-color: var(--grey-300);
+}
+
+.calendarExpandButton svg {
+  color: var(--grey-500);
+}
+
+
+/* ============================================================
+   03. REPORT SHELL
+   ============================================================ */
+
+.reportCard {
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.reportHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 32px;
+  padding: 32px 34px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.reportEyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--grey-600);
+}
+
+.reportTitle {
+  margin-top: 7px;
+  font-size: 21px;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+.reportSubtitle {
+  max-width: 65ch;
+  margin-top: 8px;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--grey-600);
+}
+
+.overallBlock {
+  min-width: 180px;
+  padding-left: 24px;
+  text-align: right;
+  border-left: 1px solid var(--border-soft);
+}
+
+.overallLabel {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--grey-600);
+}
+
+.overallValue {
+  margin-top: 4px;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--green-dark);
+}
+
+.overallCounts {
+  margin-top: 5px;
+  font-size: 11.5px;
+  color: var(--grey-600);
+}
+
+@media (max-width: 560px) {
+  .overallBlock {
+    width: 100%;
+    min-width: 0;
+    padding-left: 0;
+    padding-top: 18px;
+    text-align: left;
+    border-left: none;
+    border-top: 1px solid var(--border-soft);
+  }
+}
+
+
+/* ============================================================
+   04. SUMMARY
+   ============================================================ */
+
+.summaryStrip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--border-soft);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.summaryItem {
+  min-width: 0;
+  padding: 20px 21px;
+  background: var(--card);
+}
+
+.summaryLabel {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--grey-600);
+}
+
+.summaryValue {
+  margin-top: 5px;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.summaryItem[data-tone="warn"] .summaryValue {
+  color: var(--amber);
+}
+
+@media (max-width: 760px) {
+  .summaryStrip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 460px) {
+  .summaryStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+/* ============================================================
+   05. TABS
+   ============================================================ */
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  padding: 20px 34px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 14px 13px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.6;
+  cursor: pointer;
+  transition:
+    color 140ms ease,
+    opacity 140ms ease,
+    border-color 140ms ease;
+}
+
+.tab:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.tab[data-active="true"] {
+  color: var(--green-dark);
+  border-bottom-color: var(--green-dark);
+  opacity: 1;
+}
+
+.tab:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.tabPanel {
+  padding: 32px 34px 42px;
+}
+
+
+/* ============================================================
+   06. STATES
+   ============================================================ */
+
+.loading,
+.emptyState,
+.errorState {
+  padding: 72px 32px;
+  text-align: center;
+  color: var(--grey-600);
+  font-size: 13px;
+}
+
+.emptyTitle {
+  margin-bottom: 7px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.emptyState p,
+.errorState p {
+  max-width: 48ch;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.retryButton {
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 9px 17px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.retryButton:hover {
+  background: var(--grey-100);
+}
+
+
+/* ============================================================
+   07. TEAM TRACKER
+   Role
+      ↓
+   Planner Bucket
+      ↓
+   Person
+      ↓
+   Tasks
+   ============================================================ */
+
+.departments {
+  display: flex;
+  flex-direction: column;
+  gap: 42px;
+}
+
+.department {
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.departmentHead {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 17px;
+  padding: 27px 30px;
+  border: none;
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--grey-100);
+  text-align: left;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.departmentHead:hover {
+  background: var(--grey-200);
+}
+
+.departmentHeading {
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.departmentEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.departmentName {
+  min-width: 0;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.departmentMeta {
+  flex-shrink: 0;
+  padding: 6px 11px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: var(--card);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--grey-600);
+  white-space: nowrap;
+}
+
+.departmentBody {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 30px 34px;
+}
+
+
+/* ============================================================
+   08. PLANNER BUCKET
+   ============================================================ */
+
+/*
+   The direct children of departmentBody represent planner buckets
+   (with or without a clickable header — see showHeading in the
+   component). Each bucket gets breathing room via spacing and a
+   divider rather than a nested card, per the "no card-in-card" rule.
+*/
+
+.departmentBody > div {
+  min-width: 0;
+}
+
+.departmentBody > div + div {
+  margin-top: 38px;
+  padding-top: 36px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.bucketHead {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 4px;
+  padding: 13px 16px;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.bucketHead:hover {
+  background: var(--grey-100);
+}
+
+.bucketHeading {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bucketEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--grey-500);
+}
+
+.bucketName {
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 750;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.bucketMeta {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.bucketCount {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--grey-600);
+  white-space: nowrap;
+}
+
+.bucketBody {
+  padding: 2px 2px 4px;
+}
+
+
+/* ============================================================
+   09. PERSON / ASSIGNEE
+   ============================================================ */
+
+.employee {
+  min-width: 0;
+  margin-top: 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 15px;
+  background: var(--card);
+  overflow: hidden;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.departmentBody > div > .employee:first-of-type {
+  margin-top: 0;
+}
+
+.employee:hover {
+  border-color: var(--border);
+}
+
+.employeeHead {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 21px 23px;
+  border: none;
+  background: var(--card);
+  text-align: left;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.employeeHead:hover {
+  background: var(--grey-100);
+}
+
+.employeeIdentity {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.employeeName {
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 750;
+  line-height: 1.45;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.employeeSummary {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.employeeCompletion {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.employeePercent {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--green-dark);
+}
+
+.employeeStats {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 11px;
+  flex-wrap: wrap;
+}
+
+.employeeCounts {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--grey-600);
+  white-space: nowrap;
+}
+
+.employeeOverdue {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: var(--amber-bg);
+  color: var(--amber);
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.noTasks {
+  font-size: 11.5px;
+  font-style: italic;
+  color: var(--grey-500);
+}
+
+.employeeBody {
+  padding: 0 23px 25px 57px;
+}
+
+.employeeEmpty {
+  margin: 0;
+  padding: 3px 0 5px;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--grey-500);
+}
+
+
+/* ============================================================
+   10. TASK LIST
+   ============================================================ */
+
+.taskList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0 0 25px 57px;
+}
+
+.taskItem {
+  min-width: 0;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: var(--card);
+  overflow: hidden;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.taskItem:hover {
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.taskRow {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto 18px;
+  align-items: center;
+  gap: 15px;
+  padding: 17px 18px;
+  border: none;
+  background: var(--card);
+  text-align: left;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.taskRow:hover {
+  background: var(--grey-100);
+}
+
+.taskGlyph {
+  width: 18px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grey-500);
+}
+
+.taskRow[data-status="completed"] .taskGlyph {
+  color: var(--green-dark);
+}
+
+.taskRow[data-status="in-progress"] .taskGlyph {
+  color: var(--blue);
+}
+
+.taskMain {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.taskTitle {
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.taskRow[data-status="completed"] .taskTitle {
+  color: var(--grey-600);
+}
+
+.taskBadges {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.taskMeta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.taskStatus,
+.taskDue,
+.overdueBadge,
+.blockerBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.025em;
+  line-height: 1;
+  padding: 5px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.taskStatus {
+  background: var(--grey-200);
+  color: var(--ink-soft);
+}
+
+.taskStatus[data-status="completed"] {
+  background: var(--green-status-bg);
+  color: var(--green-dark);
+}
+
+.taskStatus[data-status="in-progress"] {
+  background: var(--blue-bg);
+  color: var(--blue);
+}
+
+.taskDue {
+  background: var(--grey-100);
+  color: var(--grey-600);
+  font-weight: 700;
+}
+
+.overdueBadge {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+
+.blockerBadge {
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.chevron {
+  flex-shrink: 0;
+  display: inline-flex;
+  color: var(--grey-500);
+  transition: transform 160ms ease;
+}
+
+.chevron[data-open="true"] {
+  transform: rotate(90deg);
+}
+
+
+/* ============================================================
+   11. TASK DETAILS
+   ============================================================ */
+
+.taskDetail {
+  padding: 30px 31px 32px;
+  background: var(--grey-100);
+  border-top: 1px solid var(--border-soft);
+  animation: reveal 160ms ease-out;
+}
+
+.detailHeading {
+  margin-bottom: 23px;
+}
+
+.detailEyebrow,
+.noteEyebrow {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--grey-600);
+}
+
+.detailTitle {
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ============================================================
+   12. TASK FIELDS
+   ============================================================ */
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 48px;
+  row-gap: 28px;
+}
+
+.field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.fieldLabel {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--grey-600);
+}
+
+.fieldValue {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.fieldValue[data-empty="true"] {
+  color: var(--grey-400);
+}
+
+@media (max-width: 850px) {
+  .fieldGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .fieldGrid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 20px;
+  }
+}
+
+
+/* ============================================================
+   13. PLANNER NOTE
+   ============================================================ */
+
+.noteSection {
+  margin-top: 36px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+
+.noteHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 13px;
+}
+
+.noteTitle {
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.noteBody {
+  padding: 20px 22px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-dark);
+  border-radius: 12px;
+  font-size: 12.5px;
+  line-height: 1.85;
+}
+
+.noteLine {
+  color: var(--ink-soft);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.noteHeading {
+  margin-bottom: 3px;
+  font-weight: 800;
+  letter-spacing: 0.015em;
+  color: var(--ink);
+}
+
+.noteHeading[data-kind="update"] {
+  color: var(--green-dark);
+}
+
+.noteHeading[data-kind="blocker"] {
+  color: var(--red);
+}
+
+.noteHeading[data-kind="next"] {
+  color: var(--blue);
+}
+
+.noteGap {
+  height: 12px;
+}
+
+.emptyNote {
+  margin: 0;
+  padding: 17px 19px;
+  background: var(--card);
+  border: 1px solid var(--border-soft);
+  border-radius: 11px;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--grey-500);
+}
+
+
+/* ============================================================
+   14. RESPONSIVE TEAM TRACKER
+   ============================================================ */
+
+@media (max-width: 760px) {
+  .departments {
+    gap: 26px;
+  }
+
+  .departmentHead {
+    grid-template-columns: 18px minmax(0, 1fr);
+    padding: 22px;
+  }
+
+  .departmentMeta {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .departmentBody {
+    padding: 22px 20px 28px;
+  }
+
+  .departmentBody > div + div {
+    margin-top: 30px;
+    padding-top: 30px;
+  }
+
+  .employeeHead {
+    grid-template-columns: 18px minmax(0, 1fr);
+    padding: 19px;
+  }
+
+  .employeeStats {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+
+  .taskList {
+    padding-left: 25px;
+    padding-right: 0;
+  }
+
+  .taskRow {
+    grid-template-columns: 18px minmax(0, 1fr) 18px;
+    gap: 11px;
+  }
+
+  .taskBadges {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+
+  .taskRow .chevron {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+
+  .taskDetail {
+    padding: 25px 21px 27px;
+  }
+}
+
+@media (max-width: 520px) {
+  .departmentHead {
+    padding: 19px;
+  }
+
+  .departmentHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .departmentBody {
+    padding: 19px 15px 23px;
+  }
+
+  .departmentBody > div + div {
+    margin-top: 25px;
+    padding-top: 25px;
+  }
+
+  .employeeHead {
+    padding: 17px;
+  }
+
+  .employeeName {
+    font-size: 13px;
+  }
+
+  .employeeBody {
+    padding-left: 17px;
+    padding-right: 17px;
+  }
+
+  .taskList {
+    padding-left: 12px;
+    padding-bottom: 18px;
+  }
+
+  .taskRow {
+    padding: 14px;
+  }
+
+  .taskTitle {
+    font-size: 12.5px;
+  }
+
+  .taskDetail {
+    padding: 22px 17px 24px;
+  }
+}
+
+
+/* ============================================================
+   15. PERFORMANCE TAB — PAGE STRUCTURE
+   Sections are separated by dividers, not nested cards, matching
+   the Team Tracker's visual language. Task Status and Needs
+   Attention sit side-by-side only at 1200px+ (see .perfLowerGrid).
+   ============================================================ */
+
+.perfPage {
+  display: flex;
+  flex-direction: column;
+  gap: 52px;
+}
+
+.perfSection {
+  padding-top: 44px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.perfSectionHead {
+  margin-bottom: 24px;
+}
+
+.perfSectionTitle {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--grey-600);
+}
+
+.perfEmptyLine {
+  font-size: 12.5px;
+  color: var(--grey-600);
+}
+
+.perfFootnote {
+  margin-top: 14px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--grey-500);
+}
+
+.perfLowerGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px;
+}
+
+.perfLowerGrid > * + * {
+  padding-top: 36px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media (min-width: 1200px) {
+  .perfLowerGrid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 56px;
+  }
+
+  .perfLowerGrid > * + * {
+    padding-top: 0;
+    border-top: none;
+  }
+}
+
+
+/* ============================================================
+   16. PERFORMANCE OVERVIEW — OVERALL COMPLETION + METRIC STRIP
+   ============================================================ */
+
+.perfIntro {
+  display: flex;
+  flex-direction: column;
+}
+
+.perfEyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--grey-600);
+}
+
+.perfIntroSubtitle {
+  margin-top: 8px;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--grey-600);
+}
+
+.perfOverall {
+  margin-top: 32px;
+}
+
+.perfOverall .perfSectionTitle {
+  margin-bottom: 18px;
+}
+
+.overallFigure {
+  margin-bottom: 11px;
+  font-size: 46px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--green-dark);
+}
+
+.overallCaption {
+  margin-top: 10px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.perfMetricStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-top: 30px;
+  padding-top: 26px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.perfMetricItem {
+  min-width: 92px;
+  padding-left: 28px;
+  border-left: 1px solid var(--border-soft);
+}
+
+.perfMetricItem:first-child {
+  padding-left: 0;
+  border-left: none;
+}
+
+.perfMetricLabel {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--grey-600);
+}
+
+.perfMetricValue {
+  margin-top: 7px;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.perfMetricValue[data-tone="completed"] {
+  color: var(--green-dark);
+}
+
+.perfMetricValue[data-tone="warn"] {
+  color: var(--amber);
+}
+
+@media (max-width: 560px) {
+  .perfMetricStrip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 24px;
+  }
+
+  .perfMetricItem {
+    padding-left: 0;
+    border-left: none;
+  }
+}
+
+
+/* ============================================================
+   17. PERFORMANCE BARS
+   ============================================================ */
+
+.barTrack {
+  width: 100%;
+  min-width: 0;
+  height: 6px;
+  background: var(--grey-200);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--grey-400);
+  transition: width 320ms ease-out;
+}
+
+.barFill[data-tone="completed"] {
+  background: var(--green-dark);
+}
+
+.barFill[data-tone="in-progress"] {
+  background: var(--blue);
+}
+
+.barFill[data-tone="pending"] {
+  background: var(--grey-400);
+}
+
+.barFill[data-tone="overdue"] {
+  background: var(--amber);
+}
+
+
+/* ============================================================
+   18. TEAM PERFORMANCE
+   ============================================================ */
+
+.perfEmployeeList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  margin: 0;
+  padding: 0;
+}
+
+.perfEmployee {
+  min-width: 0;
+}
+
+.perfEmployeeHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 9px;
+}
+
+.perfEmployeeName {
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.perfEmployeePercent {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--green-dark);
+  white-space: nowrap;
+}
+
+.perfNoTasks {
+  font-size: 11.5px;
+  font-style: italic;
+  color: var(--grey-500);
+  white-space: nowrap;
+}
+
+.perfEmployeeMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 9px;
+  font-size: 11.5px;
+  color: var(--grey-600);
+}
+
+
+/* ============================================================
+   19. TASK STATUS
+   ============================================================ */
+
+.statusList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  margin: 0;
+  padding: 0;
+}
+
+.statusRow {
+  display: grid;
+  grid-template-columns: 18px 92px minmax(0, 1fr) 32px;
+  align-items: center;
+  gap: 12px;
+}
+
+.statusIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grey-500);
+}
+
+.statusIcon[data-tone="completed"] {
+  color: var(--green-dark);
+}
+
+.statusIcon[data-tone="in-progress"] {
+  color: var(--blue);
+}
+
+.statusIcon[data-tone="pending"] {
+  color: var(--grey-500);
+}
+
+.statusIcon[data-tone="overdue"] {
+  color: var(--amber);
+}
+
+.statusLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.statusCount {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+  text-align: right;
+}
+
+.statusOverdue {
+  margin-top: 23px;
+  padding-top: 19px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media (max-width: 420px) {
+  .statusRow {
+    grid-template-columns: 16px 76px minmax(0, 1fr) 26px;
+    gap: 9px;
+  }
+}
+
+
+/* ============================================================
+   20. NEEDS ATTENTION
+   ============================================================ */
+
+.attentionSummary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, auto));
+  gap: 40px;
+  margin-bottom: 26px;
+}
+
+.attentionStat {
+  min-width: 0;
+}
+
+.attentionStatValue {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.attentionStatValue[data-tone="overdue"] {
+  color: var(--amber);
+}
+
+.attentionStatValue[data-tone="blocker"] {
+  color: var(--red);
+}
+
+.attentionStatLabel {
+  margin-top: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--grey-600);
+}
+
+.attentionGroup + .attentionGroup {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.attentionGroupTitle {
+  margin-bottom: 12px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--grey-600);
+}
+
+.attentionList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+.attentionItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding-left: 12px;
+  border-left: 2px solid var(--border);
+}
+
+.attentionItem[data-tone="overdue"] {
+  border-left-color: var(--amber);
+}
+
+.attentionItem[data-tone="blocker"] {
+  border-left-color: var(--red);
+}
+
+.attentionWho {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.attentionWhat {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+
+.attentionTask {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--grey-500);
+  overflow-wrap: anywhere;
+}
+
+
+/* ============================================================
+   21. GENERAL RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 700px) {
+  .reportHead {
+    padding: 24px 21px;
+  }
+
+  .tabs {
+    padding-left: 21px;
+    padding-right: 21px;
+  }
+
+  .tabPanel {
+    padding: 24px 21px 32px;
+  }
+
+  .departmentHead {
+    padding: 18px 19px;
+  }
+
+  .departmentHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .employeeHead {
+    align-items: flex-start;
+    grid-template-columns: 18px minmax(0, 1fr);
+    padding: 18px 17px;
+  }
+
+  .employeeSummary {
+    width: 100%;
+    justify-content: flex-start;
+    padding-left: 28px;
+  }
+
+  .employeeBody {
+    padding-left: 17px;
+    padding-right: 17px;
+  }
+
+  .taskDetail {
+    padding: 22px 18px 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .summaryStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .summaryItem {
+    padding: 15px 14px;
+  }
+
+  .summaryValue {
+    font-size: 18px;
+  }
+
+  .taskRow {
+    grid-template-columns: 16px minmax(0, 1fr) 16px;
+    gap: 9px;
+    padding: 14px 13px;
+  }
+
+  .taskTitle {
+    font-size: 12px;
+  }
+
+  .taskMeta {
+    gap: 5px;
+  }
+
+  .taskStatus,
+  .taskDue,
+  .overdueBadge,
+  .blockerBadge {
+    font-size: 9px;
+    padding: 5px 7px;
+  }
+
+  .noteBody {
+    padding: 16px 17px;
+  }
+
+  .perfPage {
+    gap: 40px;
+  }
+
+  .perfSection {
+    padding-top: 32px;
+  }
+
+  .overallFigure {
+    font-size: 36px;
+  }
+
+  .attentionSummary {
+    gap: 26px;
+  }
+}
+
+
+/* ============================================================
+   22. REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron,
+  .day,
+  .barFill,
+  .taskDetail,
+  .taskItem,
+  .employee,
+  .taskRow,
+  .departmentHead,
+  .employeeHead,
+  .bucketHead,
+  .layout,
+  .calendarCard {
+    transition: none;
+    animation: none;
+  }
+}

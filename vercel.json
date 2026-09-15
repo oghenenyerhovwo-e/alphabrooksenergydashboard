@@ -3,6 +3,14 @@
     {
       "path": "/api/aria/report/send",
       "schedule": "0 8 * * 1-5"
+    },
+    {
+      "path": "/api/aria/report/main/send",
+      "schedule": "0 6 * * 1-5"
+    },
+    {
+      "path": "/api/operations/reports/capture",
+      "schedule": "0 22 * * 1-5"
     }
   ]
 }

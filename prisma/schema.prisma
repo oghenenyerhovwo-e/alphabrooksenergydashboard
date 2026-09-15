@@ -406,3 +406,50 @@ model CommercialAuditLog {
   @@index([quoteRequestId])
   @@index([createdAt])
 }
+
+/// MAIN OPERATIONS — HISTORICAL DAILY REPORT SNAPSHOT (Phase 6).
+///
+/// One row per Africa/Lagos reporting date. This is a REPORTING ARCHIVE,
+/// not a task store: the whole report tree lives in a single immutable
+/// JSON document, there are no per-task rows to update, and nothing here
+/// is ever written back to Planner. Microsoft Planner remains the source
+/// of truth for all task state.
+///
+/// `reportDate` is a plain "YYYY-MM-DD" string rather than a DateTime on
+/// purpose — a DateTime column round-trips through UTC and would let a
+/// Lagos reporting date silently shift to the previous day on a UTC
+/// server. A string cannot drift.
+model OperationsDailyReport {
+  id String @id @default(cuid())
+
+  /// Africa/Lagos calendar date, "YYYY-MM-DD". Unique — this is what
+  /// makes snapshot capture idempotent and historical reports immutable.
+  reportDate String @unique
+  timezone   String @default("Africa/Lagos")
+
+  /// The instant the snapshot was taken (UTC).
+  capturedAt DateTime @default(now())
+
+  /// Planner connection status at capture time. Only "connected"
+  /// snapshots are ever written.
+  connectionStatus String
+
+  // Deterministic headline figures, denormalized so a calendar month can
+  // be indexed without deserializing every JSON document. All computed by
+  // application code over UNIQUE Planner tasks — never by AI.
+  totalUniqueTasks     Int
+  completedUniqueTasks Int
+  /// null (never 0) when there were no tasks at all on that date.
+  completionPercentage Int?
+  completedCount       Int
+  inProgressCount      Int
+  pendingCount         Int
+  overdueCount         Int
+  blockerCount         Int
+
+  /// The full report tree: employees, departments, tasks, Planner Notes,
+  /// parsed UPDATE/BLOCKER/NEXT sections, overall statistics.
+  snapshot Json
+
+  @@index([capturedAt])
+}

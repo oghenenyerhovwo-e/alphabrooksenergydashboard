@@ -16,23 +16,22 @@ const SESSION_COOKIE_NAME = "ab_session";
  * the session against the database. Real authentication enforcement happens
  * in the root layout and protected route handlers.
  */
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Stamp the real request pathname onto a header so the root layout (a
-  // Server Component) can tell whether it's rendering /login. There is no
-  // server-side "current pathname" API in next/navigation, so this is the
-  // standard way to pass it through. Cheap — no DB, no crypto.
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-pathname", pathname);
 
-  const hasSessionCookie = Boolean(req.cookies.get(SESSION_COOKIE_NAME)?.value);
+  const hasSessionCookie = Boolean(
+    req.cookies.get(SESSION_COOKIE_NAME)?.value
+  );
 
-  // /login must always be reachable without a session cookie — that's the
-  // entire point of the page. Authenticated visitors pass through too;
-  // the page itself decides whether to bounce them back to "/".
   if (hasSessionCookie || pathname === "/login") {
-    return NextResponse.next({ request: { headers: requestHeaders } });
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   }
 
   if (pathname.startsWith("/api/")) {
@@ -56,12 +55,18 @@ export const config = {
      *   The login flow itself must remain reachable without a session.
      *
      * - /api/aria/report/send
+     * - /api/aria/report/main/send
+     * - /api/aria/team-intro/send
      * - /api/aria/test-mail
      *   These are protected separately by CRON_SECRET /
      *   ARIA_INTERNAL_TOKEN and therefore do not have a session cookie.
      *
+     * - /api/operations/reports/capture
+     *   This endpoint is also intentionally handled by its own
+     *   authentication mechanism and must not require ab_session.
+     *
      * - Next.js internals and static assets.
      */
-    "/((?!api/auth|api/aria/report/send|api/aria/test-mail|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/auth|api/aria/report/send|api/aria/report/main/send|api/aria/team-intro/send|api/aria/test-mail|api/operations/reports/capture|_next/static|_next/image|favicon.ico).*)",
   ],
 };

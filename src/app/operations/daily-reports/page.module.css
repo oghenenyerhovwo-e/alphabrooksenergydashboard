@@ -1,0 +1,36 @@
+/* MAIN OPERATIONS — DAILY REPORTS PAGE SHELL (Phase 7)
+   Mirrors the header pattern already used by src/app/operations/page.module.css
+   so this page reads as part of the same product. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--grey-600);
+}
+
+.title {
+  font-size: 22px;
+  margin-top: 2px;
+}
+
+.subtitle {
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: var(--grey-600);
+  max-width: 62ch;
+}

@@ -51,6 +51,8 @@ export function CngDataProvider({ children }: { children: React.ReactNode }) {
     refresh: load,
   };
 
+  console.log(value)
+
   return <CngDataContext.Provider value={value}>{children}</CngDataContext.Provider>;
 }
 

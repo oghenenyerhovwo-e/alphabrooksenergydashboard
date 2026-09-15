@@ -409,7 +409,8 @@ export const ModelName = {
   QuoteRequestReferenceCounter: 'QuoteRequestReferenceCounter',
   Lead: 'Lead',
   QuoteRequest: 'QuoteRequest',
-  CommercialAuditLog: 'CommercialAuditLog'
+  CommercialAuditLog: 'CommercialAuditLog',
+  OperationsDailyReport: 'OperationsDailyReport'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -425,7 +426,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "deliveryNoteCounter" | "driver" | "vehicle" | "delivery" | "deliveryAuditLog" | "vehiclePreTripInspection" | "user" | "session" | "leadReferenceCounter" | "quoteRequestReferenceCounter" | "lead" | "quoteRequest" | "commercialAuditLog"
+    modelProps: "deliveryNoteCounter" | "driver" | "vehicle" | "delivery" | "deliveryAuditLog" | "vehiclePreTripInspection" | "user" | "session" | "leadReferenceCounter" | "quoteRequestReferenceCounter" | "lead" | "quoteRequest" | "commercialAuditLog" | "operationsDailyReport"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1391,6 +1392,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    OperationsDailyReport: {
+      payload: Prisma.$OperationsDailyReportPayload<ExtArgs>
+      fields: Prisma.OperationsDailyReportFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OperationsDailyReportFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationsDailyReportPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OperationsDailyReportFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationsDailyReportPayload>
+        }
+        findFirst: {
+          args: Prisma.OperationsDailyReportFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationsDailyReportPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OperationsDailyReportFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationsDailyReportPayload>
+        }
+        findMany: {
+          args: Prisma.OperationsDailyReportFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationsDailyReportPayload>[]
+        }
+        create: {
+          args: Prisma.OperationsDailyReportCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationsDailyReportPayload>
+        }
+        createMany: {
+          args: Prisma.OperationsDailyReportCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OperationsDailyReportCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationsDailyReportPayload>[]
+        }
+        delete: {
+          args: Prisma.OperationsDailyReportDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationsDailyReportPayload>
+        }
+        update: {
+          args: Prisma.OperationsDailyReportUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationsDailyReportPayload>
+        }
+        deleteMany: {
+          args: Prisma.OperationsDailyReportDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OperationsDailyReportUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OperationsDailyReportUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationsDailyReportPayload>[]
+        }
+        upsert: {
+          args: Prisma.OperationsDailyReportUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperationsDailyReportPayload>
+        }
+        aggregate: {
+          args: Prisma.OperationsDailyReportAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOperationsDailyReport>
+        }
+        groupBy: {
+          args: Prisma.OperationsDailyReportGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OperationsDailyReportGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OperationsDailyReportCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OperationsDailyReportCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1654,12 +1729,39 @@ export const CommercialAuditLogScalarFieldEnum = {
 export type CommercialAuditLogScalarFieldEnum = (typeof CommercialAuditLogScalarFieldEnum)[keyof typeof CommercialAuditLogScalarFieldEnum]
 
 
+export const OperationsDailyReportScalarFieldEnum = {
+  id: 'id',
+  reportDate: 'reportDate',
+  timezone: 'timezone',
+  capturedAt: 'capturedAt',
+  connectionStatus: 'connectionStatus',
+  totalUniqueTasks: 'totalUniqueTasks',
+  completedUniqueTasks: 'completedUniqueTasks',
+  completionPercentage: 'completionPercentage',
+  completedCount: 'completedCount',
+  inProgressCount: 'inProgressCount',
+  pendingCount: 'pendingCount',
+  overdueCount: 'overdueCount',
+  blockerCount: 'blockerCount',
+  snapshot: 'snapshot'
+} as const
+
+export type OperationsDailyReportScalarFieldEnum = (typeof OperationsDailyReportScalarFieldEnum)[keyof typeof OperationsDailyReportScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -1676,6 +1778,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -1886,6 +1997,20 @@ export type EnumQuoteRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
 export type ListEnumQuoteRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuoteRequestStatus[]'>
     
 
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -2050,6 +2175,7 @@ export type GlobalOmitConfig = {
   lead?: Prisma.LeadOmit
   quoteRequest?: Prisma.QuoteRequestOmit
   commercialAuditLog?: Prisma.CommercialAuditLogOmit
+  operationsDailyReport?: Prisma.OperationsDailyReportOmit
 }
 
 /* Types for Logging */

@@ -14,6 +14,10 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: "Overview", href: "/" },
       { label: "CNG Operations", href: "/cng" },
       { label: "Main Operations", href: "/operations" },
+      // Main Operations > Daily Reports (Phase 7). Sits directly beneath
+      // its parent; the Sidebar's longest-prefix rule keeps exactly one of
+      // the two highlighted at a time.
+      { label: "Daily Reports", href: "/operations/daily-reports" },
       { label: "Commercial", href: "/commercial" },
       { label: "Drivers", href: "/drivers" },
     ],

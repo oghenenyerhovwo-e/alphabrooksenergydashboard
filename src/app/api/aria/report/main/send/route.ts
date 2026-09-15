@@ -10,6 +10,10 @@ export const dynamic = "force-dynamic";
  * Main Operations Daily Team Report sender. Deliberately a separate route
  * from the existing /api/aria/report/send (CNG) — same auth conventions,
  * same mail sender, entirely separate data source and content.
+ *
+ * The historical snapshot is captured separately, late at night, by
+ * /api/operations/reports/capture — this route only sends the morning
+ * email and no longer writes to the archive.
  */
 async function sendDailyOperationsReport(): Promise<{ status: number; body: Record<string, unknown> }> {
   const recipientEnv = process.env.ARIA_OPS_MD_EMAIL || process.env.ARIA_MD_EMAIL;
@@ -32,7 +36,13 @@ async function sendDailyOperationsReport(): Promise<{ status: number; body: Reco
     console.log("[Operations Report] generation completed, sending email");
     await sendAriaMail({ to: recipient, subject, bodyHtml });
     console.log("[Operations Report] email send succeeded");
-    return { status: 200, body: { sent: true, connectionStatus: data.status } };
+    return {
+      status: 200,
+      body: {
+        sent: true,
+        connectionStatus: data.status,
+      },
+    };
   } catch (e) {
     if (e instanceof CngMailConfigError) {
       console.error("[Operations Report] email send failed (config):", e.message);
@@ -47,7 +57,7 @@ async function sendDailyOperationsReport(): Promise<{ status: number; body: Reco
   }
 }
 
-/** Vercel Cron will call this once wired up in Phase 4. Not scheduled yet. */
+/** Vercel Cron calls this at 06:00 UTC / 07:00 Africa/Lagos, Mon–Fri (see vercel.json). */
 export async function GET(req: Request) {
   const authHeader = req.headers.get("authorization");
   if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
