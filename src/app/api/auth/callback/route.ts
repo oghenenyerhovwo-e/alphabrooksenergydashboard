@@ -76,6 +76,17 @@ export async function GET(req: Request) {
       userAgent: req.headers.get("user-agent"),
       ipAddress: req.headers.get("x-forwarded-for"),
     });
+
+    if (stored.teamsAuth) {
+      return NextResponse.redirect(
+        new URL("/teams/auth-complete", appUrl)
+      );
+    }
+
+    return NextResponse.redirect(
+      new URL("/", appUrl)
+    );
+
   } catch (e) {
     if (e instanceof LoginConfigError) {
       console.error("[auth/callback] configuration error:", e.message);

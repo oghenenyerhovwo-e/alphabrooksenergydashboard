@@ -13,6 +13,10 @@ export function LoginButton() {
     setIsRedirecting(true);
 
     try {
+      /*
+       * First determine whether this page is running inside
+       * Microsoft Teams.
+       */
       let isTeams = false;
 
       try {
@@ -22,19 +26,36 @@ export function LoginButton() {
         isTeams = false;
       }
 
+      /*
+       * Normal Chrome / Edge / standalone browser login.
+       */
       if (!isTeams) {
         window.location.href = "/api/auth/login";
         return;
       }
 
+      /*
+       * Teams authentication MUST use the TeamsJS popup.
+       *
+       * The popup starts on our own domain, goes to Microsoft,
+       * returns to our callback, and finally calls
+       * authentication.notifySuccess().
+       */
       const result = await authentication.authenticate({
-        url: `${window.location.origin}/api/auth/login`,
+        url: `${window.location.origin}/api/auth/login?teams=1`,
         width: 600,
         height: 700,
       });
 
-      console.log("[Teams] Authentication completed.", result);
+      console.log("[Teams] Authentication completed:", result);
 
+      /*
+       * The session cookie has already been created by the
+       * server-side callback.
+       *
+       * Reload the Teams tab so the server/layout sees the
+       * authenticated session.
+       */
       window.location.reload();
     } catch (error) {
       console.error("[Teams] Authentication failed:", error);
@@ -50,6 +71,7 @@ export function LoginButton() {
       onClick={handleLogin}
     >
       <MicrosoftMark />
+
       {isRedirecting
         ? "Signing in…"
         : "Sign in with Microsoft"}
@@ -64,34 +86,10 @@ function MicrosoftMark() {
       viewBox="0 0 21 21"
       aria-hidden="true"
     >
-      <rect
-        x="1"
-        y="1"
-        width="9"
-        height="9"
-        fill="#f25022"
-      />
-      <rect
-        x="11"
-        y="1"
-        width="9"
-        height="9"
-        fill="#7fba00"
-      />
-      <rect
-        x="1"
-        y="11"
-        width="9"
-        height="9"
-        fill="#00a4ef"
-      />
-      <rect
-        x="11"
-        y="11"
-        width="9"
-        height="9"
-        fill="#ffb900"
-      />
+      <rect x="1" y="1" width="9" height="9" fill="#f25022" />
+      <rect x="11" y="1" width="9" height="9" fill="#7fba00" />
+      <rect x="1" y="11" width="9" height="9" fill="#00a4ef" />
+      <rect x="11" y="11" width="9" height="9" fill="#ffb900" />
     </svg>
   );
 }

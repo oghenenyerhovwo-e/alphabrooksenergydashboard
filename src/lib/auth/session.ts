@@ -108,9 +108,20 @@ export async function destroySession(): Promise<void> {
  * request. Both values are base64url strings (alphabet has no "."),
  * so joining them with "." is a safe, simple encoding.
  */
-export async function setOAuthStateCookie(state: string, codeVerifier: string): Promise<void> {
+export async function setOAuthStateCookie(
+  state: string,
+  codeVerifier: string,
+  teamsAuth = false
+): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.set(OAUTH_STATE_COOKIE_NAME, `${state}.${codeVerifier}`, {
+
+  const value = JSON.stringify({
+    state,
+    codeVerifier,
+    teamsAuth,
+  });
+
+  cookieStore.set(OAUTH_STATE_COOKIE_NAME, value, {
     httpOnly: true,
     secure: true,
     sameSite: "none",
@@ -120,17 +131,39 @@ export async function setOAuthStateCookie(state: string, codeVerifier: string): 
 }
 
 /** Reads and clears the OAuth state cookie, returning its parts, or null if absent/malformed. */
-export async function consumeOAuthStateCookie(): Promise<{ state: string; codeVerifier: string } | null> {
+export async function consumeOAuthStateCookie(): Promise<{
+  state: string;
+  codeVerifier: string;
+  teamsAuth: boolean;
+} | null> {
   const cookieStore = await cookies();
+
   const raw = cookieStore.get(OAUTH_STATE_COOKIE_NAME)?.value;
+
   cookieStore.delete(OAUTH_STATE_COOKIE_NAME);
 
   if (!raw) return null;
-  const separatorIndex = raw.indexOf(".");
-  if (separatorIndex === -1) return null;
 
-  return {
-    state: raw.slice(0, separatorIndex),
-    codeVerifier: raw.slice(separatorIndex + 1),
-  };
+  try {
+    const parsed = JSON.parse(raw) as {
+      state?: unknown;
+      codeVerifier?: unknown;
+      teamsAuth?: unknown;
+    };
+
+    if (
+      typeof parsed.state !== "string" ||
+      typeof parsed.codeVerifier !== "string"
+    ) {
+      return null;
+    }
+
+    return {
+      state: parsed.state,
+      codeVerifier: parsed.codeVerifier,
+      teamsAuth: parsed.teamsAuth === true,
+    };
+  } catch {
+    return null;
+  }
 }
