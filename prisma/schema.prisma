@@ -483,37 +483,7 @@ enum OutcomeUnit {
 /// target never creates or implies an achievement, and vice versa.
 /// Period identity is the normalized (year, month) pair, never a
 /// display string like "January 2026" — see src/lib/outcomes/period.ts.
-model OutcomeTarget {
-  id String @id @default(cuid())
 
-  userId String
-  user   User   @relation("OutcomeTargetStaff", fields: [userId], references: [id], onDelete: Restrict)
-
-  product OutcomeProduct
-  year    Int
-  month   Int
-
-  /// Decimal, not Float — see Phase 1 completion report §4 for why.
-  targetValue Decimal @db.Decimal(14, 2)
-  unit        OutcomeUnit
-
-  createdById String
-  createdBy   User   @relation("OutcomeTargetCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
-
-  updatedById String?
-  updatedBy   User?   @relation("OutcomeTargetUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  /// At most one current target per staff/product/month — no ambiguous
-  /// duplicates. No versioning requirement was found in the existing
-  /// architecture, so this is a hard DB-level constraint, not a soft rule.
-  @@unique([userId, product, year, month])
-  @@index([product, year, month])
-  @@index([userId])
-  @@index([createdById])
-}
 
 /// OUTCOMES — MONTHLY STAFF ACHIEVEMENT (Phase 1).
 ///
@@ -524,6 +494,94 @@ model OutcomeTarget {
 /// the "no achievement entered yet" state; it is never represented as
 /// a row with achievedValue = 0. Application code (see
 /// src/lib/outcomes/calculations.ts) must preserve that distinction.
+
+
+/// OUTCOMES — MONTHLY STAFF TARGET.
+///
+/// "What was expected?" for one staff member, one product, one
+/// calendar month. Independent of OutcomeAchievement.
+///
+/// The business model is:
+///
+/// targetQuantity × targetMarginPerUnit = targetGeneratedValue
+///
+/// `targetQuantity` is mapped to the existing `targetValue` database
+/// column so existing quantity data is preserved during the transition.
+///
+/// The financial fields are nullable for historical compatibility.
+/// New target records will receive their authoritative values through
+/// the server-side application flow in later implementation phases.
+model OutcomeTarget {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation("OutcomeTargetStaff", fields: [userId], references: [id], onDelete: Restrict)
+
+  product OutcomeProduct
+  year    Int
+  month   Int
+
+  /// Physical target quantity.
+  ///
+  /// This is intentionally mapped to the existing database column
+  /// `targetValue` because that column currently stores quantity.
+  ///
+  /// The database column precision is increased from DECIMAL(14,2)
+  /// to DECIMAL(20,3) by the Phase 1 migration.
+  targetQuantity Decimal @map("targetValue") @db.Decimal(20, 3)
+
+  /// Unit associated with the target quantity.
+  unit OutcomeUnit
+
+  /// Margin generated per unit of the configured quantity.
+  ///
+  /// Nullable temporarily so historical quantity-only records remain
+  /// valid. New records will be required to provide this through the
+  /// server-authoritative submission flow.
+  targetMarginPerUnit Decimal? @db.Decimal(18, 4)
+
+  /// Server-derived monetary target value.
+  ///
+  /// Authoritative relationship:
+  ///
+  /// targetQuantity × targetMarginPerUnit = targetGeneratedValue
+  ///
+  /// This is not an independently editable business input.
+  ///
+  /// Nullable temporarily for historical quantity-only records.
+  targetGeneratedValue Decimal? @db.Decimal(30, 2)
+
+  createdById String
+  createdBy   User   @relation("OutcomeTargetCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  updatedById String?
+  updatedBy   User?   @relation("OutcomeTargetUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// At most one target per staff/product/month.
+  @@unique([userId, product, year, month])
+  @@index([product, year, month])
+  @@index([userId])
+  @@index([createdById])
+}
+
+/// OUTCOMES — MONTHLY STAFF ACHIEVEMENT.
+///
+/// "What was actually produced?" for one staff member, one product,
+/// one calendar month. Independent of OutcomeTarget.
+///
+/// The business model is:
+///
+/// achievedQuantity × achievedMarginPerUnit = achievedGeneratedValue
+///
+/// `achievedQuantity` is mapped to the existing `achievedValue`
+/// database column so existing quantity data is preserved during
+/// the transition.
+///
+/// The absence of an achievement row continues to mean that no
+/// achievement has been entered yet.
 model OutcomeAchievement {
   id String @id @default(cuid())
 
@@ -534,9 +592,35 @@ model OutcomeAchievement {
   year    Int
   month   Int
 
-  /// Decimal, not Float — see Phase 1 completion report §4 for why.
-  achievedValue Decimal @db.Decimal(14, 2)
-  unit          OutcomeUnit
+  /// Physical achieved quantity.
+  ///
+  /// This is intentionally mapped to the existing database column
+  /// `achievedValue` because that column currently stores quantity.
+  ///
+  /// The database column precision is increased from DECIMAL(14,2)
+  /// to DECIMAL(20,3) by the Phase 1 migration.
+  achievedQuantity Decimal @map("achievedValue") @db.Decimal(20, 3)
+
+  /// Unit associated with the achieved quantity.
+  unit OutcomeUnit
+
+  /// Margin generated per unit of the achieved quantity.
+  ///
+  /// Nullable temporarily so historical quantity-only records remain
+  /// valid. New records will be required to provide this through the
+  /// server-authoritative submission flow.
+  achievedMarginPerUnit Decimal? @db.Decimal(18, 4)
+
+  /// Server-derived monetary achievement value.
+  ///
+  /// Authoritative relationship:
+  ///
+  /// achievedQuantity × achievedMarginPerUnit = achievedGeneratedValue
+  ///
+  /// This is not an independently editable business input.
+  ///
+  /// Nullable temporarily for historical quantity-only records.
+  achievedGeneratedValue Decimal? @db.Decimal(30, 2)
 
   createdById String
   createdBy   User   @relation("OutcomeAchievementCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
@@ -547,6 +631,7 @@ model OutcomeAchievement {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  /// At most one achievement per staff/product/month.
   @@unique([userId, product, year, month])
   @@index([product, year, month])
   @@index([userId])
