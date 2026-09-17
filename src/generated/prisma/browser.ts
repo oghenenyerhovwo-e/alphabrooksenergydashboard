@@ -102,3 +102,27 @@ export type CommercialAuditLog = Prisma.CommercialAuditLogModel
  * server. A string cannot drift.
  */
 export type OperationsDailyReport = Prisma.OperationsDailyReportModel
+/**
+ * Model OutcomeTarget
+ * OUTCOMES — MONTHLY STAFF TARGET (Phase 1).
+ * 
+ * "What was expected?" for one staff member, one product, one
+ * calendar month. Independent of OutcomeAchievement — creating a
+ * target never creates or implies an achievement, and vice versa.
+ * Period identity is the normalized (year, month) pair, never a
+ * display string like "January 2026" — see src/lib/outcomes/period.ts.
+ */
+export type OutcomeTarget = Prisma.OutcomeTargetModel
+/**
+ * Model OutcomeAchievement
+ * OUTCOMES — MONTHLY STAFF ACHIEVEMENT (Phase 1).
+ * 
+ * "What was actually produced?" for one staff member, one product,
+ * one calendar month. Independent of OutcomeTarget — a target need
+ * not exist first, and achievement is never derived from or capped
+ * by target. The ABSENCE of a row for a given staff/product/month is
+ * the "no achievement entered yet" state; it is never represented as
+ * a row with achievedValue = 0. Application code (see
+ * src/lib/outcomes/calculations.ts) must preserve that distinction.
+ */
+export type OutcomeAchievement = Prisma.OutcomeAchievementModel

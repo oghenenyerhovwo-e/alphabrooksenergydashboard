@@ -5,7 +5,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px; /* was 20px — matches the new rhythm below */
 }
 
 .header {

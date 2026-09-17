@@ -1,0 +1,526 @@
+/* =========================================================
+   OUTCOME PERFORMANCE PANEL
+   Visual system for measurable monthly performance.
+   Uses the existing application design tokens from globals.css.
+========================================================= */
+
+.panel {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.panelHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 26px 28px 24px;
+  border-bottom: 1px solid var(--border-soft);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(76, 181, 34, 0.055),
+      rgba(255, 255, 255, 0.96) 58%
+    );
+}
+
+.panelHeader h2 {
+  margin-top: 5px;
+  color: var(--ink);
+  font-size: 23px;
+  font-weight: 750;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+}
+
+.panelHeader p {
+  max-width: 560px;
+  margin-top: 7px;
+  color: var(--grey-600);
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+
+.eyebrow {
+  display: block;
+  color: var(--green-dark);
+  font-size: 8.5px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   PERFORMANCE STATUS
+========================================================= */
+
+.status {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 7px 11px;
+  border: 1px solid #d8e7d0;
+  border-radius: 999px;
+  background: #f3f9ef;
+  color: var(--green-dark);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 3px rgba(76, 181, 34, 0.12);
+}
+
+/* =========================================================
+   PERSONAL PERFORMANCE HERO
+========================================================= */
+
+.heroMetric {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+  padding: 30px 28px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+/* =========================================================
+   PERFORMANCE RING
+   IMPORTANT:
+   The old black/default SVG appearance is removed here.
+========================================================= */
+
+.progressRing {
+  position: relative;
+  width: 164px;
+  height: 164px;
+  margin: 0 auto;
+}
+
+.progressRing svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform: rotate(-90deg);
+}
+
+.ringTrack,
+.ringValue {
+  fill: none;
+  stroke-width: 9;
+}
+
+.ringTrack {
+  stroke: #e8eee5;
+}
+
+.ringValue {
+  stroke: var(--green);
+  stroke-linecap: round;
+  filter: drop-shadow(
+    0 2px 4px rgba(76, 181, 34, 0.16)
+  );
+  transition: stroke-dasharray 0.5s ease;
+}
+
+.ringText {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(1px);
+  pointer-events: none;
+}
+
+.ringText strong {
+  color: var(--ink);
+  font-size: 31px;
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+}
+
+.ringText span {
+  margin-top: 7px;
+  color: var(--grey-500);
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   HERO COPY
+========================================================= */
+
+.heroCopy {
+  min-width: 0;
+  padding: 4px 0;
+}
+
+.heroCopy > span {
+  display: block;
+  color: var(--grey-500);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.heroCopy > strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.055em;
+  overflow-wrap: anywhere;
+}
+
+.heroCopy small {
+  display: block;
+  margin-top: 10px;
+  color: var(--grey-600);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.heroCopy small::first-letter {
+  color: var(--grey-600);
+}
+
+/* =========================================================
+   CORE METRICS
+========================================================= */
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 22px 28px 26px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.metricCard {
+  position: relative;
+  min-width: 0;
+  min-height: 108px;
+  padding: 17px 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fbfcfa;
+}
+
+.metricCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #dfe7dc;
+}
+
+.metricCard:nth-child(2)::before {
+  background: var(--green);
+}
+
+.metricCard:nth-child(3)::before {
+  background: #d5a84f;
+}
+
+.metricCard span {
+  display: block;
+  color: var(--grey-500);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.metricCard strong {
+  display: block;
+  margin-top: 10px;
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+}
+
+.metricCard small {
+  display: block;
+  margin-top: 7px;
+  color: var(--grey-500);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.metricCard.outstanding {
+  background: #fffdf8;
+  border-color: #eee4ce;
+}
+
+/* =========================================================
+   TEAM CONTRIBUTION
+========================================================= */
+
+.teamSection {
+  padding: 26px 28px 28px;
+  background:
+    linear-gradient(
+      180deg,
+      #fafcf9 0%,
+      #ffffff 100%
+    );
+}
+
+.teamHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.teamHeader h3 {
+  margin-top: 6px;
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.teamHeader > strong {
+  color: var(--green-dark);
+  font-size: 27px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+/* =========================================================
+   CONTRIBUTION BAR
+========================================================= */
+
+.contributionTrack {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  margin-top: 19px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e7ede5;
+}
+
+.contributionValue {
+  height: 100%;
+  min-width: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      90deg,
+      var(--green-dark),
+      var(--green)
+    );
+  box-shadow:
+    0 1px 4px rgba(76, 181, 34, 0.2);
+  transition: width 0.45s ease;
+}
+
+/* =========================================================
+   TEAM NUMBERS
+========================================================= */
+
+.teamNumbers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.teamNumbers > span {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 13px 15px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--grey-500);
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.teamNumbers strong {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+
+/* =========================================================
+   OVERALL TEAM PERFORMANCE
+========================================================= */
+
+.teamProgress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 12px;
+  padding: 14px 15px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--grey-100);
+}
+
+.teamProgress span {
+  color: var(--grey-600);
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.teamProgress strong {
+  color: var(--green-dark);
+  font-size: 16px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 760px) {
+  .panelHeader {
+    padding: 22px;
+  }
+
+  .heroMetric {
+    grid-template-columns: 145px minmax(0, 1fr);
+    gap: 22px;
+    padding: 25px 22px;
+  }
+
+  .progressRing {
+    width: 140px;
+    height: 140px;
+  }
+
+  .ringText strong {
+    font-size: 27px;
+  }
+
+  .metricGrid {
+    padding: 18px 22px 22px;
+  }
+
+  .teamSection {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 600px) {
+  .panelHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .status {
+    align-self: flex-start;
+  }
+
+  .heroMetric {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .progressRing {
+    margin: 0 auto;
+  }
+
+  .heroCopy {
+    padding-top: 4px;
+  }
+
+  .heroCopy > span,
+  .heroCopy small {
+    text-align: center;
+  }
+
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .teamNumbers {
+    grid-template-columns: 1fr;
+  }
+
+  .teamHeader {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 420px) {
+  .panelHeader,
+  .heroMetric,
+  .metricGrid,
+  .teamSection {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .panelHeader h2 {
+    font-size: 20px;
+  }
+
+  .teamHeader h3 {
+    font-size: 15px;
+  }
+
+  .teamProgress {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY / REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .ringValue,
+  .contributionValue {
+    transition: none;
+  }
+}

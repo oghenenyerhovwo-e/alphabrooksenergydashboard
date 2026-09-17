@@ -113,3 +113,23 @@ export const QuoteRequestStatus = {
 } as const
 
 export type QuoteRequestStatus = (typeof QuoteRequestStatus)[keyof typeof QuoteRequestStatus]
+
+
+export const OutcomeProduct = {
+  AGO: 'AGO',
+  CNG: 'CNG',
+  LPG: 'LPG'
+} as const
+
+export type OutcomeProduct = (typeof OutcomeProduct)[keyof typeof OutcomeProduct]
+
+
+export const OutcomeUnit = {
+  LITRES: 'LITRES',
+  SCM: 'SCM',
+  KG: 'KG',
+  TONNES: 'TONNES',
+  UNITS: 'UNITS'
+} as const
+
+export type OutcomeUnit = (typeof OutcomeUnit)[keyof typeof OutcomeUnit]

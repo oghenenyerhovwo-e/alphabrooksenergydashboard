@@ -1,0 +1,137 @@
+.page {
+  min-height: 70vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem clamp(1.25rem, 4vw, 4rem);
+  background:
+    radial-gradient(
+      circle at 75% 10%,
+      rgba(82, 204, 36, 0.07),
+      transparent 25rem
+    ),
+    #f6f8f6;
+}
+
+.card {
+  width: min(680px, 100%);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #dfe6e1;
+  border-radius: 1.4rem;
+  box-shadow: 0 18px 50px rgba(11, 13, 12, 0.07);
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #f2eee3;
+  color: #705e2d;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.content {
+  min-width: 0;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 0.6rem;
+  color: #68716b;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.content h1 {
+  margin: 0;
+  color: #161a18;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.content p {
+  max-width: 52ch;
+  margin: 0.9rem 0 0;
+  color: #68716b;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.5rem;
+}
+
+.primaryButton,
+.secondaryButton {
+  min-height: 42px;
+  padding: 0 1rem;
+  border-radius: 0.7rem;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+.primaryButton {
+  border: 1px solid #075b2a;
+  background: #075b2a;
+  color: #fff;
+}
+
+.secondaryButton {
+  border: 1px solid #d8dfda;
+  background: #fff;
+  color: #26312b;
+}
+
+.primaryButton:hover,
+.secondaryButton:hover {
+  transform: translateY(-1px);
+}
+
+.primaryButton:hover {
+  background: #063d20;
+}
+
+.secondaryButton:hover {
+  border-color: #aebbb2;
+}
+
+@media (max-width: 600px) {
+  .card {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryButton,
+  .secondaryButton {
+    transition: none;
+  }
+}

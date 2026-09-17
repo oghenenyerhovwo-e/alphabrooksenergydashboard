@@ -410,7 +410,9 @@ export const ModelName = {
   Lead: 'Lead',
   QuoteRequest: 'QuoteRequest',
   CommercialAuditLog: 'CommercialAuditLog',
-  OperationsDailyReport: 'OperationsDailyReport'
+  OperationsDailyReport: 'OperationsDailyReport',
+  OutcomeTarget: 'OutcomeTarget',
+  OutcomeAchievement: 'OutcomeAchievement'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -426,7 +428,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "deliveryNoteCounter" | "driver" | "vehicle" | "delivery" | "deliveryAuditLog" | "vehiclePreTripInspection" | "user" | "session" | "leadReferenceCounter" | "quoteRequestReferenceCounter" | "lead" | "quoteRequest" | "commercialAuditLog" | "operationsDailyReport"
+    modelProps: "deliveryNoteCounter" | "driver" | "vehicle" | "delivery" | "deliveryAuditLog" | "vehiclePreTripInspection" | "user" | "session" | "leadReferenceCounter" | "quoteRequestReferenceCounter" | "lead" | "quoteRequest" | "commercialAuditLog" | "operationsDailyReport" | "outcomeTarget" | "outcomeAchievement"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1466,6 +1468,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    OutcomeTarget: {
+      payload: Prisma.$OutcomeTargetPayload<ExtArgs>
+      fields: Prisma.OutcomeTargetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OutcomeTargetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeTargetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OutcomeTargetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeTargetPayload>
+        }
+        findFirst: {
+          args: Prisma.OutcomeTargetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeTargetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OutcomeTargetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeTargetPayload>
+        }
+        findMany: {
+          args: Prisma.OutcomeTargetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeTargetPayload>[]
+        }
+        create: {
+          args: Prisma.OutcomeTargetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeTargetPayload>
+        }
+        createMany: {
+          args: Prisma.OutcomeTargetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OutcomeTargetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeTargetPayload>[]
+        }
+        delete: {
+          args: Prisma.OutcomeTargetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeTargetPayload>
+        }
+        update: {
+          args: Prisma.OutcomeTargetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeTargetPayload>
+        }
+        deleteMany: {
+          args: Prisma.OutcomeTargetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OutcomeTargetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OutcomeTargetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeTargetPayload>[]
+        }
+        upsert: {
+          args: Prisma.OutcomeTargetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeTargetPayload>
+        }
+        aggregate: {
+          args: Prisma.OutcomeTargetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOutcomeTarget>
+        }
+        groupBy: {
+          args: Prisma.OutcomeTargetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OutcomeTargetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OutcomeTargetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OutcomeTargetCountAggregateOutputType> | number
+        }
+      }
+    }
+    OutcomeAchievement: {
+      payload: Prisma.$OutcomeAchievementPayload<ExtArgs>
+      fields: Prisma.OutcomeAchievementFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OutcomeAchievementFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeAchievementPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OutcomeAchievementFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeAchievementPayload>
+        }
+        findFirst: {
+          args: Prisma.OutcomeAchievementFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeAchievementPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OutcomeAchievementFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeAchievementPayload>
+        }
+        findMany: {
+          args: Prisma.OutcomeAchievementFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeAchievementPayload>[]
+        }
+        create: {
+          args: Prisma.OutcomeAchievementCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeAchievementPayload>
+        }
+        createMany: {
+          args: Prisma.OutcomeAchievementCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OutcomeAchievementCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeAchievementPayload>[]
+        }
+        delete: {
+          args: Prisma.OutcomeAchievementDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeAchievementPayload>
+        }
+        update: {
+          args: Prisma.OutcomeAchievementUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeAchievementPayload>
+        }
+        deleteMany: {
+          args: Prisma.OutcomeAchievementDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OutcomeAchievementUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OutcomeAchievementUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeAchievementPayload>[]
+        }
+        upsert: {
+          args: Prisma.OutcomeAchievementUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OutcomeAchievementPayload>
+        }
+        aggregate: {
+          args: Prisma.OutcomeAchievementAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOutcomeAchievement>
+        }
+        groupBy: {
+          args: Prisma.OutcomeAchievementGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OutcomeAchievementGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OutcomeAchievementCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OutcomeAchievementCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1749,6 +1899,40 @@ export const OperationsDailyReportScalarFieldEnum = {
 export type OperationsDailyReportScalarFieldEnum = (typeof OperationsDailyReportScalarFieldEnum)[keyof typeof OperationsDailyReportScalarFieldEnum]
 
 
+export const OutcomeTargetScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  product: 'product',
+  year: 'year',
+  month: 'month',
+  targetValue: 'targetValue',
+  unit: 'unit',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OutcomeTargetScalarFieldEnum = (typeof OutcomeTargetScalarFieldEnum)[keyof typeof OutcomeTargetScalarFieldEnum]
+
+
+export const OutcomeAchievementScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  product: 'product',
+  year: 'year',
+  month: 'month',
+  achievedValue: 'achievedValue',
+  unit: 'unit',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OutcomeAchievementScalarFieldEnum = (typeof OutcomeAchievementScalarFieldEnum)[keyof typeof OutcomeAchievementScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2011,6 +2195,48 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
+
+/**
+ * Reference to a field of type 'OutcomeProduct'
+ */
+export type EnumOutcomeProductFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutcomeProduct'>
+    
+
+
+/**
+ * Reference to a field of type 'OutcomeProduct[]'
+ */
+export type ListEnumOutcomeProductFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutcomeProduct[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal'
+ */
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal[]'
+ */
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
+ * Reference to a field of type 'OutcomeUnit'
+ */
+export type EnumOutcomeUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutcomeUnit'>
+    
+
+
+/**
+ * Reference to a field of type 'OutcomeUnit[]'
+ */
+export type ListEnumOutcomeUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutcomeUnit[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -2176,6 +2402,8 @@ export type GlobalOmitConfig = {
   quoteRequest?: Prisma.QuoteRequestOmit
   commercialAuditLog?: Prisma.CommercialAuditLogOmit
   operationsDailyReport?: Prisma.OperationsDailyReportOmit
+  outcomeTarget?: Prisma.OutcomeTargetOmit
+  outcomeAchievement?: Prisma.OutcomeAchievementOmit
 }
 
 /* Types for Logging */

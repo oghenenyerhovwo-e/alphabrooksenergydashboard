@@ -64,7 +64,9 @@ export const ModelName = {
   Lead: 'Lead',
   QuoteRequest: 'QuoteRequest',
   CommercialAuditLog: 'CommercialAuditLog',
-  OperationsDailyReport: 'OperationsDailyReport'
+  OperationsDailyReport: 'OperationsDailyReport',
+  OutcomeTarget: 'OutcomeTarget',
+  OutcomeAchievement: 'OutcomeAchievement'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -325,6 +327,40 @@ export const OperationsDailyReportScalarFieldEnum = {
 } as const
 
 export type OperationsDailyReportScalarFieldEnum = (typeof OperationsDailyReportScalarFieldEnum)[keyof typeof OperationsDailyReportScalarFieldEnum]
+
+
+export const OutcomeTargetScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  product: 'product',
+  year: 'year',
+  month: 'month',
+  targetValue: 'targetValue',
+  unit: 'unit',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OutcomeTargetScalarFieldEnum = (typeof OutcomeTargetScalarFieldEnum)[keyof typeof OutcomeTargetScalarFieldEnum]
+
+
+export const OutcomeAchievementScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  product: 'product',
+  year: 'year',
+  month: 'month',
+  achievedValue: 'achievedValue',
+  unit: 'unit',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OutcomeAchievementScalarFieldEnum = (typeof OutcomeAchievementScalarFieldEnum)[keyof typeof OutcomeAchievementScalarFieldEnum]
 
 
 export const SortOrder = {
