@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { TeamsInitializer } from "@/components/teams/TeamsInitializer";
 import {
   Manrope,
   JetBrains_Mono,
@@ -77,6 +78,7 @@ export default async function RootLayout({
             "var(--font-ui), -apple-system, sans-serif",
         }}
       >
+        <TeamsInitializer />
         {isLoginRoute ? (
           children
         ) : (

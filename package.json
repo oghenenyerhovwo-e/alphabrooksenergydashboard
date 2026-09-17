@@ -12,6 +12,7 @@
   "dependencies": {
     "@azure/msal-node": "^6.0.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
+    "@microsoft/teams-js": "^2.56.0",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "@vercel/blob": "^2.8.0",

@@ -48,8 +48,8 @@ export async function createSessionAndSetCookie(
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
-    secure: isProduction(),
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
     path: "/",
     expires: expiresAt,
   });
@@ -112,8 +112,8 @@ export async function setOAuthStateCookie(state: string, codeVerifier: string): 
   const cookieStore = await cookies();
   cookieStore.set(OAUTH_STATE_COOKIE_NAME, `${state}.${codeVerifier}`, {
     httpOnly: true,
-    secure: isProduction(),
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
     path: "/",
     maxAge: OAUTH_STATE_TTL_SECONDS,
   });
