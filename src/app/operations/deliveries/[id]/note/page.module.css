@@ -170,9 +170,9 @@
  * This is why the note div in page.tsx has id="delivery-note-printable".
  */
 @media print {
-  body * {
+  /* body * {
     visibility: hidden;
-  }
+  } */
 
   #delivery-note-printable,
   #delivery-note-printable * {
