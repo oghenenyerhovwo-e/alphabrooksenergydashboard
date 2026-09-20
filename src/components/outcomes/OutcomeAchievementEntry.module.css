@@ -1,0 +1,330 @@
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.header {
+  padding: 20px 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.eyebrow {
+  color: var(--green-dark);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin-top: 4px;
+  color: var(--ink);
+  font-size: 19px;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.description {
+  max-width: 650px;
+  margin-top: 7px;
+  color: var(--grey-600);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.periodBadge {
+  flex: 0 0 auto;
+  min-width: 100px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--grey-100);
+  text-align: right;
+}
+
+.periodBadge span {
+  display: block;
+  color: var(--grey-500);
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.periodBadge strong {
+  display: block;
+  margin-top: 2px;
+  color: var(--green-dark);
+  font-size: 12px;
+}
+
+.form {
+  padding: 20px 22px 22px;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+  gap: 16px;
+}
+
+.field {
+  min-width: 0;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.field input {
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.field input:focus {
+  border-color: var(--green);
+  box-shadow:
+    0 0 0 3px
+    rgba(82, 204, 36, 0.12);
+}
+
+.field input:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+  background: var(--grey-100);
+}
+
+.inputWithUnit {
+  position: relative;
+}
+
+.inputWithUnit input {
+  padding-right: 76px;
+}
+
+.unit {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  color: var(--grey-500);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.help {
+  margin-top: 6px;
+  color: var(--grey-500);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.fieldError {
+  margin-top: 6px;
+  color: #a53b32;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.preview {
+  margin-top: 18px;
+  padding: 15px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(82, 204, 36, 0.08),
+      rgba(255, 255, 255, 0.96)
+    );
+}
+
+.preview > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.previewLabel {
+  color: var(--grey-600);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.previewValue {
+  color: var(--ink);
+  font-size: 20px;
+  letter-spacing: -0.025em;
+}
+
+.preview p {
+  max-width: 650px;
+  margin-top: 5px;
+  color: var(--grey-500);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.formError {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid #e7c3bf;
+  border-radius: 9px;
+  background: #fff7f6;
+  color: #9c352d;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.success {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid #c8ddc2;
+  border-radius: 9px;
+  background: var(--green-status-bg);
+  color: var(--green-darker);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.notice {
+  margin: 18px 22px 22px;
+  padding: 13px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--grey-100);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notice strong {
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.notice span {
+  color: var(--grey-600);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.footer {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-soft);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.footerNote {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.footerNote span {
+  color: var(--grey-600);
+  font-size: 10px;
+}
+
+.footerNote small {
+  color: var(--grey-500);
+  font-size: 9px;
+}
+
+.submitButton {
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 0 17px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--green);
+  color: #0b1908;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    opacity 0.16s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.submitButton:focus-visible {
+  outline: 3px solid
+    rgba(82, 204, 36, 0.25);
+  outline-offset: 2px;
+}
+
+.submitButton:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+@media (max-width: 680px) {
+  .header {
+    flex-direction: column;
+  }
+
+  .periodBadge {
+    text-align: left;
+  }
+
+  .fields {
+    grid-template-columns: 1fr;
+  }
+
+  .footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .submitButton {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field input,
+  .submitButton {
+    transition: none;
+  }
+}

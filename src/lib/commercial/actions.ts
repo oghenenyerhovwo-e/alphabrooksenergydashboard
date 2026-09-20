@@ -1,6 +1,24 @@
 "use server";
 
-import { canTransitionQualification } from "@/lib/commercial/status"
+import {
+  createSalesProfitabilityNotification,
+} from "@/lib/notifications";
+import { createNewLeadNotification } from "@/lib/notifications";
+import {
+  canCloseLeadWithOutcome,
+  canMoveLeadToFollowUp,
+  canMoveLeadToProspect,
+  canTransitionQualification,
+} from "@/lib/commercial/status";
+import {
+  canCreateLead,
+  canMakeCustomer,
+  canManageLeads,
+  canTransitionLead,
+  canUpdateLead,
+  canViewLeads,
+} from "@/lib/commercial/permissions";
+import { createZohoCustomer } from "@/lib/zoho/books";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth/session";
 import { revalidatePath } from "next/cache";
@@ -16,6 +34,7 @@ import {
 import {
   generateLeadReferenceNumber,
   generateQuoteRequestReferenceNumber,
+  generateInternalOrderReferenceNumber,
 } from "@/lib/commercial/referenceNumber";
 import {
   requiredString,
@@ -45,6 +64,11 @@ export async function createLeadAction(
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     return { error: "You must be signed in to do this." };
+  }
+  if (!canCreateLead(currentUser.role)) {
+    return {
+      error: "You do not have permission to create leads.",
+    };
   }
 
   const fieldErrors: Record<string, string> = {};
@@ -79,10 +103,12 @@ export async function createLeadAction(
     return { error: "Please fix the errors below.", fieldErrors };
   }
 
+    let lead;
+
   try {
     const referenceNumber = await generateLeadReferenceNumber();
 
-    const lead = await prisma.$transaction(async (tx) => {
+    lead = await prisma.$transaction(async (tx) => {
       const created = await tx.lead.create({
         data: {
           referenceNumber,
@@ -113,12 +139,19 @@ export async function createLeadAction(
       return created;
     });
 
-    revalidatePath("/commercial/leads");
-    redirect(`/commercial/leads/${lead.id}?created=1`);
+    await createNewLeadNotification(
+      lead.id,
+      lead.referenceNumber
+    );
   } catch (error) {
     console.error("[createLeadAction]", error);
     return { error: "Something went wrong while creating the lead." };
   }
+
+  revalidatePath("/commercial");
+  revalidatePath("/commercial/leads");
+
+  redirect(`/commercial/leads/${lead.id}?created=1`);
 }
 
 /* =========================================================
@@ -142,6 +175,12 @@ export async function updateLeadAction(
   const existing = await prisma.lead.findUnique({ where: { id: leadId } });
   if (!existing) {
     return { error: "Lead not found." };
+  }
+
+  if (!canUpdateLead(currentUser.role)) {
+    return {
+      error: "You do not have permission to update leads.",
+    };
   }
 
   const fieldErrors: Record<string, string> = {};
@@ -214,82 +253,89 @@ export async function updateLeadAction(
 }
 
 /* =========================================================
-   LEAD — CLOSE (record lifecycle status, not qualification)
+   LEAD — LIFECYCLE TRANSITION
    ========================================================= */
 
-export async function closeLeadAction(
-  leadId: string
-): Promise<CommercialActionState> {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    return { error: "You must be signed in to do this." };
-  }
-
-  const existing = await prisma.lead.findUnique({ where: { id: leadId } });
-  if (!existing) {
-    return { error: "Lead not found." };
-  }
-
-  if (existing.status === LeadStatus.CLOSED) {
-    return { error: "This lead is already closed." };
-  }
-
-  try {
-    await prisma.$transaction(async (tx) => {
-      await tx.lead.update({
-        where: { id: leadId },
-        data: { status: LeadStatus.CLOSED },
-      });
-
-      await tx.commercialAuditLog.create({
-        data: {
-          leadId,
-          actorName: currentUser.name,
-          actorRole: currentUser.role,
-          action: "LEAD_CLOSED",
-          details: `Lead ${existing.referenceNumber} closed.`,
-        },
-      });
-    });
-
-    revalidatePath(`/commercial/leads/${leadId}`);
-    return { success: true };
-  } catch (error) {
-    console.error("[closeLeadAction]", error);
-    return { error: "Something went wrong while closing the lead." };
-  }
-}
-
-/* =========================================================
-   LEAD — QUALIFY / DISQUALIFY
-   ========================================================= */
-
-export async function qualifyLeadAction(
+export async function transitionLeadAction(
   leadId: string,
-  decision: "QUALIFIED" | "DISQUALIFIED",
-  reason: string | undefined
+  nextStatus:
+    | "FOLLOW_UP"
+    | "PROSPECT"
+    | "LOST"
+    | "UNQUALIFIED"
+    | "NOT_INTERESTED",
+  reason?: string
 ): Promise<CommercialActionState> {
   const currentUser = await getCurrentUser();
+
   if (!currentUser) {
     return { error: "You must be signed in to do this." };
   }
 
-  const existing = await prisma.lead.findUnique({ where: { id: leadId } });
+  const existing = await prisma.lead.findUnique({
+    where: { id: leadId },
+  });
+
   if (!existing) {
     return { error: "Lead not found." };
   }
 
-  if (!canTransitionQualification(existing.qualificationState)) {
+  if (!canTransitionLead(currentUser.role)) {
     return {
-      error: `This lead has already been ${existing.qualificationState.toLowerCase()}.`,
+      error: "You do not have permission to change the Lead status.",
     };
   }
 
-  if (decision === "DISQUALIFIED" && (!reason || reason.trim().length === 0)) {
+  const requestedStatus = nextStatus as LeadStatus;
+
+  if (existing.status === requestedStatus) {
     return {
-      error: "A reason is required to disqualify a lead.",
-      fieldErrors: { qualificationReason: "Reason is required." },
+      error: `This lead is already ${requestedStatus.toLowerCase().replace("_", " ")}.`,
     };
+  }
+
+  /*
+   * Forward lifecycle transitions.
+   */
+  if (requestedStatus === LeadStatus.FOLLOW_UP) {
+    if (!canMoveLeadToFollowUp(existing.status)) {
+      return {
+        error: "This lead cannot be moved to Follow-up from its current status.",
+      };
+    }
+  }
+
+  if (requestedStatus === LeadStatus.PROSPECT) {
+    if (!canMoveLeadToProspect(existing.status)) {
+      return {
+        error: "This lead cannot be converted to Prospect from its current status.",
+      };
+    }
+  }
+
+  /*
+   * Terminal outcomes.
+   */
+  const isOutcome =
+    requestedStatus === LeadStatus.LOST ||
+    requestedStatus === LeadStatus.UNQUALIFIED ||
+    requestedStatus === LeadStatus.NOT_INTERESTED;
+
+  if (isOutcome) {
+    if (!canCloseLeadWithOutcome(existing.status)) {
+      return {
+        error: "This lead cannot be given an unsuccessful outcome from its current status.",
+      };
+    }
+
+    if (!reason || reason.trim().length === 0) {
+      return {
+        error: "A reason is required for this outcome.",
+        fieldErrors: {
+          outcomeReason: "Reason is required.",
+        },
+      };
+    }
   }
 
   const trimmedReason = reason?.trim() || undefined;
@@ -299,10 +345,10 @@ export async function qualifyLeadAction(
       await tx.lead.update({
         where: { id: leadId },
         data: {
-          qualificationState: decision as QualificationState,
-          qualificationReason: trimmedReason,
-          qualifiedAt: new Date(),
-          qualifiedById: currentUser.id,
+          status: requestedStatus,
+          outcomeReason: isOutcome ? trimmedReason : null,
+          outcomeAt: isOutcome ? new Date() : null,
+          outcomeById: isOutcome ? currentUser.id : null,
         },
       });
 
@@ -311,19 +357,24 @@ export async function qualifyLeadAction(
           leadId,
           actorName: currentUser.name,
           actorRole: currentUser.role,
-          action: decision === "QUALIFIED" ? "LEAD_QUALIFIED" : "LEAD_DISQUALIFIED",
+          action: "LEAD_STATUS_CHANGED",
           details: trimmedReason
-            ? `Lead ${existing.referenceNumber} ${decision.toLowerCase()}: ${trimmedReason}`
-            : `Lead ${existing.referenceNumber} ${decision.toLowerCase()}.`,
+            ? `Lead ${existing.referenceNumber} changed from ${existing.status} to ${requestedStatus}: ${trimmedReason}`
+            : `Lead ${existing.referenceNumber} changed from ${existing.status} to ${requestedStatus}.`,
         },
       });
     });
 
     revalidatePath(`/commercial/leads/${leadId}`);
+    revalidatePath("/commercial/leads");
+
     return { success: true };
   } catch (error) {
-    console.error("[qualifyLeadAction]", error);
-    return { error: "Something went wrong while qualifying the lead." };
+    console.error("[transitionLeadAction]", error);
+
+    return {
+      error: "Something went wrong while updating the lead status.",
+    };
   }
 }
 
@@ -417,6 +468,113 @@ export async function createQuoteRequestAction(
   revalidatePath(`/commercial/leads/${leadId}`);
   revalidatePath("/commercial/quote-requests");
   redirect(`/commercial/quote-requests/${quoteRequestId}?created=1`);
+}
+
+export async function createInternalOrderAction(
+  _prevState: CommercialActionState,
+  formData: FormData
+): Promise<CommercialActionState> {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    return {
+      error: "You must be signed in to do this.",
+    };
+  }
+
+  const fieldErrors: Record<string, string> = {};
+
+  const zohoCustomerId = requiredString(formData, "zohoCustomerId");
+
+  if (!zohoCustomerId) {
+    fieldErrors.zohoCustomerId = "Select a customer.";
+  }
+
+  const customerName = requiredString(formData, "customerName");
+
+  if (!customerName) {
+    fieldErrors.zohoCustomerId = "Select a customer.";
+  }
+
+  const productRaw = requiredString(formData, "product");
+
+  if (!productRaw || !isValidProduct(productRaw)) {
+    fieldErrors.product = "Select a valid product.";
+  }
+
+  const quantityRaw = requiredString(formData, "quantity");
+  const quantity = quantityRaw ? Number(quantityRaw) : NaN;
+
+  if (!Number.isFinite(quantity) || quantity <= 0) {
+    fieldErrors.quantity = "Enter a quantity greater than zero.";
+  }
+
+  const deliveryLocation = requiredString(
+    formData,
+    "deliveryLocation"
+  );
+
+  if (!deliveryLocation) {
+    fieldErrors.deliveryLocation = "Delivery location is required.";
+  }
+
+  const customerReference = optionalString(
+    formData,
+    "customerReference"
+  );
+
+  const notes = optionalString(formData, "notes");
+
+  if (Object.keys(fieldErrors).length > 0) {
+    return {
+      error: "Please fix the errors below.",
+      fieldErrors,
+    };
+  }
+
+  try {
+    const referenceNumber =
+      await generateInternalOrderReferenceNumber();
+
+    const order = await prisma.internalOrder.create({
+      data: {
+        referenceNumber,
+        zohoCustomerId: zohoCustomerId!,
+        customerName: customerName!,
+        product: productRaw as DeliveryProduct,
+        quantity,
+        deliveryLocation: deliveryLocation!,
+        customerReference,
+        notes,
+        createdById: currentUser.id,
+      },
+    });
+
+    await createSalesProfitabilityNotification({
+      internalOrderId: order.id,
+      orderReference: order.referenceNumber,
+    });
+
+    await prisma.commercialAuditLog.create({
+      data: {
+        actorName: currentUser.name,
+        actorRole: currentUser.role,
+        action: "INTERNAL_ORDER_CREATED",
+        details: `Internal order ${referenceNumber} created for ${customerName}.`,
+      },
+    });
+
+    revalidatePath("/commercial");
+    revalidatePath("/commercial/orders");
+
+    redirect(`/commercial/orders/${order.id}`);
+  } catch (error) {
+    console.error("[createInternalOrderAction]", error);
+
+    return {
+      error: "Something went wrong while creating the internal order.",
+    };
+  }
 }
 
 /* =========================================================
@@ -631,28 +789,58 @@ export async function qualifyQuoteRequestAction(
 
 export async function getCommercialDashboardData() {
   const currentUser = await getCurrentUser();
+
   if (!currentUser) {
     throw new Error("Unauthorized: you must be signed in to view this data.");
   }
 
   const [
     totalLeads,
-    pendingLeads,
-    qualifiedLeads,
-    disqualifiedLeads,
+    newLeads,
+    followUpLeads,
+    prospects,
+    lostLeads,
+    unqualifiedLeads,
+    notInterestedLeads,
     openQuoteRequests,
     recentLeads,
     recentQuoteRequests,
   ] = await Promise.all([
     prisma.lead.count(),
-    prisma.lead.count({ where: { qualificationState: QualificationState.PENDING } }),
-    prisma.lead.count({ where: { qualificationState: QualificationState.QUALIFIED } }),
-    prisma.lead.count({ where: { qualificationState: QualificationState.DISQUALIFIED } }),
-    prisma.quoteRequest.count({ where: { status: QuoteRequestStatus.OPEN } }),
+
+    prisma.lead.count({
+      where: { status: LeadStatus.NEW },
+    }),
+
+    prisma.lead.count({
+      where: { status: LeadStatus.FOLLOW_UP },
+    }),
+
+    prisma.lead.count({
+      where: { status: LeadStatus.PROSPECT },
+    }),
+
+    prisma.lead.count({
+      where: { status: LeadStatus.LOST },
+    }),
+
+    prisma.lead.count({
+      where: { status: LeadStatus.UNQUALIFIED },
+    }),
+
+    prisma.lead.count({
+      where: { status: LeadStatus.NOT_INTERESTED },
+    }),
+
+    prisma.quoteRequest.count({
+      where: { status: QuoteRequestStatus.OPEN },
+    }),
+
     prisma.lead.findMany({
       orderBy: { createdAt: "desc" },
       take: 5,
     }),
+
     prisma.quoteRequest.findMany({
       orderBy: { createdAt: "desc" },
       take: 5,
@@ -662,9 +850,12 @@ export async function getCommercialDashboardData() {
 
   return {
     totalLeads,
-    pendingLeads,
-    qualifiedLeads,
-    disqualifiedLeads,
+    newLeads,
+    followUpLeads,
+    prospects,
+    lostLeads,
+    unqualifiedLeads,
+    notInterestedLeads,
     openQuoteRequests,
     recentLeads,
     recentQuoteRequests,
@@ -680,6 +871,11 @@ export async function getLeads() {
   if (!currentUser) {
     throw new Error("Unauthorized: you must be signed in to view this data.");
   }
+  if (!canViewLeads(currentUser.role)) {
+    throw new Error(
+      "Forbidden: you do not have permission to view Leads."
+    );
+  }
 
   return prisma.lead.findMany({
     orderBy: { createdAt: "desc" },
@@ -694,13 +890,17 @@ export async function getLeadDetail(leadId: string) {
   if (!currentUser) {
     throw new Error("Unauthorized: you must be signed in to view this data.");
   }
+  if (!canViewLeads(currentUser.role)) {
+    throw new Error(
+      "Forbidden: you do not have permission to view Leads."
+    );
+  }
 
   return prisma.lead.findUnique({
     where: { id: leadId },
     include: {
-      createdBy: true,
-      qualifiedBy: true,
-      quoteRequests: {
+    createdBy: true,
+    quoteRequests: {
         orderBy: { createdAt: "desc" },
       },
       auditLogs: {
@@ -745,5 +945,172 @@ export async function getQuoteRequestDetail(quoteRequestId: string) {
       },
     },
   });
+}
+
+/* =========================================================
+   LEAD — CONVERT PROSPECT TO CUSTOMER
+   ========================================================= */
+
+export async function makeCustomerAction(
+  leadId: string,
+): Promise<CommercialActionState> {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    return {
+      error: "You must be signed in to do this.",
+    };
+  }
+
+  if (!canMakeCustomer(currentUser.role)) {
+    return {
+      error: "Only the Operations Manager can make a Lead a Customer.",
+    };
+  }
+
+  if (!leadId || !leadId.trim()) {
+    return {
+      error: "Missing Lead reference.",
+    };
+  }
+
+  const existing = await prisma.lead.findUnique({
+    where: { id: leadId },
+  });
+
+  if (!existing) {
+    return {
+      error: "Lead not found.",
+    };
+  }
+
+  if (existing.status !== LeadStatus.PROSPECT) {
+    return {
+      error:
+        "Only a Prospect can be converted to a Customer.",
+    };
+  }
+
+  if (existing.zohoCustomerId) {
+    return {
+      error:
+        "This Prospect already has a Zoho Books customer reference.",
+    };
+  }
+
+  let zohoCustomer;
+
+  try {
+    zohoCustomer = await createZohoCustomer({
+      companyName: existing.companyName,
+      contactPerson: existing.contactPerson,
+      phone: existing.phone,
+      email: existing.email,
+      notes: existing.notes,
+    });
+  } catch (error) {
+    console.error("[makeCustomerAction] Zoho customer creation failed:", {
+      leadId,
+      error,
+    });
+
+    try {
+      await prisma.commercialAuditLog.create({
+        data: {
+          leadId,
+          actorName: currentUser.name,
+          actorRole: currentUser.role,
+          action: "LEAD_CUSTOMER_CONVERSION_FAILED",
+          details:
+            `Customer conversion failed for Lead ${existing.referenceNumber}. ` +
+            `Zoho Books customer creation did not succeed. ` +
+            `Reason: ${
+              error instanceof Error
+                ? error.message
+                : "Unknown Zoho error."
+            }`,
+        },
+      });
+    } catch (auditError) {
+      console.error(
+        "[makeCustomerAction] Failed to record conversion failure audit:",
+        auditError,
+      );
+    }
+
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "Zoho Books customer creation failed. The Lead remains a Prospect.",
+    };
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.lead.update({
+        where: { id: leadId },
+        data: {
+          status: LeadStatus.CUSTOMER,
+          zohoCustomerId: zohoCustomer.contactId,
+        },
+      });
+
+      await tx.commercialAuditLog.create({
+        data: {
+          leadId,
+          actorName: currentUser.name,
+          actorRole: currentUser.role,
+          action: "LEAD_CONVERTED_TO_CUSTOMER",
+          details:
+            `Lead ${existing.referenceNumber} converted from Prospect to Customer. ` +
+            `Zoho Books customer ID: ${zohoCustomer.contactId}.`,
+        },
+      });
+    });
+    } catch (error) {
+    console.error(
+      "[makeCustomerAction] Failed to update Lead after Zoho creation:",
+      {
+        leadId,
+        zohoCustomerId: zohoCustomer.contactId,
+        error,
+      },
+    );
+
+    try {
+      await prisma.commercialAuditLog.create({
+        data: {
+          leadId,
+          actorName: currentUser.name,
+          actorRole: currentUser.role,
+          action: "LEAD_CUSTOMER_CONVERSION_RECONCILIATION_REQUIRED",
+          details:
+            `Zoho Books customer ${zohoCustomer.contactId} was created for ` +
+            `Lead ${existing.referenceNumber}, but Alpha Brooks could not ` +
+            `complete the Lead conversion. Manual reconciliation is required ` +
+            `before another conversion attempt.`,
+        },
+      });
+    } catch (auditError) {
+      console.error(
+        "[makeCustomerAction] Failed to record reconciliation audit:",
+        auditError,
+      );
+    }
+
+    return {
+      error:
+        "The Zoho Books customer was created, but Alpha Brooks could not finish updating the Lead. Please do not retry yet; the Zoho customer reference needs to be reconciled.",
+    };
+  }
+
+  revalidatePath(`/commercial/leads/${leadId}`);
+  revalidatePath("/commercial/leads");
+  revalidatePath("/commercial");
+
+  return {
+    success: true,
+  };
 }
 

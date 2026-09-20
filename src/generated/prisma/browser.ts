@@ -55,6 +55,11 @@ export type VehiclePreTripInspection = Prisma.VehiclePreTripInspectionModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
  * Model Session
  * Server-side session record. The cookie holds only a random opaque
  * token; `tokenHash` is a SHA-256 hash of that token, so a leaked
@@ -72,6 +77,11 @@ export type LeadReferenceCounter = Prisma.LeadReferenceCounterModel
  */
 export type QuoteRequestReferenceCounter = Prisma.QuoteRequestReferenceCounterModel
 /**
+ * Model InternalOrderReferenceCounter
+ * 
+ */
+export type InternalOrderReferenceCounter = Prisma.InternalOrderReferenceCounterModel
+/**
  * Model Lead
  * 
  */
@@ -81,6 +91,11 @@ export type Lead = Prisma.LeadModel
  * 
  */
 export type QuoteRequest = Prisma.QuoteRequestModel
+/**
+ * Model InternalOrder
+ * 
+ */
+export type InternalOrder = Prisma.InternalOrderModel
 /**
  * Model CommercialAuditLog
  * 
@@ -104,25 +119,39 @@ export type CommercialAuditLog = Prisma.CommercialAuditLogModel
 export type OperationsDailyReport = Prisma.OperationsDailyReportModel
 /**
  * Model OutcomeTarget
- * OUTCOMES — MONTHLY STAFF TARGET (Phase 1).
+ * OUTCOMES — MONTHLY STAFF TARGET.
  * 
  * "What was expected?" for one staff member, one product, one
- * calendar month. Independent of OutcomeAchievement — creating a
- * target never creates or implies an achievement, and vice versa.
- * Period identity is the normalized (year, month) pair, never a
- * display string like "January 2026" — see src/lib/outcomes/period.ts.
+ * calendar month. Independent of OutcomeAchievement.
+ * 
+ * The business model is:
+ * 
+ * targetQuantity × targetMarginPerUnit = targetGeneratedValue
+ * 
+ * `targetQuantity` is mapped to the existing `targetValue` database
+ * column so existing quantity data is preserved during the transition.
+ * 
+ * The financial fields are nullable for historical compatibility.
+ * New target records will receive their authoritative values through
+ * the server-side application flow in later implementation phases.
  */
 export type OutcomeTarget = Prisma.OutcomeTargetModel
 /**
  * Model OutcomeAchievement
- * OUTCOMES — MONTHLY STAFF ACHIEVEMENT (Phase 1).
+ * OUTCOMES — MONTHLY STAFF ACHIEVEMENT.
  * 
  * "What was actually produced?" for one staff member, one product,
- * one calendar month. Independent of OutcomeTarget — a target need
- * not exist first, and achievement is never derived from or capped
- * by target. The ABSENCE of a row for a given staff/product/month is
- * the "no achievement entered yet" state; it is never represented as
- * a row with achievedValue = 0. Application code (see
- * src/lib/outcomes/calculations.ts) must preserve that distinction.
+ * one calendar month. Independent of OutcomeTarget.
+ * 
+ * The business model is:
+ * 
+ * achievedQuantity × achievedMarginPerUnit = achievedGeneratedValue
+ * 
+ * `achievedQuantity` is mapped to the existing `achievedValue`
+ * database column so existing quantity data is preserved during
+ * the transition.
+ * 
+ * The absence of an achievement row continues to mean that no
+ * achievement has been entered yet.
  */
 export type OutcomeAchievement = Prisma.OutcomeAchievementModel

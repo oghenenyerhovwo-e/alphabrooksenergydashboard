@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { getCurrentUser } from "@/lib/auth/session";
+import { UserRole } from "@/generated/prisma/client";
+import { MakeCustomerPanel } from "@/components/commercial/MakeCustomerPanel";
 import { notFound } from "next/navigation";
 import { getLeadDetail } from "@/lib/commercial/actions";
 import { LeadQualificationPanel } from "@/components/commercial/LeadQualificationPanel";
@@ -19,6 +22,7 @@ function formatDate(value: Date | null) {
 export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
   const { id } = await params;
   const lead = await getLeadDetail(id);
+  const currentUser = await getCurrentUser();
 
   if (!lead) {
     notFound();
@@ -40,11 +44,8 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
         </div>
 
         <div className={styles.headerBadges}>
-          <span className={styles.badge} data-tone={lead.qualificationState}>
-            {lead.qualificationState}
-          </span>
           <span className={styles.statusPill} data-status={lead.status}>
-            {lead.status}
+            {lead.status.replace("_", " ")}
           </span>
         </div>
       </header>
@@ -69,10 +70,9 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
                 label="Product interest"
                 value={lead.productInterest ? lead.productInterest.replace("_", " ") : "—"}
               />
-              <Detail label="Created by" value={lead.createdBy.name} />
               <Detail
-                label="Qualified by"
-                value={lead.qualifiedBy ? lead.qualifiedBy.name : "—"}
+                label="Created by"
+                value={lead.createdBy?.name ?? "Website / System"}
               />
             </div>
 
@@ -83,10 +83,10 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
               </div>
             )}
 
-            {lead.qualificationReason && (
+            {lead.outcomeReason && (
               <div className={styles.notesBlock}>
-                <div className={styles.detailLabel}>Qualification reason</div>
-                <p className={styles.notesText}>{lead.qualificationReason}</p>
+                <div className={styles.detailLabel}>Outcome reason</div>
+                <p className={styles.notesText}>{lead.outcomeReason}</p>
               </div>
             )}
           </section>
@@ -158,7 +158,18 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
         </div>
 
         <div className={styles.sideColumn}>
-          <LeadQualificationPanel leadId={lead.id} qualificationState={lead.qualificationState} />
+          <LeadQualificationPanel
+            leadId={lead.id}
+            status={lead.status}
+          />
+          {lead.status === "PROSPECT" &&
+            currentUser?.role === UserRole.OPERATIONS && (
+              <MakeCustomerPanel
+                leadId={lead.id}
+                companyName={lead.companyName}
+                phone={lead.phone}
+              />
+          )}
         </div>
       </div>
     </div>

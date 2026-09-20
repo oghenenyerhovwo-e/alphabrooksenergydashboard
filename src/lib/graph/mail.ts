@@ -18,25 +18,50 @@ export class CngMailApiError extends Error {
 
 interface SendAriaMailOptions {
   to: string | string[];
+  cc?: string | string[];
   subject: string;
   bodyHtml: string;
 }
 
 /**
  * Sends mail via Microsoft Graph app-only auth, from the mailbox configured
- * in ARIA_SENDER_EMAIL. This is the ONLY function in the codebase that
- * knows how to send outbound mail — reuse it rather than calling Graph's
- * sendMail endpoint directly elsewhere.
+ * in ARIA_SENDER_EMAIL.
+ *
+ * This remains the single outbound-mail function used by the application.
  */
-export async function sendAriaMail({ to, subject, bodyHtml }: SendAriaMailOptions): Promise<void> {
+export async function sendAriaMail({
+  to,
+  cc,
+  subject,
+  bodyHtml,
+}: SendAriaMailOptions): Promise<void> {
   const senderMailbox = process.env.ARIA_SENDER_EMAIL;
+
   if (!senderMailbox) {
-    throw new CngMailConfigError("Missing required configuration: ARIA_SENDER_EMAIL.");
+    throw new CngMailConfigError(
+      "Missing required configuration: ARIA_SENDER_EMAIL."
+    );
   }
 
-  const toRecipients = (Array.isArray(to) ? to : [to]).map((address) => ({
-    emailAddress: { address },
-  }));
+  const toRecipients = (Array.isArray(to) ? to : [to])
+    .map((address) => address.trim())
+    .filter(Boolean)
+    .map((address) => ({
+      emailAddress: { address },
+    }));
+
+  const ccRecipients = (Array.isArray(cc) ? cc : cc ? [cc] : [])
+    .map((address) => address.trim())
+    .filter(Boolean)
+    .map((address) => ({
+      emailAddress: { address },
+    }));
+
+  if (toRecipients.length === 0) {
+    throw new CngMailConfigError(
+      "At least one recipient is required."
+    );
+  }
 
   const client = getGraphClient();
 
@@ -44,13 +69,20 @@ export async function sendAriaMail({ to, subject, bodyHtml }: SendAriaMailOption
     await client.api(`/users/${senderMailbox}/sendMail`).post({
       message: {
         subject,
-        body: { contentType: "HTML", content: bodyHtml },
+        body: {
+          contentType: "HTML",
+          content: bodyHtml,
+        },
         toRecipients,
+        ...(ccRecipients.length > 0
+          ? { ccRecipients }
+          : {}),
       },
       saveToSentItems: true,
     });
   } catch (e) {
     console.error("[ARIA Mail] sendMail failed:", e);
+
     throw new CngMailApiError(
       "Failed to send mail via Microsoft Graph. Check the Mail.Send permission, admin consent, and ARIA_SENDER_EMAIL."
     );

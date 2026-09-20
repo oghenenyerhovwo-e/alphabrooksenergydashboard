@@ -1,25 +1,90 @@
-import { QualificationState } from "@/generated/prisma/client";
+import { LeadStatus, QualificationState } from "@/generated/prisma/client";
 
 /**
- * Centralizes the qualification state machine so the same transition
- * rules are enforced consistently everywhere (actions, UI, future
- * phases) instead of being re-implemented ad hoc per call site.
+ * Phase 1 Lead lifecycle.
  *
- * Allowed transitions:
- *   PENDING -> QUALIFIED
- *   PENDING -> DISQUALIFIED
+ * NEW
+ *   ↓
+ * FOLLOW_UP
+ *   ↓
+ * PROSPECT
  *
- * QUALIFIED and DISQUALIFIED are terminal in Phase 3. Re-opening a
- * decided Lead/Quote Request is intentionally out of scope here —
- * that belongs to a later phase if the business ever needs it.
+ * Or an unsuccessful outcome:
+ *
+ * LOST
+ * UNQUALIFIED
+ * NOT_INTERESTED
  */
-export type QualificationDecision = "QUALIFIED" | "DISQUALIFIED";
 
+export const LEAD_ACTIVE_STATUSES: LeadStatus[] = [
+  LeadStatus.NEW,
+  LeadStatus.FOLLOW_UP,
+  LeadStatus.PROSPECT,
+];
+
+export const LEAD_OUTCOME_STATUSES: LeadStatus[] = [
+  LeadStatus.LOST,
+  LeadStatus.UNQUALIFIED,
+  LeadStatus.NOT_INTERESTED,
+];
+
+export function isLeadActive(status: LeadStatus): boolean {
+  return LEAD_ACTIVE_STATUSES.includes(status);
+}
+
+export function isLeadOutcome(status: LeadStatus): boolean {
+  return LEAD_OUTCOME_STATUSES.includes(status);
+}
+
+export function canMoveLeadToFollowUp(status: LeadStatus): boolean {
+  return status === LeadStatus.NEW;
+}
+
+export function canMoveLeadToProspect(status: LeadStatus): boolean {
+  return status === LeadStatus.NEW || status === LeadStatus.FOLLOW_UP;
+}
+
+export function canCloseLeadWithOutcome(status: LeadStatus): boolean {
+  return isLeadActive(status);
+}
+
+export function leadStatusLabel(status: LeadStatus): string {
+  switch (status) {
+    case LeadStatus.NEW:
+      return "New Lead";
+
+    case LeadStatus.FOLLOW_UP:
+      return "Follow-up";
+
+    case LeadStatus.PROSPECT:
+      return "Prospect";
+
+    case LeadStatus.LOST:
+      return "Lost";
+
+    case LeadStatus.UNQUALIFIED:
+      return "Unqualified";
+
+    case LeadStatus.NOT_INTERESTED:
+      return "Not Interested";
+
+    default:
+      return status;
+  }
+}
+
+/*
+ * QualificationState remains available for Quote Request
+ * until that workflow is intentionally refactored in a later
+ * implementation step.
+ */
 export function canTransitionQualification(
   current: QualificationState
 ): boolean {
   return current === QualificationState.PENDING;
 }
+
+export type QualificationDecision = "QUALIFIED" | "DISQUALIFIED";
 
 export function isValidQualificationDecision(
   value: string
@@ -31,18 +96,17 @@ export function requiresReason(decision: QualificationDecision): boolean {
   return decision === "DISQUALIFIED";
 }
 
-/**
- * Human-readable label for qualification state, used consistently
- * across Lead and Quote Request UI so badges don't drift in wording.
- */
 export function qualificationLabel(state: QualificationState): string {
   switch (state) {
     case QualificationState.PENDING:
       return "Pending";
+
     case QualificationState.QUALIFIED:
       return "Qualified";
+
     case QualificationState.DISQUALIFIED:
       return "Disqualified";
+
     default:
       return state;
   }

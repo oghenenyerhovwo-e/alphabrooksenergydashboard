@@ -36,10 +36,10 @@ export type LeadMinAggregateOutputType = {
   productInterest: $Enums.DeliveryProduct | null
   notes: string | null
   status: $Enums.LeadStatus | null
-  qualificationState: $Enums.QualificationState | null
-  qualificationReason: string | null
-  qualifiedAt: Date | null
-  qualifiedById: string | null
+  zohoCustomerId: string | null
+  outcomeReason: string | null
+  outcomeAt: Date | null
+  outcomeById: string | null
   createdById: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -57,10 +57,10 @@ export type LeadMaxAggregateOutputType = {
   productInterest: $Enums.DeliveryProduct | null
   notes: string | null
   status: $Enums.LeadStatus | null
-  qualificationState: $Enums.QualificationState | null
-  qualificationReason: string | null
-  qualifiedAt: Date | null
-  qualifiedById: string | null
+  zohoCustomerId: string | null
+  outcomeReason: string | null
+  outcomeAt: Date | null
+  outcomeById: string | null
   createdById: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -78,10 +78,10 @@ export type LeadCountAggregateOutputType = {
   productInterest: number
   notes: number
   status: number
-  qualificationState: number
-  qualificationReason: number
-  qualifiedAt: number
-  qualifiedById: number
+  zohoCustomerId: number
+  outcomeReason: number
+  outcomeAt: number
+  outcomeById: number
   createdById: number
   createdAt: number
   updatedAt: number
@@ -101,10 +101,10 @@ export type LeadMinAggregateInputType = {
   productInterest?: true
   notes?: true
   status?: true
-  qualificationState?: true
-  qualificationReason?: true
-  qualifiedAt?: true
-  qualifiedById?: true
+  zohoCustomerId?: true
+  outcomeReason?: true
+  outcomeAt?: true
+  outcomeById?: true
   createdById?: true
   createdAt?: true
   updatedAt?: true
@@ -122,10 +122,10 @@ export type LeadMaxAggregateInputType = {
   productInterest?: true
   notes?: true
   status?: true
-  qualificationState?: true
-  qualificationReason?: true
-  qualifiedAt?: true
-  qualifiedById?: true
+  zohoCustomerId?: true
+  outcomeReason?: true
+  outcomeAt?: true
+  outcomeById?: true
   createdById?: true
   createdAt?: true
   updatedAt?: true
@@ -143,10 +143,10 @@ export type LeadCountAggregateInputType = {
   productInterest?: true
   notes?: true
   status?: true
-  qualificationState?: true
-  qualificationReason?: true
-  qualifiedAt?: true
-  qualifiedById?: true
+  zohoCustomerId?: true
+  outcomeReason?: true
+  outcomeAt?: true
+  outcomeById?: true
   createdById?: true
   createdAt?: true
   updatedAt?: true
@@ -237,11 +237,11 @@ export type LeadGroupByOutputType = {
   productInterest: $Enums.DeliveryProduct | null
   notes: string | null
   status: $Enums.LeadStatus
-  qualificationState: $Enums.QualificationState
-  qualificationReason: string | null
-  qualifiedAt: Date | null
-  qualifiedById: string | null
-  createdById: string
+  zohoCustomerId: string | null
+  outcomeReason: string | null
+  outcomeAt: Date | null
+  outcomeById: string | null
+  createdById: string | null
   createdAt: Date
   updatedAt: Date
   _count: LeadCountAggregateOutputType | null
@@ -279,17 +279,18 @@ export type LeadWhereInput = {
   productInterest?: Prisma.EnumDeliveryProductNullableFilter<"Lead"> | $Enums.DeliveryProduct | null
   notes?: Prisma.StringNullableFilter<"Lead"> | string | null
   status?: Prisma.EnumLeadStatusFilter<"Lead"> | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFilter<"Lead"> | $Enums.QualificationState
-  qualificationReason?: Prisma.StringNullableFilter<"Lead"> | string | null
-  qualifiedAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
-  qualifiedById?: Prisma.StringNullableFilter<"Lead"> | string | null
-  createdById?: Prisma.StringFilter<"Lead"> | string
+  zohoCustomerId?: Prisma.StringNullableFilter<"Lead"> | string | null
+  outcomeReason?: Prisma.StringNullableFilter<"Lead"> | string | null
+  outcomeAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
+  outcomeById?: Prisma.StringNullableFilter<"Lead"> | string | null
+  createdById?: Prisma.StringNullableFilter<"Lead"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Lead"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Lead"> | Date | string
-  qualifiedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
-  createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  outcomeBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   quoteRequests?: Prisma.QuoteRequestListRelationFilter
   auditLogs?: Prisma.CommercialAuditLogListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
 }
 
 export type LeadOrderByWithRelationInput = {
@@ -304,22 +305,24 @@ export type LeadOrderByWithRelationInput = {
   productInterest?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
-  qualificationState?: Prisma.SortOrder
-  qualificationReason?: Prisma.SortOrderInput | Prisma.SortOrder
-  qualifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  qualifiedById?: Prisma.SortOrderInput | Prisma.SortOrder
-  createdById?: Prisma.SortOrder
+  zohoCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  outcomeReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  outcomeAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  outcomeById?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  qualifiedBy?: Prisma.UserOrderByWithRelationInput
+  outcomeBy?: Prisma.UserOrderByWithRelationInput
   createdBy?: Prisma.UserOrderByWithRelationInput
   quoteRequests?: Prisma.QuoteRequestOrderByRelationAggregateInput
   auditLogs?: Prisma.CommercialAuditLogOrderByRelationAggregateInput
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput
 }
 
 export type LeadWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   referenceNumber?: string
+  zohoCustomerId?: string
   AND?: Prisma.LeadWhereInput | Prisma.LeadWhereInput[]
   OR?: Prisma.LeadWhereInput[]
   NOT?: Prisma.LeadWhereInput | Prisma.LeadWhereInput[]
@@ -332,18 +335,18 @@ export type LeadWhereUniqueInput = Prisma.AtLeast<{
   productInterest?: Prisma.EnumDeliveryProductNullableFilter<"Lead"> | $Enums.DeliveryProduct | null
   notes?: Prisma.StringNullableFilter<"Lead"> | string | null
   status?: Prisma.EnumLeadStatusFilter<"Lead"> | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFilter<"Lead"> | $Enums.QualificationState
-  qualificationReason?: Prisma.StringNullableFilter<"Lead"> | string | null
-  qualifiedAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
-  qualifiedById?: Prisma.StringNullableFilter<"Lead"> | string | null
-  createdById?: Prisma.StringFilter<"Lead"> | string
+  outcomeReason?: Prisma.StringNullableFilter<"Lead"> | string | null
+  outcomeAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
+  outcomeById?: Prisma.StringNullableFilter<"Lead"> | string | null
+  createdById?: Prisma.StringNullableFilter<"Lead"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Lead"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Lead"> | Date | string
-  qualifiedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
-  createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  outcomeBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   quoteRequests?: Prisma.QuoteRequestListRelationFilter
   auditLogs?: Prisma.CommercialAuditLogListRelationFilter
-}, "id" | "referenceNumber">
+  notifications?: Prisma.NotificationListRelationFilter
+}, "id" | "referenceNumber" | "zohoCustomerId">
 
 export type LeadOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -357,11 +360,11 @@ export type LeadOrderByWithAggregationInput = {
   productInterest?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
-  qualificationState?: Prisma.SortOrder
-  qualificationReason?: Prisma.SortOrderInput | Prisma.SortOrder
-  qualifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  qualifiedById?: Prisma.SortOrderInput | Prisma.SortOrder
-  createdById?: Prisma.SortOrder
+  zohoCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  outcomeReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  outcomeAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  outcomeById?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.LeadCountOrderByAggregateInput
@@ -384,11 +387,11 @@ export type LeadScalarWhereWithAggregatesInput = {
   productInterest?: Prisma.EnumDeliveryProductNullableWithAggregatesFilter<"Lead"> | $Enums.DeliveryProduct | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   status?: Prisma.EnumLeadStatusWithAggregatesFilter<"Lead"> | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateWithAggregatesFilter<"Lead"> | $Enums.QualificationState
-  qualificationReason?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
-  qualifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
-  qualifiedById?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
-  createdById?: Prisma.StringWithAggregatesFilter<"Lead"> | string
+  zohoCustomerId?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
+  outcomeReason?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
+  outcomeAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
+  outcomeById?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
+  createdById?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Lead"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Lead"> | Date | string
 }
@@ -405,15 +408,16 @@ export type LeadCreateInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  qualifiedBy?: Prisma.UserCreateNestedOneWithoutQualifiedLeadsInput
-  createdBy: Prisma.UserCreateNestedOneWithoutCreatedLeadsInput
+  outcomeBy?: Prisma.UserCreateNestedOneWithoutOutcomeLeadsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedLeadsInput
   quoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutLeadInput
   auditLogs?: Prisma.CommercialAuditLogCreateNestedManyWithoutLeadInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUncheckedCreateInput = {
@@ -428,15 +432,16 @@ export type LeadUncheckedCreateInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
-  qualifiedById?: string | null
-  createdById: string
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
+  outcomeById?: string | null
+  createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   quoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutLeadInput
   auditLogs?: Prisma.CommercialAuditLogUncheckedCreateNestedManyWithoutLeadInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUpdateInput = {
@@ -451,15 +456,16 @@ export type LeadUpdateInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  qualifiedBy?: Prisma.UserUpdateOneWithoutQualifiedLeadsNestedInput
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedLeadsNestedInput
+  outcomeBy?: Prisma.UserUpdateOneWithoutOutcomeLeadsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedLeadsNestedInput
   quoteRequests?: Prisma.QuoteRequestUpdateManyWithoutLeadNestedInput
   auditLogs?: Prisma.CommercialAuditLogUpdateManyWithoutLeadNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateInput = {
@@ -474,15 +480,16 @@ export type LeadUncheckedUpdateInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifiedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outcomeById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutLeadNestedInput
   auditLogs?: Prisma.CommercialAuditLogUncheckedUpdateManyWithoutLeadNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadCreateManyInput = {
@@ -497,11 +504,11 @@ export type LeadCreateManyInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
-  qualifiedById?: string | null
-  createdById: string
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
+  outcomeById?: string | null
+  createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -518,9 +525,9 @@ export type LeadUpdateManyMutationInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -537,11 +544,11 @@ export type LeadUncheckedUpdateManyInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifiedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outcomeById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -556,6 +563,11 @@ export type LeadOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type LeadNullableScalarRelationFilter = {
+  is?: Prisma.LeadWhereInput | null
+  isNot?: Prisma.LeadWhereInput | null
+}
+
 export type LeadCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   referenceNumber?: Prisma.SortOrder
@@ -568,10 +580,10 @@ export type LeadCountOrderByAggregateInput = {
   productInterest?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  qualificationState?: Prisma.SortOrder
-  qualificationReason?: Prisma.SortOrder
-  qualifiedAt?: Prisma.SortOrder
-  qualifiedById?: Prisma.SortOrder
+  zohoCustomerId?: Prisma.SortOrder
+  outcomeReason?: Prisma.SortOrder
+  outcomeAt?: Prisma.SortOrder
+  outcomeById?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -589,10 +601,10 @@ export type LeadMaxOrderByAggregateInput = {
   productInterest?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  qualificationState?: Prisma.SortOrder
-  qualificationReason?: Prisma.SortOrder
-  qualifiedAt?: Prisma.SortOrder
-  qualifiedById?: Prisma.SortOrder
+  zohoCustomerId?: Prisma.SortOrder
+  outcomeReason?: Prisma.SortOrder
+  outcomeAt?: Prisma.SortOrder
+  outcomeById?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -610,10 +622,10 @@ export type LeadMinOrderByAggregateInput = {
   productInterest?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  qualificationState?: Prisma.SortOrder
-  qualificationReason?: Prisma.SortOrder
-  qualifiedAt?: Prisma.SortOrder
-  qualifiedById?: Prisma.SortOrder
+  zohoCustomerId?: Prisma.SortOrder
+  outcomeReason?: Prisma.SortOrder
+  outcomeAt?: Prisma.SortOrder
+  outcomeById?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -624,11 +636,6 @@ export type LeadScalarRelationFilter = {
   isNot?: Prisma.LeadWhereInput
 }
 
-export type LeadNullableScalarRelationFilter = {
-  is?: Prisma.LeadWhereInput | null
-  isNot?: Prisma.LeadWhereInput | null
-}
-
 export type LeadCreateNestedManyWithoutCreatedByInput = {
   create?: Prisma.XOR<Prisma.LeadCreateWithoutCreatedByInput, Prisma.LeadUncheckedCreateWithoutCreatedByInput> | Prisma.LeadCreateWithoutCreatedByInput[] | Prisma.LeadUncheckedCreateWithoutCreatedByInput[]
   connectOrCreate?: Prisma.LeadCreateOrConnectWithoutCreatedByInput | Prisma.LeadCreateOrConnectWithoutCreatedByInput[]
@@ -636,10 +643,10 @@ export type LeadCreateNestedManyWithoutCreatedByInput = {
   connect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
 }
 
-export type LeadCreateNestedManyWithoutQualifiedByInput = {
-  create?: Prisma.XOR<Prisma.LeadCreateWithoutQualifiedByInput, Prisma.LeadUncheckedCreateWithoutQualifiedByInput> | Prisma.LeadCreateWithoutQualifiedByInput[] | Prisma.LeadUncheckedCreateWithoutQualifiedByInput[]
-  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutQualifiedByInput | Prisma.LeadCreateOrConnectWithoutQualifiedByInput[]
-  createMany?: Prisma.LeadCreateManyQualifiedByInputEnvelope
+export type LeadCreateNestedManyWithoutOutcomeByInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutOutcomeByInput, Prisma.LeadUncheckedCreateWithoutOutcomeByInput> | Prisma.LeadCreateWithoutOutcomeByInput[] | Prisma.LeadUncheckedCreateWithoutOutcomeByInput[]
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutOutcomeByInput | Prisma.LeadCreateOrConnectWithoutOutcomeByInput[]
+  createMany?: Prisma.LeadCreateManyOutcomeByInputEnvelope
   connect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
 }
 
@@ -650,10 +657,10 @@ export type LeadUncheckedCreateNestedManyWithoutCreatedByInput = {
   connect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
 }
 
-export type LeadUncheckedCreateNestedManyWithoutQualifiedByInput = {
-  create?: Prisma.XOR<Prisma.LeadCreateWithoutQualifiedByInput, Prisma.LeadUncheckedCreateWithoutQualifiedByInput> | Prisma.LeadCreateWithoutQualifiedByInput[] | Prisma.LeadUncheckedCreateWithoutQualifiedByInput[]
-  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutQualifiedByInput | Prisma.LeadCreateOrConnectWithoutQualifiedByInput[]
-  createMany?: Prisma.LeadCreateManyQualifiedByInputEnvelope
+export type LeadUncheckedCreateNestedManyWithoutOutcomeByInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutOutcomeByInput, Prisma.LeadUncheckedCreateWithoutOutcomeByInput> | Prisma.LeadCreateWithoutOutcomeByInput[] | Prisma.LeadUncheckedCreateWithoutOutcomeByInput[]
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutOutcomeByInput | Prisma.LeadCreateOrConnectWithoutOutcomeByInput[]
+  createMany?: Prisma.LeadCreateManyOutcomeByInputEnvelope
   connect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
 }
 
@@ -671,17 +678,17 @@ export type LeadUpdateManyWithoutCreatedByNestedInput = {
   deleteMany?: Prisma.LeadScalarWhereInput | Prisma.LeadScalarWhereInput[]
 }
 
-export type LeadUpdateManyWithoutQualifiedByNestedInput = {
-  create?: Prisma.XOR<Prisma.LeadCreateWithoutQualifiedByInput, Prisma.LeadUncheckedCreateWithoutQualifiedByInput> | Prisma.LeadCreateWithoutQualifiedByInput[] | Prisma.LeadUncheckedCreateWithoutQualifiedByInput[]
-  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutQualifiedByInput | Prisma.LeadCreateOrConnectWithoutQualifiedByInput[]
-  upsert?: Prisma.LeadUpsertWithWhereUniqueWithoutQualifiedByInput | Prisma.LeadUpsertWithWhereUniqueWithoutQualifiedByInput[]
-  createMany?: Prisma.LeadCreateManyQualifiedByInputEnvelope
+export type LeadUpdateManyWithoutOutcomeByNestedInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutOutcomeByInput, Prisma.LeadUncheckedCreateWithoutOutcomeByInput> | Prisma.LeadCreateWithoutOutcomeByInput[] | Prisma.LeadUncheckedCreateWithoutOutcomeByInput[]
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutOutcomeByInput | Prisma.LeadCreateOrConnectWithoutOutcomeByInput[]
+  upsert?: Prisma.LeadUpsertWithWhereUniqueWithoutOutcomeByInput | Prisma.LeadUpsertWithWhereUniqueWithoutOutcomeByInput[]
+  createMany?: Prisma.LeadCreateManyOutcomeByInputEnvelope
   set?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
   disconnect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
   delete?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
   connect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
-  update?: Prisma.LeadUpdateWithWhereUniqueWithoutQualifiedByInput | Prisma.LeadUpdateWithWhereUniqueWithoutQualifiedByInput[]
-  updateMany?: Prisma.LeadUpdateManyWithWhereWithoutQualifiedByInput | Prisma.LeadUpdateManyWithWhereWithoutQualifiedByInput[]
+  update?: Prisma.LeadUpdateWithWhereUniqueWithoutOutcomeByInput | Prisma.LeadUpdateWithWhereUniqueWithoutOutcomeByInput[]
+  updateMany?: Prisma.LeadUpdateManyWithWhereWithoutOutcomeByInput | Prisma.LeadUpdateManyWithWhereWithoutOutcomeByInput[]
   deleteMany?: Prisma.LeadScalarWhereInput | Prisma.LeadScalarWhereInput[]
 }
 
@@ -699,18 +706,34 @@ export type LeadUncheckedUpdateManyWithoutCreatedByNestedInput = {
   deleteMany?: Prisma.LeadScalarWhereInput | Prisma.LeadScalarWhereInput[]
 }
 
-export type LeadUncheckedUpdateManyWithoutQualifiedByNestedInput = {
-  create?: Prisma.XOR<Prisma.LeadCreateWithoutQualifiedByInput, Prisma.LeadUncheckedCreateWithoutQualifiedByInput> | Prisma.LeadCreateWithoutQualifiedByInput[] | Prisma.LeadUncheckedCreateWithoutQualifiedByInput[]
-  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutQualifiedByInput | Prisma.LeadCreateOrConnectWithoutQualifiedByInput[]
-  upsert?: Prisma.LeadUpsertWithWhereUniqueWithoutQualifiedByInput | Prisma.LeadUpsertWithWhereUniqueWithoutQualifiedByInput[]
-  createMany?: Prisma.LeadCreateManyQualifiedByInputEnvelope
+export type LeadUncheckedUpdateManyWithoutOutcomeByNestedInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutOutcomeByInput, Prisma.LeadUncheckedCreateWithoutOutcomeByInput> | Prisma.LeadCreateWithoutOutcomeByInput[] | Prisma.LeadUncheckedCreateWithoutOutcomeByInput[]
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutOutcomeByInput | Prisma.LeadCreateOrConnectWithoutOutcomeByInput[]
+  upsert?: Prisma.LeadUpsertWithWhereUniqueWithoutOutcomeByInput | Prisma.LeadUpsertWithWhereUniqueWithoutOutcomeByInput[]
+  createMany?: Prisma.LeadCreateManyOutcomeByInputEnvelope
   set?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
   disconnect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
   delete?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
   connect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
-  update?: Prisma.LeadUpdateWithWhereUniqueWithoutQualifiedByInput | Prisma.LeadUpdateWithWhereUniqueWithoutQualifiedByInput[]
-  updateMany?: Prisma.LeadUpdateManyWithWhereWithoutQualifiedByInput | Prisma.LeadUpdateManyWithWhereWithoutQualifiedByInput[]
+  update?: Prisma.LeadUpdateWithWhereUniqueWithoutOutcomeByInput | Prisma.LeadUpdateWithWhereUniqueWithoutOutcomeByInput[]
+  updateMany?: Prisma.LeadUpdateManyWithWhereWithoutOutcomeByInput | Prisma.LeadUpdateManyWithWhereWithoutOutcomeByInput[]
   deleteMany?: Prisma.LeadScalarWhereInput | Prisma.LeadScalarWhereInput[]
+}
+
+export type LeadCreateNestedOneWithoutNotificationsInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutNotificationsInput, Prisma.LeadUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutNotificationsInput
+  connect?: Prisma.LeadWhereUniqueInput
+}
+
+export type LeadUpdateOneWithoutNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutNotificationsInput, Prisma.LeadUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutNotificationsInput
+  upsert?: Prisma.LeadUpsertWithoutNotificationsInput
+  disconnect?: Prisma.LeadWhereInput | boolean
+  delete?: Prisma.LeadWhereInput | boolean
+  connect?: Prisma.LeadWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LeadUpdateToOneWithWhereWithoutNotificationsInput, Prisma.LeadUpdateWithoutNotificationsInput>, Prisma.LeadUncheckedUpdateWithoutNotificationsInput>
 }
 
 export type EnumLeadSourceFieldUpdateOperationsInput = {
@@ -723,10 +746,6 @@ export type NullableEnumDeliveryProductFieldUpdateOperationsInput = {
 
 export type EnumLeadStatusFieldUpdateOperationsInput = {
   set?: $Enums.LeadStatus
-}
-
-export type EnumQualificationStateFieldUpdateOperationsInput = {
-  set?: $Enums.QualificationState
 }
 
 export type LeadCreateNestedOneWithoutQuoteRequestsInput = {
@@ -771,14 +790,15 @@ export type LeadCreateWithoutCreatedByInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  qualifiedBy?: Prisma.UserCreateNestedOneWithoutQualifiedLeadsInput
+  outcomeBy?: Prisma.UserCreateNestedOneWithoutOutcomeLeadsInput
   quoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutLeadInput
   auditLogs?: Prisma.CommercialAuditLogCreateNestedManyWithoutLeadInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUncheckedCreateWithoutCreatedByInput = {
@@ -793,14 +813,15 @@ export type LeadUncheckedCreateWithoutCreatedByInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
-  qualifiedById?: string | null
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
+  outcomeById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   quoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutLeadInput
   auditLogs?: Prisma.CommercialAuditLogUncheckedCreateNestedManyWithoutLeadInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type LeadCreateOrConnectWithoutCreatedByInput = {
@@ -813,7 +834,7 @@ export type LeadCreateManyCreatedByInputEnvelope = {
   skipDuplicates?: boolean
 }
 
-export type LeadCreateWithoutQualifiedByInput = {
+export type LeadCreateWithoutOutcomeByInput = {
   id?: string
   referenceNumber: string
   companyName: string
@@ -825,17 +846,18 @@ export type LeadCreateWithoutQualifiedByInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  createdBy: Prisma.UserCreateNestedOneWithoutCreatedLeadsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedLeadsInput
   quoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutLeadInput
   auditLogs?: Prisma.CommercialAuditLogCreateNestedManyWithoutLeadInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutLeadInput
 }
 
-export type LeadUncheckedCreateWithoutQualifiedByInput = {
+export type LeadUncheckedCreateWithoutOutcomeByInput = {
   id?: string
   referenceNumber: string
   companyName: string
@@ -847,23 +869,24 @@ export type LeadUncheckedCreateWithoutQualifiedByInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
-  createdById: string
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
+  createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   quoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutLeadInput
   auditLogs?: Prisma.CommercialAuditLogUncheckedCreateNestedManyWithoutLeadInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutLeadInput
 }
 
-export type LeadCreateOrConnectWithoutQualifiedByInput = {
+export type LeadCreateOrConnectWithoutOutcomeByInput = {
   where: Prisma.LeadWhereUniqueInput
-  create: Prisma.XOR<Prisma.LeadCreateWithoutQualifiedByInput, Prisma.LeadUncheckedCreateWithoutQualifiedByInput>
+  create: Prisma.XOR<Prisma.LeadCreateWithoutOutcomeByInput, Prisma.LeadUncheckedCreateWithoutOutcomeByInput>
 }
 
-export type LeadCreateManyQualifiedByInputEnvelope = {
-  data: Prisma.LeadCreateManyQualifiedByInput | Prisma.LeadCreateManyQualifiedByInput[]
+export type LeadCreateManyOutcomeByInputEnvelope = {
+  data: Prisma.LeadCreateManyOutcomeByInput | Prisma.LeadCreateManyOutcomeByInput[]
   skipDuplicates?: boolean
 }
 
@@ -898,29 +921,137 @@ export type LeadScalarWhereInput = {
   productInterest?: Prisma.EnumDeliveryProductNullableFilter<"Lead"> | $Enums.DeliveryProduct | null
   notes?: Prisma.StringNullableFilter<"Lead"> | string | null
   status?: Prisma.EnumLeadStatusFilter<"Lead"> | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFilter<"Lead"> | $Enums.QualificationState
-  qualificationReason?: Prisma.StringNullableFilter<"Lead"> | string | null
-  qualifiedAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
-  qualifiedById?: Prisma.StringNullableFilter<"Lead"> | string | null
-  createdById?: Prisma.StringFilter<"Lead"> | string
+  zohoCustomerId?: Prisma.StringNullableFilter<"Lead"> | string | null
+  outcomeReason?: Prisma.StringNullableFilter<"Lead"> | string | null
+  outcomeAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
+  outcomeById?: Prisma.StringNullableFilter<"Lead"> | string | null
+  createdById?: Prisma.StringNullableFilter<"Lead"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Lead"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Lead"> | Date | string
 }
 
-export type LeadUpsertWithWhereUniqueWithoutQualifiedByInput = {
+export type LeadUpsertWithWhereUniqueWithoutOutcomeByInput = {
   where: Prisma.LeadWhereUniqueInput
-  update: Prisma.XOR<Prisma.LeadUpdateWithoutQualifiedByInput, Prisma.LeadUncheckedUpdateWithoutQualifiedByInput>
-  create: Prisma.XOR<Prisma.LeadCreateWithoutQualifiedByInput, Prisma.LeadUncheckedCreateWithoutQualifiedByInput>
+  update: Prisma.XOR<Prisma.LeadUpdateWithoutOutcomeByInput, Prisma.LeadUncheckedUpdateWithoutOutcomeByInput>
+  create: Prisma.XOR<Prisma.LeadCreateWithoutOutcomeByInput, Prisma.LeadUncheckedCreateWithoutOutcomeByInput>
 }
 
-export type LeadUpdateWithWhereUniqueWithoutQualifiedByInput = {
+export type LeadUpdateWithWhereUniqueWithoutOutcomeByInput = {
   where: Prisma.LeadWhereUniqueInput
-  data: Prisma.XOR<Prisma.LeadUpdateWithoutQualifiedByInput, Prisma.LeadUncheckedUpdateWithoutQualifiedByInput>
+  data: Prisma.XOR<Prisma.LeadUpdateWithoutOutcomeByInput, Prisma.LeadUncheckedUpdateWithoutOutcomeByInput>
 }
 
-export type LeadUpdateManyWithWhereWithoutQualifiedByInput = {
+export type LeadUpdateManyWithWhereWithoutOutcomeByInput = {
   where: Prisma.LeadScalarWhereInput
-  data: Prisma.XOR<Prisma.LeadUpdateManyMutationInput, Prisma.LeadUncheckedUpdateManyWithoutQualifiedByInput>
+  data: Prisma.XOR<Prisma.LeadUpdateManyMutationInput, Prisma.LeadUncheckedUpdateManyWithoutOutcomeByInput>
+}
+
+export type LeadCreateWithoutNotificationsInput = {
+  id?: string
+  referenceNumber: string
+  companyName: string
+  contactPerson?: string | null
+  phone?: string | null
+  email?: string | null
+  location?: string | null
+  source: $Enums.LeadSource
+  productInterest?: $Enums.DeliveryProduct | null
+  notes?: string | null
+  status?: $Enums.LeadStatus
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  outcomeBy?: Prisma.UserCreateNestedOneWithoutOutcomeLeadsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedLeadsInput
+  quoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutLeadInput
+  auditLogs?: Prisma.CommercialAuditLogCreateNestedManyWithoutLeadInput
+}
+
+export type LeadUncheckedCreateWithoutNotificationsInput = {
+  id?: string
+  referenceNumber: string
+  companyName: string
+  contactPerson?: string | null
+  phone?: string | null
+  email?: string | null
+  location?: string | null
+  source: $Enums.LeadSource
+  productInterest?: $Enums.DeliveryProduct | null
+  notes?: string | null
+  status?: $Enums.LeadStatus
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
+  outcomeById?: string | null
+  createdById?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  quoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutLeadInput
+  auditLogs?: Prisma.CommercialAuditLogUncheckedCreateNestedManyWithoutLeadInput
+}
+
+export type LeadCreateOrConnectWithoutNotificationsInput = {
+  where: Prisma.LeadWhereUniqueInput
+  create: Prisma.XOR<Prisma.LeadCreateWithoutNotificationsInput, Prisma.LeadUncheckedCreateWithoutNotificationsInput>
+}
+
+export type LeadUpsertWithoutNotificationsInput = {
+  update: Prisma.XOR<Prisma.LeadUpdateWithoutNotificationsInput, Prisma.LeadUncheckedUpdateWithoutNotificationsInput>
+  create: Prisma.XOR<Prisma.LeadCreateWithoutNotificationsInput, Prisma.LeadUncheckedCreateWithoutNotificationsInput>
+  where?: Prisma.LeadWhereInput
+}
+
+export type LeadUpdateToOneWithWhereWithoutNotificationsInput = {
+  where?: Prisma.LeadWhereInput
+  data: Prisma.XOR<Prisma.LeadUpdateWithoutNotificationsInput, Prisma.LeadUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type LeadUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
+  productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  outcomeBy?: Prisma.UserUpdateOneWithoutOutcomeLeadsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedLeadsNestedInput
+  quoteRequests?: Prisma.QuoteRequestUpdateManyWithoutLeadNestedInput
+  auditLogs?: Prisma.CommercialAuditLogUpdateManyWithoutLeadNestedInput
+}
+
+export type LeadUncheckedUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
+  productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outcomeById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  quoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutLeadNestedInput
+  auditLogs?: Prisma.CommercialAuditLogUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadCreateWithoutQuoteRequestsInput = {
@@ -935,14 +1066,15 @@ export type LeadCreateWithoutQuoteRequestsInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  qualifiedBy?: Prisma.UserCreateNestedOneWithoutQualifiedLeadsInput
-  createdBy: Prisma.UserCreateNestedOneWithoutCreatedLeadsInput
+  outcomeBy?: Prisma.UserCreateNestedOneWithoutOutcomeLeadsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedLeadsInput
   auditLogs?: Prisma.CommercialAuditLogCreateNestedManyWithoutLeadInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUncheckedCreateWithoutQuoteRequestsInput = {
@@ -957,14 +1089,15 @@ export type LeadUncheckedCreateWithoutQuoteRequestsInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
-  qualifiedById?: string | null
-  createdById: string
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
+  outcomeById?: string | null
+  createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   auditLogs?: Prisma.CommercialAuditLogUncheckedCreateNestedManyWithoutLeadInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type LeadCreateOrConnectWithoutQuoteRequestsInput = {
@@ -995,14 +1128,15 @@ export type LeadUpdateWithoutQuoteRequestsInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  qualifiedBy?: Prisma.UserUpdateOneWithoutQualifiedLeadsNestedInput
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedLeadsNestedInput
+  outcomeBy?: Prisma.UserUpdateOneWithoutOutcomeLeadsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedLeadsNestedInput
   auditLogs?: Prisma.CommercialAuditLogUpdateManyWithoutLeadNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateWithoutQuoteRequestsInput = {
@@ -1017,14 +1151,15 @@ export type LeadUncheckedUpdateWithoutQuoteRequestsInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifiedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outcomeById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auditLogs?: Prisma.CommercialAuditLogUncheckedUpdateManyWithoutLeadNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadCreateWithoutAuditLogsInput = {
@@ -1039,14 +1174,15 @@ export type LeadCreateWithoutAuditLogsInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  qualifiedBy?: Prisma.UserCreateNestedOneWithoutQualifiedLeadsInput
-  createdBy: Prisma.UserCreateNestedOneWithoutCreatedLeadsInput
+  outcomeBy?: Prisma.UserCreateNestedOneWithoutOutcomeLeadsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedLeadsInput
   quoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutLeadInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUncheckedCreateWithoutAuditLogsInput = {
@@ -1061,14 +1197,15 @@ export type LeadUncheckedCreateWithoutAuditLogsInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
-  qualifiedById?: string | null
-  createdById: string
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
+  outcomeById?: string | null
+  createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   quoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutLeadInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type LeadCreateOrConnectWithoutAuditLogsInput = {
@@ -1099,14 +1236,15 @@ export type LeadUpdateWithoutAuditLogsInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  qualifiedBy?: Prisma.UserUpdateOneWithoutQualifiedLeadsNestedInput
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedLeadsNestedInput
+  outcomeBy?: Prisma.UserUpdateOneWithoutOutcomeLeadsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedLeadsNestedInput
   quoteRequests?: Prisma.QuoteRequestUpdateManyWithoutLeadNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateWithoutAuditLogsInput = {
@@ -1121,14 +1259,15 @@ export type LeadUncheckedUpdateWithoutAuditLogsInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifiedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outcomeById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutLeadNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadCreateManyCreatedByInput = {
@@ -1143,15 +1282,15 @@ export type LeadCreateManyCreatedByInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
-  qualifiedById?: string | null
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
+  outcomeById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
-export type LeadCreateManyQualifiedByInput = {
+export type LeadCreateManyOutcomeByInput = {
   id?: string
   referenceNumber: string
   companyName: string
@@ -1163,10 +1302,10 @@ export type LeadCreateManyQualifiedByInput = {
   productInterest?: $Enums.DeliveryProduct | null
   notes?: string | null
   status?: $Enums.LeadStatus
-  qualificationState?: $Enums.QualificationState
-  qualificationReason?: string | null
-  qualifiedAt?: Date | string | null
-  createdById: string
+  zohoCustomerId?: string | null
+  outcomeReason?: string | null
+  outcomeAt?: Date | string | null
+  createdById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1183,14 +1322,15 @@ export type LeadUpdateWithoutCreatedByInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  qualifiedBy?: Prisma.UserUpdateOneWithoutQualifiedLeadsNestedInput
+  outcomeBy?: Prisma.UserUpdateOneWithoutOutcomeLeadsNestedInput
   quoteRequests?: Prisma.QuoteRequestUpdateManyWithoutLeadNestedInput
   auditLogs?: Prisma.CommercialAuditLogUpdateManyWithoutLeadNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateWithoutCreatedByInput = {
@@ -1205,14 +1345,15 @@ export type LeadUncheckedUpdateWithoutCreatedByInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifiedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outcomeById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutLeadNestedInput
   auditLogs?: Prisma.CommercialAuditLogUncheckedUpdateManyWithoutLeadNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateManyWithoutCreatedByInput = {
@@ -1227,15 +1368,15 @@ export type LeadUncheckedUpdateManyWithoutCreatedByInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  qualifiedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outcomeById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type LeadUpdateWithoutQualifiedByInput = {
+export type LeadUpdateWithoutOutcomeByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1247,17 +1388,18 @@ export type LeadUpdateWithoutQualifiedByInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedLeadsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedLeadsNestedInput
   quoteRequests?: Prisma.QuoteRequestUpdateManyWithoutLeadNestedInput
   auditLogs?: Prisma.CommercialAuditLogUpdateManyWithoutLeadNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutLeadNestedInput
 }
 
-export type LeadUncheckedUpdateWithoutQualifiedByInput = {
+export type LeadUncheckedUpdateWithoutOutcomeByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1269,17 +1411,18 @@ export type LeadUncheckedUpdateWithoutQualifiedByInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutLeadNestedInput
   auditLogs?: Prisma.CommercialAuditLogUncheckedUpdateManyWithoutLeadNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutLeadNestedInput
 }
 
-export type LeadUncheckedUpdateManyWithoutQualifiedByInput = {
+export type LeadUncheckedUpdateManyWithoutOutcomeByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1291,10 +1434,10 @@ export type LeadUncheckedUpdateManyWithoutQualifiedByInput = {
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
-  qualificationState?: Prisma.EnumQualificationStateFieldUpdateOperationsInput | $Enums.QualificationState
-  qualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  qualifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1307,11 +1450,13 @@ export type LeadUncheckedUpdateManyWithoutQualifiedByInput = {
 export type LeadCountOutputType = {
   quoteRequests: number
   auditLogs: number
+  notifications: number
 }
 
 export type LeadCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   quoteRequests?: boolean | LeadCountOutputTypeCountQuoteRequestsArgs
   auditLogs?: boolean | LeadCountOutputTypeCountAuditLogsArgs
+  notifications?: boolean | LeadCountOutputTypeCountNotificationsArgs
 }
 
 /**
@@ -1338,6 +1483,13 @@ export type LeadCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.CommercialAuditLogWhereInput
 }
 
+/**
+ * LeadCountOutputType without action
+ */
+export type LeadCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
+
 
 export type LeadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1351,17 +1503,18 @@ export type LeadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   productInterest?: boolean
   notes?: boolean
   status?: boolean
-  qualificationState?: boolean
-  qualificationReason?: boolean
-  qualifiedAt?: boolean
-  qualifiedById?: boolean
+  zohoCustomerId?: boolean
+  outcomeReason?: boolean
+  outcomeAt?: boolean
+  outcomeById?: boolean
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  qualifiedBy?: boolean | Prisma.Lead$qualifiedByArgs<ExtArgs>
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  outcomeBy?: boolean | Prisma.Lead$outcomeByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Lead$createdByArgs<ExtArgs>
   quoteRequests?: boolean | Prisma.Lead$quoteRequestsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Lead$auditLogsArgs<ExtArgs>
+  notifications?: boolean | Prisma.Lead$notificationsArgs<ExtArgs>
   _count?: boolean | Prisma.LeadCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["lead"]>
 
@@ -1377,15 +1530,15 @@ export type LeadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   productInterest?: boolean
   notes?: boolean
   status?: boolean
-  qualificationState?: boolean
-  qualificationReason?: boolean
-  qualifiedAt?: boolean
-  qualifiedById?: boolean
+  zohoCustomerId?: boolean
+  outcomeReason?: boolean
+  outcomeAt?: boolean
+  outcomeById?: boolean
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  qualifiedBy?: boolean | Prisma.Lead$qualifiedByArgs<ExtArgs>
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  outcomeBy?: boolean | Prisma.Lead$outcomeByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Lead$createdByArgs<ExtArgs>
 }, ExtArgs["result"]["lead"]>
 
 export type LeadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1400,15 +1553,15 @@ export type LeadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   productInterest?: boolean
   notes?: boolean
   status?: boolean
-  qualificationState?: boolean
-  qualificationReason?: boolean
-  qualifiedAt?: boolean
-  qualifiedById?: boolean
+  zohoCustomerId?: boolean
+  outcomeReason?: boolean
+  outcomeAt?: boolean
+  outcomeById?: boolean
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  qualifiedBy?: boolean | Prisma.Lead$qualifiedByArgs<ExtArgs>
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  outcomeBy?: boolean | Prisma.Lead$outcomeByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Lead$createdByArgs<ExtArgs>
 }, ExtArgs["result"]["lead"]>
 
 export type LeadSelectScalar = {
@@ -1423,39 +1576,41 @@ export type LeadSelectScalar = {
   productInterest?: boolean
   notes?: boolean
   status?: boolean
-  qualificationState?: boolean
-  qualificationReason?: boolean
-  qualifiedAt?: boolean
-  qualifiedById?: boolean
+  zohoCustomerId?: boolean
+  outcomeReason?: boolean
+  outcomeAt?: boolean
+  outcomeById?: boolean
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "referenceNumber" | "companyName" | "contactPerson" | "phone" | "email" | "location" | "source" | "productInterest" | "notes" | "status" | "qualificationState" | "qualificationReason" | "qualifiedAt" | "qualifiedById" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
+export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "referenceNumber" | "companyName" | "contactPerson" | "phone" | "email" | "location" | "source" | "productInterest" | "notes" | "status" | "zohoCustomerId" | "outcomeReason" | "outcomeAt" | "outcomeById" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
 export type LeadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  qualifiedBy?: boolean | Prisma.Lead$qualifiedByArgs<ExtArgs>
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  outcomeBy?: boolean | Prisma.Lead$outcomeByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Lead$createdByArgs<ExtArgs>
   quoteRequests?: boolean | Prisma.Lead$quoteRequestsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Lead$auditLogsArgs<ExtArgs>
+  notifications?: boolean | Prisma.Lead$notificationsArgs<ExtArgs>
   _count?: boolean | Prisma.LeadCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LeadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  qualifiedBy?: boolean | Prisma.Lead$qualifiedByArgs<ExtArgs>
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  outcomeBy?: boolean | Prisma.Lead$outcomeByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Lead$createdByArgs<ExtArgs>
 }
 export type LeadIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  qualifiedBy?: boolean | Prisma.Lead$qualifiedByArgs<ExtArgs>
-  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  outcomeBy?: boolean | Prisma.Lead$outcomeByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Lead$createdByArgs<ExtArgs>
 }
 
 export type $LeadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Lead"
   objects: {
-    qualifiedBy: Prisma.$UserPayload<ExtArgs> | null
-    createdBy: Prisma.$UserPayload<ExtArgs>
+    outcomeBy: Prisma.$UserPayload<ExtArgs> | null
+    createdBy: Prisma.$UserPayload<ExtArgs> | null
     quoteRequests: Prisma.$QuoteRequestPayload<ExtArgs>[]
     auditLogs: Prisma.$CommercialAuditLogPayload<ExtArgs>[]
+    notifications: Prisma.$NotificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1469,11 +1624,11 @@ export type $LeadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     productInterest: $Enums.DeliveryProduct | null
     notes: string | null
     status: $Enums.LeadStatus
-    qualificationState: $Enums.QualificationState
-    qualificationReason: string | null
-    qualifiedAt: Date | null
-    qualifiedById: string | null
-    createdById: string
+    zohoCustomerId: string | null
+    outcomeReason: string | null
+    outcomeAt: Date | null
+    outcomeById: string | null
+    createdById: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["lead"]>
@@ -1870,10 +2025,11 @@ readonly fields: LeadFieldRefs;
  */
 export interface Prisma__LeadClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  qualifiedBy<T extends Prisma.Lead$qualifiedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$qualifiedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  outcomeBy<T extends Prisma.Lead$outcomeByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$outcomeByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  createdBy<T extends Prisma.Lead$createdByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$createdByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   quoteRequests<T extends Prisma.Lead$quoteRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$quoteRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuoteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.Lead$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommercialAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notifications<T extends Prisma.Lead$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1914,10 +2070,10 @@ export interface LeadFieldRefs {
   readonly productInterest: Prisma.FieldRef<"Lead", 'DeliveryProduct'>
   readonly notes: Prisma.FieldRef<"Lead", 'String'>
   readonly status: Prisma.FieldRef<"Lead", 'LeadStatus'>
-  readonly qualificationState: Prisma.FieldRef<"Lead", 'QualificationState'>
-  readonly qualificationReason: Prisma.FieldRef<"Lead", 'String'>
-  readonly qualifiedAt: Prisma.FieldRef<"Lead", 'DateTime'>
-  readonly qualifiedById: Prisma.FieldRef<"Lead", 'String'>
+  readonly zohoCustomerId: Prisma.FieldRef<"Lead", 'String'>
+  readonly outcomeReason: Prisma.FieldRef<"Lead", 'String'>
+  readonly outcomeAt: Prisma.FieldRef<"Lead", 'DateTime'>
+  readonly outcomeById: Prisma.FieldRef<"Lead", 'String'>
   readonly createdById: Prisma.FieldRef<"Lead", 'String'>
   readonly createdAt: Prisma.FieldRef<"Lead", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Lead", 'DateTime'>
@@ -2322,9 +2478,28 @@ export type LeadDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * Lead.qualifiedBy
+ * Lead.outcomeBy
  */
-export type Lead$qualifiedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Lead$outcomeByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * Lead.createdBy
+ */
+export type Lead$createdByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the User
    */
@@ -2386,6 +2561,30 @@ export type Lead$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.CommercialAuditLogScalarFieldEnum | Prisma.CommercialAuditLogScalarFieldEnum[]
+}
+
+/**
+ * Lead.notifications
+ */
+export type Lead$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**

@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import {
   toOutcomeNumber,
 } from "@/lib/outcomes/decimal";
+import {
+  OutcomeAchievementEntry,
+} from "@/components/outcomes/OutcomeAchievementEntry";
 import type {
   OutcomeProduct,
 } from "@/generated/prisma/client";
@@ -167,33 +170,44 @@ export default async function OutcomesPage({
    * Existing targets.
    */
   const existingTargets =
-  isOutcomeProductActive(
-    selectedProduct
-  )
-    ? (
-        await prisma.outcomeTarget.findMany({
-          where: {
-            product: selectedProduct,
-            year: selectedYear,
-            month: selectedMonth,
-            userId: {
-              in: staffIds,
+    isOutcomeProductActive(
+      selectedProduct
+    )
+      ? (
+          await prisma.outcomeTarget.findMany({
+            where: {
+              product: selectedProduct,
+              year: selectedYear,
+              month: selectedMonth,
+              userId: {
+                in: staffIds,
+              },
             },
-          },
-          select: {
-            userId: true,
-            targetValue: true,
-            unit: true,
-          },
-        })
-      ).map((target) => ({
-        userId: target.userId,
-        targetValue: toOutcomeNumber(
-          target.targetValue
-        ),
-        unit: target.unit,
-      }))
-    : [];
+            select: {
+              userId: true,
+              targetQuantity: true,
+              targetMarginPerUnit: true,
+              targetValue: true,
+              unit: true,
+            },
+          })
+        ).map((target) => ({
+          userId: target.userId,
+          targetQuantity: toOutcomeNumber(
+            target.targetQuantity
+          ),
+          targetMarginPerUnit:
+            target.targetMarginPerUnit === null
+              ? null
+              : toOutcomeNumber(
+                  target.targetMarginPerUnit
+                ),
+          targetValue: toOutcomeNumber(
+            target.targetQuantity
+          ),
+          unit: target.unit,
+        }))
+      : [];
 
   /*
    * Existing achievements.
@@ -214,18 +228,79 @@ export default async function OutcomesPage({
           },
           select: {
             userId: true,
-            achievedValue: true,
+            achievedQuantity: true,
             unit: true,
           },
         })
       ).map((achievement) => ({
         userId: achievement.userId,
         achievedValue: toOutcomeNumber(
-          achievement.achievedValue
+          achievement.achievedQuantity
         ),
         unit: achievement.unit,
       }))
     : [];
+
+    const currentUserAchievement =
+  isOutcomeProductActive(
+    selectedProduct
+  )
+    ? await prisma.outcomeAchievement.findUnique({
+        where: {
+          userId_product_year_month: {
+            userId: currentUser.id,
+            product: selectedProduct,
+            year: selectedYear,
+            month: selectedMonth,
+          },
+        },
+        select: {
+          achievedQuantity: true,
+          achievedMarginPerUnit: true,
+          achievedGeneratedValue: true,
+          unit: true,
+        },
+      })
+    : null;
+
+    const currentUserTarget =
+      existingTargets.find(
+        (target) =>
+          target.userId ===
+          currentUser.id
+      ) ?? null;
+
+    const currentUserAchievementForEntry =
+  currentUserAchievement
+    ? {
+        achievedQuantity:
+          currentUserAchievement.achievedQuantity !==
+          null
+            ? toOutcomeNumber(
+                currentUserAchievement.achievedQuantity
+              )
+            : null,
+
+        achievedMarginPerUnit:
+          currentUserAchievement.achievedMarginPerUnit !==
+          null
+            ? toOutcomeNumber(
+                currentUserAchievement.achievedMarginPerUnit
+              )
+            : null,
+
+        achievedGeneratedValue:
+          currentUserAchievement.achievedGeneratedValue !==
+          null
+            ? toOutcomeNumber(
+                currentUserAchievement.achievedGeneratedValue
+              )
+            : null,
+
+        unit:
+          currentUserAchievement.unit,
+      }
+    : null;
 
   const targetMap =
     new Map(
@@ -710,12 +785,9 @@ export default async function OutcomesPage({
           {/* =================================================
               ADMIN TARGET CONSOLE
           ================================================== */}
-
           {isAdmin &&
-            isOutcomeProductActive(
-              selectedProduct
-            ) && (
-              <OutcomeTargetConsole
+          isOutcomeProductActive(selectedProduct) && (
+            <OutcomeTargetConsole
                 year={
                   selectedYear
                 }
@@ -732,7 +804,28 @@ export default async function OutcomesPage({
                   existingTargets
                 }
               />
-            )}
+          )}
+
+          {!isAdmin &&
+            isOutcomeProductActive(
+              selectedProduct
+            ) && (
+              <OutcomeAchievementEntry
+                year={selectedYear}
+                month={selectedMonth}
+                product={selectedProduct}
+                unit={
+                  currentUserTarget?.unit ??
+                  null
+                }
+                hasTarget={
+                  currentUserTarget !== null
+                }
+                existingAchievement={
+                  currentUserAchievementForEntry
+                }
+              />
+  )}
         </section>
       </section>
     </main>

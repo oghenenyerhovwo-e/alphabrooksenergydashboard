@@ -58,11 +58,14 @@ export const ModelName = {
   DeliveryAuditLog: 'DeliveryAuditLog',
   VehiclePreTripInspection: 'VehiclePreTripInspection',
   User: 'User',
+  Notification: 'Notification',
   Session: 'Session',
   LeadReferenceCounter: 'LeadReferenceCounter',
   QuoteRequestReferenceCounter: 'QuoteRequestReferenceCounter',
+  InternalOrderReferenceCounter: 'InternalOrderReferenceCounter',
   Lead: 'Lead',
   QuoteRequest: 'QuoteRequest',
+  InternalOrder: 'InternalOrder',
   CommercialAuditLog: 'CommercialAuditLog',
   OperationsDailyReport: 'OperationsDailyReport',
   OutcomeTarget: 'OutcomeTarget',
@@ -217,6 +220,21 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  recipientId: 'recipientId',
+  leadId: 'leadId',
+  title: 'title',
+  message: 'message',
+  readAt: 'readAt',
+  createdAt: 'createdAt',
+  internalOrderId: 'internalOrderId',
+  link: 'link'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
 export const SessionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -247,6 +265,14 @@ export const QuoteRequestReferenceCounterScalarFieldEnum = {
 export type QuoteRequestReferenceCounterScalarFieldEnum = (typeof QuoteRequestReferenceCounterScalarFieldEnum)[keyof typeof QuoteRequestReferenceCounterScalarFieldEnum]
 
 
+export const InternalOrderReferenceCounterScalarFieldEnum = {
+  year: 'year',
+  lastSequence: 'lastSequence'
+} as const
+
+export type InternalOrderReferenceCounterScalarFieldEnum = (typeof InternalOrderReferenceCounterScalarFieldEnum)[keyof typeof InternalOrderReferenceCounterScalarFieldEnum]
+
+
 export const LeadScalarFieldEnum = {
   id: 'id',
   referenceNumber: 'referenceNumber',
@@ -259,10 +285,10 @@ export const LeadScalarFieldEnum = {
   productInterest: 'productInterest',
   notes: 'notes',
   status: 'status',
-  qualificationState: 'qualificationState',
-  qualificationReason: 'qualificationReason',
-  qualifiedAt: 'qualifiedAt',
-  qualifiedById: 'qualifiedById',
+  zohoCustomerId: 'zohoCustomerId',
+  outcomeReason: 'outcomeReason',
+  outcomeAt: 'outcomeAt',
+  outcomeById: 'outcomeById',
   createdById: 'createdById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -293,6 +319,24 @@ export const QuoteRequestScalarFieldEnum = {
 } as const
 
 export type QuoteRequestScalarFieldEnum = (typeof QuoteRequestScalarFieldEnum)[keyof typeof QuoteRequestScalarFieldEnum]
+
+
+export const InternalOrderScalarFieldEnum = {
+  id: 'id',
+  referenceNumber: 'referenceNumber',
+  zohoCustomerId: 'zohoCustomerId',
+  customerName: 'customerName',
+  product: 'product',
+  quantity: 'quantity',
+  deliveryLocation: 'deliveryLocation',
+  customerReference: 'customerReference',
+  notes: 'notes',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InternalOrderScalarFieldEnum = (typeof InternalOrderScalarFieldEnum)[keyof typeof InternalOrderScalarFieldEnum]
 
 
 export const CommercialAuditLogScalarFieldEnum = {
@@ -335,8 +379,10 @@ export const OutcomeTargetScalarFieldEnum = {
   product: 'product',
   year: 'year',
   month: 'month',
-  targetValue: 'targetValue',
+  targetQuantity: 'targetQuantity',
   unit: 'unit',
+  targetMarginPerUnit: 'targetMarginPerUnit',
+  targetGeneratedValue: 'targetGeneratedValue',
   createdById: 'createdById',
   updatedById: 'updatedById',
   createdAt: 'createdAt',
@@ -352,8 +398,10 @@ export const OutcomeAchievementScalarFieldEnum = {
   product: 'product',
   year: 'year',
   month: 'month',
-  achievedValue: 'achievedValue',
+  achievedQuantity: 'achievedQuantity',
   unit: 'unit',
+  achievedMarginPerUnit: 'achievedMarginPerUnit',
+  achievedGeneratedValue: 'achievedGeneratedValue',
   createdById: 'createdById',
   updatedById: 'updatedById',
   createdAt: 'createdAt',

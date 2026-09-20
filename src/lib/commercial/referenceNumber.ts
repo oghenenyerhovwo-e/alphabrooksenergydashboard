@@ -68,3 +68,28 @@ export async function generateQuoteRequestReferenceNumber(
 
   return `QR-${year}-${sequence}`;
 }
+
+export async function generateInternalOrderReferenceNumber(
+  referenceDate: Date = new Date()
+): Promise<string> {
+  const year = referenceDate.getFullYear();
+
+  const counter = await prisma.internalOrderReferenceCounter.upsert({
+    where: {
+      year,
+    },
+    create: {
+      year,
+      lastSequence: 1,
+    },
+    update: {
+      lastSequence: {
+        increment: 1,
+      },
+    },
+  });
+
+  const sequence = String(counter.lastSequence).padStart(4, "0");
+
+  return `ORD-${year}-${sequence}`;
+}

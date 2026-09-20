@@ -797,6 +797,10 @@ export type EnumQuoteRequestStatusFieldUpdateOperationsInput = {
   set?: $Enums.QuoteRequestStatus
 }
 
+export type EnumQualificationStateFieldUpdateOperationsInput = {
+  set?: $Enums.QualificationState
+}
+
 export type QuoteRequestCreateNestedOneWithoutAuditLogsInput = {
   create?: Prisma.XOR<Prisma.QuoteRequestCreateWithoutAuditLogsInput, Prisma.QuoteRequestUncheckedCreateWithoutAuditLogsInput>
   connectOrCreate?: Prisma.QuoteRequestCreateOrConnectWithoutAuditLogsInput

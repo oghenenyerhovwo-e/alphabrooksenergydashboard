@@ -1,30 +1,94 @@
+import { Prisma } from "@/generated/prisma/client";
+import {
+  type DecimalInput,
+  toOutcomeDecimal,
+  toOutcomeNumber,
+} from "@/lib/outcomes/decimal";
+
 /**
  * Outcomes derived business calculations.
  *
- * Nothing here is persisted (spec §17) — these are pure functions over
- * plain numbers, always called on values already unwrapped via
- * src/lib/outcomes/decimal.ts::toOutcomeNumber(OrNull).
+ * The authoritative financial calculation is:
  *
- * MISSING vs ZERO: every function that takes an "achievement" value
- * accepts `number | null`, where `null` means "no achievement record
- * exists for this staff/product/month" and `0` means "a record exists
- * and its value is zero." These are never conflated (spec §9/§16).
+ * quantity × margin per unit = generated value
  *
- * ZERO-DIVISION CONVENTION: matches the existing convention in
- * src/lib/cng/calculations.ts (calculateCompletionPercentage) — a
- * percentage with a zero or invalid denominator returns `null`, never
- * NaN or Infinity, and is never fabricated.
+ * Financial multiplication is performed with Prisma Decimal.
+ *
+ * Generic performance calculations such as achievement percentage,
+ * outstanding, team aggregation, and contribution continue to operate
+ * on plain numbers because they are generic ratio/aggregation
+ * functions. Callers should convert Decimal generated values to
+ * numbers at that boundary with toOutcomeNumber().
+ *
+ * MISSING vs ZERO:
+ *
+ * For achievement values:
+ * - null = no achievement record exists
+ * - 0    = an achievement record exists and its value is zero
+ *
+ * These states are intentionally kept separate.
+ *
+ * ZERO-DIVISION CONVENTION:
+ *
+ * A percentage with a zero, negative, or invalid denominator returns
+ * null rather than NaN or Infinity.
  */
 
+/**
+ * Round a percentage/derived display calculation to two decimal
+ * places.
+ *
+ * This preserves the existing Outcomes convention.
+ *
+ * Financial generated values themselves are NOT rounded here.
+ * They remain Decimal until persistence or an explicit presentation
+ * boundary.
+ */
 function roundToTwoDecimals(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
 /**
+ * Derive generated monetary value from quantity and margin per unit.
+ *
+ * Authoritative formula:
+ *
+ * quantity × margin = generated value
+ *
+ * The calculation is intentionally Decimal-based so that financial
+ * multiplication does not rely on JavaScript floating-point
+ * arithmetic.
+ *
+ * No validation policy is applied here. Negative values, if supplied,
+ * are mathematically calculated; the validation layer remains
+ * responsible for deciding whether such inputs are permitted.
+ *
+ * The returned Decimal is intentionally NOT rounded to two decimal
+ * places here. The database monetary field has its own scale, and
+ * subsequent calculations should avoid premature rounding.
+ */
+export function deriveOutcomeValue(
+  quantity: DecimalInput,
+  margin: DecimalInput
+): Prisma.Decimal {
+  const decimalQuantity = toOutcomeDecimal(quantity);
+  const decimalMargin = toOutcomeDecimal(margin);
+
+  return decimalQuantity.mul(decimalMargin);
+}
+
+/**
  * achievement / target × 100.
- * - `null` if achievement is missing (not yet entered).
- * - `null` if target is 0, negative, or not finite (never divide by zero).
- * - Achievement may exceed target — this can legitimately return > 100.
+ *
+ * - null if achievement is missing.
+ * - null if target is zero, negative, or not finite.
+ * - achievement may exceed target.
+ *
+ * This function is deliberately generic. It can be used for:
+ *
+ * actual generated value / target generated value
+ *
+ * as well as other numerical performance ratios where required.
  */
 export function calculateAchievementPercentage(
   achievement: number | null,
@@ -32,49 +96,94 @@ export function calculateAchievementPercentage(
 ): number | null {
   if (achievement === null) return null;
   if (!Number.isFinite(target) || target <= 0) return null;
+  if (!Number.isFinite(achievement)) return null;
+
   return roundToTwoDecimals((achievement / target) * 100);
 }
 
 /**
- * max(target - achievement, 0). Achievement is NEVER capped at target
- * (spec §15) — outstanding simply floors at zero once target is met or
- * exceeded. A missing achievement is treated as "nothing recorded
- * toward this target yet," so the full target is outstanding — this is
- * a deliberate, documented choice (not a silent missing→0 coercion of
- * the *achievement value itself*, which callers must still track
- * separately when they need to distinguish "0% - nothing entered" from
- * "0% - entered as zero" for display, per calculateAchievementPercentage above).
+ * Calculate outstanding value.
+ *
+ * Existing project convention:
+ *
+ * max(target - achievement, 0)
+ *
+ * A missing achievement is treated as zero for the purpose of
+ * outstanding calculation, meaning the full target remains
+ * outstanding.
+ *
+ * The original missing/zero distinction remains available to callers
+ * because the achievement argument itself still accepts null.
  */
-export function calculateOutstanding(target: number, achievement: number | null): number {
+export function calculateOutstanding(
+  target: number,
+  achievement: number | null
+): number {
   const achieved = achievement ?? 0;
+
+  if (!Number.isFinite(target)) return 0;
+  if (!Number.isFinite(achieved)) return Math.max(target, 0);
+
   return Math.max(target - achieved, 0);
 }
 
-/** Sum of individual targets. Targets are always concrete numbers (never "missing"). */
+/**
+ * Sum of individual target values.
+ *
+ * Targets are expected to be concrete numbers rather than null.
+ *
+ * In the margin-adjusted architecture, callers should pass generated
+ * target values here, NOT raw target quantities.
+ */
 export function calculateTeamTarget(targets: number[]): number {
-  return roundToTwoDecimals(targets.reduce((sum, t) => sum + t, 0));
+  return roundToTwoDecimals(
+    targets.reduce((sum, target) => sum + target, 0)
+  );
 }
 
 /**
- * Sum of ACTUAL ENTERED achievements only.
- * - Pass `null` for any staff member with no achievement record.
- * - Returns `null` if every entry is missing (no one has entered
- *   anything yet for this product/month) — this is NOT the same as a
- *   team achievement of 0, which means every eligible staff member
- *   entered a value and those values summed to zero.
+ * Sum of entered achievement values only.
+ *
+ * null means that no achievement record exists.
+ * 0 means that an achievement exists and its value is zero.
+ *
+ * If every entry is missing, return null.
+ *
+ * In the margin-adjusted architecture, callers should pass generated
+ * achievement values here, NOT raw quantities.
  */
-export function calculateTeamAchievement(achievements: Array<number | null>): number | null {
-  const entered = achievements.filter((a): a is number => a !== null);
+export function calculateTeamAchievement(
+  achievements: Array<number | null>
+): number | null {
+  const entered = achievements.filter(
+    (achievement): achievement is number => achievement !== null
+  );
+
   if (entered.length === 0) return null;
-  return roundToTwoDecimals(entered.reduce((sum, a) => sum + a, 0));
+
+  return roundToTwoDecimals(
+    entered.reduce((sum, achievement) => sum + achievement, 0)
+  );
 }
 
-/** max(teamTarget - teamAchievement, 0). Same missing-treated-as-zero rule as calculateOutstanding. */
-export function calculateTeamOutstanding(teamTarget: number, teamAchievement: number | null): number {
+/**
+ * Team outstanding value.
+ *
+ * Uses the same outstanding convention as individual performance.
+ */
+export function calculateTeamOutstanding(
+  teamTarget: number,
+  teamAchievement: number | null
+): number {
   return calculateOutstanding(teamTarget, teamAchievement);
 }
 
-/** teamAchievement / teamTarget × 100, same zero-division/missing rules as calculateAchievementPercentage. */
+/**
+ * Team achievement percentage.
+ *
+ * The supplied values should be generated monetary values when used
+ * for Outcomes performance.
+ */
 export function calculateTeamAchievementPercentage(
   teamAchievement: number | null,
   teamTarget: number
@@ -83,12 +192,15 @@ export function calculateTeamAchievementPercentage(
 }
 
 /**
- * individualAchievement / teamAchievement × 100.
- * - `null` if the individual has no achievement entered.
- * - `null` if the team achievement is missing (no one has entered anything) or is 0
- *   (a real, entered team total of zero — contribution to zero is undefined, not 0%).
- * NOTE: this is a DIFFERENT metric from achievement percentage (spec §5) —
- *   contribution is share-of-team-output, not progress-against-target.
+ * Individual contribution to team generated value.
+ *
+ * Formula:
+ *
+ * individual actual generated value
+ * -------------------------------- × 100
+ * team actual generated value
+ *
+ * Contribution is a share of team output, not progress against target.
  */
 export function calculateContributionPercentage(
   individualAchievement: number | null,
@@ -96,10 +208,21 @@ export function calculateContributionPercentage(
 ): number | null {
   if (individualAchievement === null) return null;
   if (teamAchievement === null || teamAchievement === 0) return null;
-  return roundToTwoDecimals((individualAchievement / teamAchievement) * 100);
+  if (!Number.isFinite(individualAchievement)) return null;
+  if (!Number.isFinite(teamAchievement)) return null;
+
+  return roundToTwoDecimals(
+    (individualAchievement / teamAchievement) * 100
+  );
 }
 
-/** Convenience bundle for one staff member's full monthly performance picture. */
+/**
+ * Convenience bundle for one staff member's monthly performance.
+ *
+ * These properties are intentionally generic numerical performance
+ * values. In the margin-adjusted Outcomes flow, `target` and
+ * `achievement` should represent generated monetary values.
+ */
 export interface StaffOutcomePerformance {
   target: number;
   achievement: number | null;
@@ -115,11 +238,19 @@ export function calculateStaffOutcomePerformance(
     target,
     achievement,
     outstanding: calculateOutstanding(target, achievement),
-    achievementPercentage: calculateAchievementPercentage(achievement, target),
+    achievementPercentage: calculateAchievementPercentage(
+      achievement,
+      target
+    ),
   };
 }
 
-/** Convenience bundle for a team's full monthly performance picture. */
+/**
+ * Convenience bundle for a team's monthly performance.
+ *
+ * The target and achievement arrays should contain generated monetary
+ * values when used for the margin-adjusted Outcomes system.
+ */
 export interface TeamOutcomePerformance {
   teamTarget: number;
   teamAchievement: number | null;
@@ -133,10 +264,28 @@ export function calculateTeamOutcomePerformance(
 ): TeamOutcomePerformance {
   const teamTarget = calculateTeamTarget(targets);
   const teamAchievement = calculateTeamAchievement(achievements);
+
   return {
     teamTarget,
     teamAchievement,
-    teamOutstanding: calculateTeamOutstanding(teamTarget, teamAchievement),
-    teamAchievementPercentage: calculateTeamAchievementPercentage(teamAchievement, teamTarget),
+    teamOutstanding: calculateTeamOutstanding(
+      teamTarget,
+      teamAchievement
+    ),
+    teamAchievementPercentage: calculateTeamAchievementPercentage(
+      teamAchievement,
+      teamTarget
+    ),
   };
+}
+
+/**
+ * Convenience helper for converting an authoritative generated value
+ * into the number representation expected by the existing generic
+ * performance calculation functions.
+ *
+ * This makes the Decimal → number boundary explicit.
+ */
+export function outcomeValueToNumber(value: DecimalInput): number {
+  return toOutcomeNumber(value);
 }

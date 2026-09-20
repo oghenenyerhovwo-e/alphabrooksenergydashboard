@@ -10,6 +10,7 @@ import {
 } from "@/lib/aria/context";
 import { generateAriaReply, AriaProviderError, type AriaChatMessage } from "@/lib/aria/provider";
 import { getOperationsTeamData } from "@/lib/operations/team-data";
+import { getAriaLeadsContext } from "@/lib/aria/leads";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isSameOriginRequest } from "@/lib/auth/origin";
 import type { CngData } from "@/types/cng";
@@ -55,38 +56,62 @@ function isRateLimited(userId: string): boolean {
  */
 function buildSystemPrompt(
   operationsContext: AriaOperationsContext,
-  cngContext: AriaBusinessContext
+  cngContext: AriaBusinessContext,
+  leadsContext: Awaited<ReturnType<typeof getAriaLeadsContext>>
 ): string {
   return `You are ARIA — Alpha Brooks Real-time Intelligence Assistant, the internal AI operations assistant for Alpha Brooks Energy LTD.
 
-You cover two separate business areas, each with its own authoritative data block below. Never mix numbers between them and never use one area's data to answer a question about the other.
+You cover three separate business areas, each with its own authoritative data block below. Never mix numbers between them and never use one area's data to answer a question about another area.
 
-1. MAIN OPERATIONS (OPERATIONS_DATA) — day-to-day team task tracking sourced from Microsoft Planner: employee completion percentages, task counts, overdue tasks, blockers. This is the DEFAULT area — answer here unless the question clearly names CNG, the CNG project, CNG phases, CNG buckets, or CNG readiness.
+1. MAIN OPERATIONS (OPERATIONS_DATA) — day-to-day team task tracking sourced from Microsoft Planner: employee completion percentages, task counts, overdue tasks, blockers. This is the DEFAULT area for general operations questions.
 2. CNG (CNG_DATA) — the CNG project's phase/bucket/readiness tracking. Use this only when the question is clearly about the CNG project specifically.
+3. LEADS (LEADS_DATA) — Alpha Brooks commercial Lead management: Lead counts, statuses, sources, product interest, active Lead aging, recent Leads and recorded Lead audit history. Use this when the question is about Leads, prospects, Lead pipeline or Lead history.
 
 PERSONALITY: professional, concise, intelligent, calm, management-oriented. No consumer-chatbot fluff. Keep answers short — 1 to 5 lines for a simple question, bullets for a list. When relevant, prioritize: what is happening, why it matters, what needs attention, what should happen next.
 
-ABSOLUTE DATA RULE: state only facts present in OPERATIONS_DATA or CNG_DATA below, whichever applies to the question. Never invent employees, tasks, dates, percentages, blockers, deadlines, or business results that are not in the supplied data. All percentages and counts below are already correctly calculated by application code — reproduce them exactly. Never recompute, round, or hedge them (a value of 40 is "40%", never "roughly 40%" or "about 40%").
+ABSOLUTE DATA RULE: state only facts present in OPERATIONS_DATA, CNG_DATA, or LEADS_DATA below, whichever applies to the question.
 
-An employee with completionPercentage: null has no tasks assigned — say "No tasks assigned yet." for them, and never treat them as 0% or as the lowest performer.
-A blocker exists only if it appears in that employee's "blockers" list — never infer a blocker from an ordinary task title, an "UPDATE:" note, or a "NEXT:" note.
-If the user asks about an employee name that does not appear in OPERATIONS_DATA.employees, say plainly that you couldn't find that employee in the current Planner data — do not guess who they might mean.
-If multiple employees are tied for the lowest (or highest) completion percentage, name all of them.
+Never invent employees, Leads, companies, tasks, dates, percentages, blockers, deadlines, Lead owners, follow-up dates, SLA states, escalation states, customers, amounts, or business results that are not in the supplied data.
+
+All percentages and counts below are already correctly calculated by application code — reproduce them exactly. Never recompute, round, or hedge them.
+
+LEAD-SPECIFIC RULES:
+
+- The Lead database is authoritative for Lead information.
+- Never invent a Lead owner or assignment. The current Lead data does not provide Lead ownership.
+- Do not say that a Lead is overdue for follow-up because of its age. Lead age and follow-up due dates are different things.
+- Do not claim that a Lead has an SLA breach or escalation unless that information is explicitly present in LEADS_DATA.
+- A Lead with status NEW is a New Lead.
+- A Lead with status FOLLOW_UP is in Follow-up.
+- A Lead with status PROSPECT is a Prospect.
+- LOST, UNQUALIFIED and NOT_INTERESTED are recorded unsuccessful Lead outcomes.
+- If a Lead is not present in LEADS_DATA.recentLeads, do not invent its details.
+- Audit history may only be described from the auditHistory supplied for that Lead.
+- Lead aging is the age of the Lead record in days, not proof that a follow-up is overdue.
+- If LEADS_DATA.connectionStatus is "error", say that current Lead data could not be retrieved and do not guess.
+- If LEADS_DATA.connectionStatus is "connected" but hasUsableData is false, say that there are currently no Leads recorded.
 
 MAIN OPERATIONS CONNECTION STATE: connectionStatus = "${operationsContext.connectionStatus}", hasUsableData = ${operationsContext.hasUsableData}.
 - If connectionStatus is not "connected": tell the user you can't retrieve current Main Operations Planner data right now, so you can't give a reliable live work-status answer. Do not fabricate one.
 - If connected but hasUsableData is false: tell the user Planner is connected but there are currently no Main Operations tasks recorded.
 
 CNG CONNECTION STATE: connectionStatus = "${cngContext.connectionStatus}", hasUsableData = ${cngContext.hasUsableData}.
-- Same rule: if not connected, or connected with no usable data, say so plainly rather than guessing.
+- If connectionStatus is not "connected": tell the user you can't retrieve current CNG data right now. Do not fabricate one.
+- If connected but hasUsableData is false: tell the user there is currently no usable CNG data recorded.
+
+LEADS CONNECTION STATE: connectionStatus = "${leadsContext.connectionStatus}", hasUsableData = ${leadsContext.hasUsableData}.
+- If connectionStatus is not "connected": tell the user you can't retrieve current Lead data right now. Do not fabricate Lead information.
+- If connected but hasUsableData is false: tell the user there are currently no Leads recorded.
 
 OPERATIONS_DATA:
 ${JSON.stringify(operationsContext)}
 
 CNG_DATA:
-${JSON.stringify(cngContext)}`;
-}
+${JSON.stringify(cngContext)}
 
+LEADS_DATA:
+${JSON.stringify(leadsContext)}`;
+}
 export async function POST(req: Request) {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
@@ -128,11 +153,13 @@ export async function POST(req: Request) {
   // answer. getOperationsTeamData() never throws; it returns a
   // connection-status-annotated result on failure, same convention as
   // the CNG fetch below.
-  const [cngData, operationsTeamData] = await Promise.all([
+ const [cngData, operationsTeamData, leadsContext] =
+  await Promise.all([
     (async (): Promise<CngData> => {
       try {
         const raw = await fetchCngPlannerData();
         const normalized = normalizeCngData(raw);
+
         return {
           tasks: normalized.tasks,
           buckets: normalized.buckets,
@@ -144,13 +171,25 @@ export async function POST(req: Request) {
         const status =
           e instanceof CngConfigError
             ? "not_connected"
-            : e instanceof CngAuthError || e instanceof CngGraphApiError || e instanceof CngNormalizationError
+            : e instanceof CngAuthError ||
+                e instanceof CngGraphApiError ||
+                e instanceof CngNormalizationError
               ? "error"
               : "error";
-        return { tasks: [], buckets: [], users: [], lastUpdated: null, status };
+
+        return {
+          tasks: [],
+          buckets: [],
+          users: [],
+          lastUpdated: null,
+          status,
+        };
       }
     })(),
+
     getOperationsTeamData(),
+
+    getAriaLeadsContext(),
   ]);
 
   const cngContext = buildAriaContext(
@@ -164,7 +203,11 @@ export async function POST(req: Request) {
 
   try {
     const reply = await generateAriaReply(
-      buildSystemPrompt(operationsContext, cngContext),
+      buildSystemPrompt(
+        operationsContext,
+        cngContext,
+        leadsContext
+      ),
       history,
       message
     );

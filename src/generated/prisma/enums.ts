@@ -91,8 +91,13 @@ export type LeadSource = (typeof LeadSource)[keyof typeof LeadSource]
 
 
 export const LeadStatus = {
-  ACTIVE: 'ACTIVE',
-  CLOSED: 'CLOSED'
+  NEW: 'NEW',
+  FOLLOW_UP: 'FOLLOW_UP',
+  PROSPECT: 'PROSPECT',
+  CUSTOMER: 'CUSTOMER',
+  LOST: 'LOST',
+  UNQUALIFIED: 'UNQUALIFIED',
+  NOT_INTERESTED: 'NOT_INTERESTED'
 } as const
 
 export type LeadStatus = (typeof LeadStatus)[keyof typeof LeadStatus]

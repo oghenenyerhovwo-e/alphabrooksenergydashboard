@@ -1,16 +1,30 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import type {
   OutcomeProduct,
-  OutcomeTarget,
   OutcomeUnit,
   User,
 } from "@/generated/prisma/client";
+
+import {
+  OUTCOME_PRODUCT_ALLOWED_UNITS,
+} from "@/config/outcomeProducts";
+
+import {
+  deriveOutcomeValue,
+} from "@/lib/outcomes/calculations";
+
 import {
   saveOutcomeTargetsAction,
   type OutcomeTargetActionState,
 } from "@/lib/outcomes/actions";
+
 import styles from "./OutcomeTargetConsole.module.css";
 
 interface EligibleStaffMember
@@ -18,6 +32,8 @@ interface EligibleStaffMember
 
 interface TargetWithStaff {
   userId: string;
+  targetQuantity: number;
+  targetMarginPerUnit: number | null;
   targetValue: number;
   unit: OutcomeUnit;
 }
@@ -30,26 +46,143 @@ interface OutcomeTargetConsoleProps {
   existingTargets: TargetWithStaff[];
 }
 
+interface DraftTarget {
+  quantity: string;
+  margin: string;
+  unit: OutcomeUnit;
+}
+
 const initialState: OutcomeTargetActionState = {};
 
-const AGO_UNITS: Array<{
-  value: OutcomeUnit;
-  label: string;
-}> = [
-  {
-    value: "LITRES",
-    label: "Litres",
-  },
-];
-
 function formatExistingValue(
-  value: TargetWithStaff["targetValue"]
+  value: number | null | undefined
 ): string {
-  if (value === null || value === undefined) {
+  if (
+    value === null ||
+    value === undefined
+  ) {
     return "";
   }
 
   return String(value);
+}
+
+function formatNumberForDisplay(
+  value: string
+): string {
+  const numericValue = Number(value);
+
+  if (
+    !Number.isFinite(numericValue)
+  ) {
+    return value;
+  }
+
+  return new Intl.NumberFormat(
+    "en-NG",
+    {
+      maximumFractionDigits: 3,
+    }
+  ).format(numericValue);
+}
+
+function formatMoney(
+  value: ReturnType<typeof deriveOutcomeValue>
+): string {
+  const numericValue = value.toNumber();
+
+  return new Intl.NumberFormat(
+    "en-NG",
+    {
+      style: "currency",
+      currency: "NGN",
+      maximumFractionDigits: 2,
+    }
+  ).format(numericValue);
+}
+
+function getUnitLabel(
+  unit: OutcomeUnit
+): string {
+  switch (unit) {
+    case "LITRES":
+      return "Litres";
+
+    case "SCM":
+      return "SCM";
+
+    case "KG":
+      return "Kg";
+
+    case "TONNES":
+      return "Tonnes";
+
+    default:
+      return unit;
+  }
+}
+
+function getUnitShortLabel(
+  unit: OutcomeUnit
+): string {
+  switch (unit) {
+    case "LITRES":
+      return "L";
+
+    case "SCM":
+      return "SCM";
+
+    case "KG":
+      return "kg";
+
+    case "TONNES":
+      return "t";
+
+    default:
+      return unit;
+  }
+}
+
+function isValidPreviewInput(
+  value: string
+): boolean {
+  if (value.trim() === "") {
+    return false;
+  }
+
+  const numericValue = Number(value);
+
+  return (
+    Number.isFinite(numericValue) &&
+    numericValue >= 0
+  );
+}
+
+function calculatePreview(
+  quantity: string,
+  margin: string
+): ReturnType<typeof deriveOutcomeValue> | null {
+  /*
+   * Empty values do not represent a configured target.
+   *
+   * Zero is intentionally different from empty:
+   * 0 × 80 = 0 is a valid preview.
+   */
+  if (
+    !isValidPreviewInput(quantity) ||
+    !isValidPreviewInput(margin)
+  ) {
+    return null;
+  }
+
+  try {
+    return deriveOutcomeValue(
+      quantity,
+      margin
+    );
+  } catch {
+    return null;
+  }
 }
 
 export function OutcomeTargetConsole({
@@ -59,32 +192,125 @@ export function OutcomeTargetConsole({
   staff,
   existingTargets,
 }: OutcomeTargetConsoleProps) {
-  const [state, formAction, isPending] = useActionState(
+  const [
+    state,
+    formAction,
+    isPending,
+  ] = useActionState(
     saveOutcomeTargetsAction,
     initialState
   );
 
-  const [savedNoticeVisible, setSavedNoticeVisible] =
-    useState(false);
+  const [
+    savedNoticeVisible,
+    setSavedNoticeVisible,
+  ] = useState(false);
 
-  const targetMap = new Map(
-    existingTargets.map((target) => [
-      target.userId,
-      target,
-    ])
+  const targetMap = useMemo(
+    () =>
+      new Map(
+        existingTargets.map(
+          (target) => [
+            target.userId,
+            target,
+          ]
+        )
+      ),
+    [existingTargets]
   );
 
+  const [
+    drafts,
+    setDrafts,
+  ] = useState<
+    Record<string, DraftTarget>
+  >({});
+
   useEffect(() => {
-    if (!state.success) return;
+    const nextDrafts: Record<
+      string,
+      DraftTarget
+    > = {};
+
+    for (const member of staff) {
+      const existing =
+        targetMap.get(member.id);
+
+      const configuredUnits =
+        OUTCOME_PRODUCT_ALLOWED_UNITS[
+          product
+        ];
+
+      const defaultUnit =
+        existing?.unit ??
+        configuredUnits[0];
+
+      if (!defaultUnit) {
+        continue;
+      }
+
+      nextDrafts[member.id] = {
+        quantity:
+          existing
+            ? formatExistingValue(
+                existing.targetQuantity
+              )
+            : "",
+        margin:
+          existing &&
+          existing.targetMarginPerUnit !== null
+            ? formatExistingValue(
+                existing.targetMarginPerUnit
+              )
+            : "",
+        unit: defaultUnit,
+      };
+    }
+
+    setDrafts(nextDrafts);
+  }, [
+    existingTargets,
+    product,
+    staff,
+    targetMap,
+  ]);
+
+  useEffect(() => {
+    if (!state.success) {
+      return;
+    }
 
     setSavedNoticeVisible(true);
 
-    const timer = window.setTimeout(() => {
-      setSavedNoticeVisible(false);
-    }, 4500);
+    const timer =
+      window.setTimeout(() => {
+        setSavedNoticeVisible(false);
+      }, 4500);
 
-    return () => window.clearTimeout(timer);
+    return () =>
+      window.clearTimeout(timer);
   }, [state.success]);
+
+  function updateDraft(
+    userId: string,
+    field: keyof DraftTarget,
+    value: string | OutcomeUnit
+  ) {
+    setDrafts((current) => ({
+      ...current,
+      [userId]: {
+        ...(current[userId] ?? {
+          quantity: "",
+          margin: "",
+          unit:
+            OUTCOME_PRODUCT_ALLOWED_UNITS[
+              product
+            ][0],
+        }),
+        [field]: value,
+      } as DraftTarget,
+    }));
+  }
 
   return (
     <section className={styles.console}>
@@ -94,23 +320,33 @@ export function OutcomeTargetConsole({
             ADMIN CONTROL
           </div>
 
-          <h2>Monthly Targets</h2>
+          <h2>
+            Monthly Targets
+          </h2>
 
           <p>
-            Set the expected measurable output for each eligible
-            staff member. Targets can be edited at any time for
-            this reporting month.
+            Set the expected measurable output
+            and margin per unit for each eligible
+            staff member. The generated target
+            value is calculated automatically from
+            those inputs.
           </p>
         </div>
 
-        <div className={styles.periodSummary}>
-          <span>Target period</span>
+        <div
+          className={styles.periodSummary}
+        >
+          <span>
+            Target period
+          </span>
 
           <strong>
             {monthName(month)} {year}
           </strong>
 
-          <small>{product}</small>
+          <small>
+            {product}
+          </small>
         </div>
       </div>
 
@@ -119,11 +355,21 @@ export function OutcomeTargetConsole({
           className={styles.error}
           role="alert"
         >
-          <span className={styles.errorIcon}>!</span>
+          <span
+            className={styles.errorIcon}
+            aria-hidden="true"
+          >
+            !
+          </span>
 
           <div>
-            <strong>Unable to save targets</strong>
-            <p>{state.error}</p>
+            <strong>
+              Unable to save targets
+            </strong>
+
+            <p>
+              {state.error}
+            </p>
           </div>
         </div>
       )}
@@ -133,14 +379,22 @@ export function OutcomeTargetConsole({
           className={styles.success}
           role="status"
         >
-          <span className={styles.successIcon}>✓</span>
+          <span
+            className={styles.successIcon}
+            aria-hidden="true"
+          >
+            ✓
+          </span>
 
           <div>
-            <strong>Targets saved</strong>
+            <strong>
+              Targets saved
+            </strong>
+
             <p>
               The {product} targets for{" "}
-              {monthName(month)} {year} have been
-              updated successfully.
+              {monthName(month)} {year} have
+              been updated successfully.
             </p>
           </div>
         </div>
@@ -167,127 +421,422 @@ export function OutcomeTargetConsole({
 
         <div className={styles.tableHeader}>
           <div>
-            <span>Staff member</span>
+            <span>
+              Staff member
+            </span>
           </div>
 
           <div>
-            <span>Expected output</span>
+            <span>
+              Target quantity
+            </span>
           </div>
 
           <div>
-            <span>Measurement</span>
+            <span>
+              Margin / unit
+            </span>
+          </div>
+
+          <div>
+            <span>
+              Measurement
+            </span>
+          </div>
+
+          <div>
+            <span>
+              Calculated target value
+            </span>
           </div>
         </div>
 
         <div className={styles.staffList}>
-          {staff.map((member, index) => {
-            const existing = targetMap.get(member.id);
+          {staff.map(
+            (member, index) => {
+              const existing =
+                targetMap.get(
+                  member.id
+                );
 
-            const targetError =
-              state.fieldErrors?.[`target-${member.id}`];
+              const draft =
+                drafts[member.id] ?? {
+                  quantity:
+                    existing
+                      ? formatExistingValue(
+                          existing.targetQuantity
+                        )
+                      : "",
+                  margin:
+                    existing &&
+                    existing.targetMarginPerUnit !==
+                      null
+                      ? formatExistingValue(
+                          existing.targetMarginPerUnit
+                        )
+                      : "",
+                  unit:
+                    existing?.unit ??
+                    OUTCOME_PRODUCT_ALLOWED_UNITS[
+                      product
+                    ][0],
+                };
 
-            const unitError =
-              state.fieldErrors?.[`unit-${member.id}`];
+              const targetError =
+                state.fieldErrors?.[
+                  `target-${member.id}`
+                ];
 
-            return (
-              <div
-                key={member.id}
-                className={styles.staffRow}
-              >
-                <div className={styles.staffIdentity}>
-                  <div className={styles.staffNumber}>
-                    {String(index + 1).padStart(2, "0")}
-                  </div>
+              const marginError =
+                state.fieldErrors?.[
+                  `margin-${member.id}`
+                ];
 
-                  <div>
-                    <strong>{member.name}</strong>
+              const unitError =
+                state.fieldErrors?.[
+                  `unit-${member.id}`
+                ];
 
-                    <span>
-                      {formatRole(member.role)}
-                    </span>
-                  </div>
-                </div>
+              const preview =
+                calculatePreview(
+                  draft.quantity,
+                  draft.margin
+                );
 
-                <div className={styles.quantityField}>
-                  <input
-                    name={`target-${member.id}`}
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    inputMode="decimal"
-                    defaultValue={
-                      existing
-                        ? formatExistingValue(
-                            existing.targetValue
-                          )
-                        : ""
+              const unitShort =
+                getUnitShortLabel(
+                  draft.unit
+                );
+
+              const unitLabel =
+                getUnitLabel(
+                  draft.unit
+                );
+
+              return (
+                <div
+                  key={member.id}
+                  className={styles.staffRow}
+                >
+                  <div
+                    className={
+                      styles.staffIdentity
                     }
-                    placeholder="Enter target"
-                    aria-label={`Target for ${member.name}`}
-                    className={`${styles.quantityInput} ${
-                      targetError
-                        ? styles.inputError
-                        : ""
-                    }`}
-                  />
-
-                  {targetError && (
-                    <span className={styles.fieldError}>
-                      {targetError}
-                    </span>
-                  )}
-                </div>
-
-                <div className={styles.unitField}>
-                  <select
-                    name={`unit-${member.id}`}
-                    defaultValue={
-                      existing?.unit ??
-                      AGO_UNITS[0].value
-                    }
-                    className={`${styles.unitSelect} ${
-                      unitError
-                        ? styles.inputError
-                        : ""
-                    }`}
-                    aria-label={`Measurement unit for ${member.name}`}
                   >
-                    {AGO_UNITS.map((unit) => (
-                      <option
-                        key={unit.value}
-                        value={unit.value}
-                      >
-                        {unit.label}
-                      </option>
-                    ))}
-                  </select>
+                    <div
+                      className={
+                        styles.staffNumber
+                      }
+                    >
+                      {String(
+                        index + 1
+                      ).padStart(2, "0")}
+                    </div>
 
-                  {unitError && (
-                    <span className={styles.fieldError}>
-                      {unitError}
+                    <div>
+                      <strong>
+                        {member.name}
+                      </strong>
+
+                      <span>
+                        {formatRole(
+                          member.role
+                        )}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    className={
+                      styles.quantityField
+                    }
+                  >
+                    <label
+                      className={
+                        styles.mobileFieldLabel
+                      }
+                      htmlFor={`target-${member.id}`}
+                    >
+                      Target quantity
+                    </label>
+
+                    <input
+                      id={`target-${member.id}`}
+                      name={`target-${member.id}`}
+                      type="number"
+                      min="0"
+                      step="0.001"
+                      inputMode="decimal"
+                      value={
+                        draft.quantity
+                      }
+                      onChange={(event) =>
+                        updateDraft(
+                          member.id,
+                          "quantity",
+                          event.target.value
+                        )
+                      }
+                      placeholder="Enter quantity"
+                      aria-label={`Target quantity for ${member.name}`}
+                      aria-describedby={
+                        targetError
+                          ? `target-error-${member.id}`
+                          : undefined
+                      }
+                      aria-invalid={
+                        targetError
+                          ? true
+                          : undefined
+                      }
+                      className={`${styles.quantityInput} ${
+                        targetError
+                          ? styles.inputError
+                          : ""
+                      }`}
+                    />
+
+                    {targetError && (
+                      <span
+                        id={`target-error-${member.id}`}
+                        className={
+                          styles.fieldError
+                        }
+                      >
+                        {targetError}
+                      </span>
+                    )}
+                  </div>
+
+                  <div
+                    className={
+                      styles.marginField
+                    }
+                  >
+                    <label
+                      className={
+                        styles.mobileFieldLabel
+                      }
+                      htmlFor={`margin-${member.id}`}
+                    >
+                      Margin per {unitShort}
+                    </label>
+
+                    <input
+                      id={`margin-${member.id}`}
+                      name={`margin-${member.id}`}
+                      type="number"
+                      min="0"
+                      step="0.0001"
+                      inputMode="decimal"
+                      value={
+                        draft.margin
+                      }
+                      onChange={(event) =>
+                        updateDraft(
+                          member.id,
+                          "margin",
+                          event.target.value
+                        )
+                      }
+                      placeholder="e.g. 80"
+                      aria-label={`Margin per ${unitLabel} for ${member.name}`}
+                      aria-describedby={
+                        marginError
+                          ? `margin-error-${member.id}`
+                          : undefined
+                      }
+                      aria-invalid={
+                        marginError
+                          ? true
+                          : undefined
+                      }
+                      className={`${styles.quantityInput} ${
+                        marginError
+                          ? styles.inputError
+                          : ""
+                      }`}
+                    />
+
+                    {marginError && (
+                      <span
+                        id={`margin-error-${member.id}`}
+                        className={
+                          styles.fieldError
+                        }
+                      >
+                        {marginError}
+                      </span>
+                    )}
+                  </div>
+
+                  <div
+                    className={
+                      styles.unitField
+                    }
+                  >
+                    <label
+                      className={
+                        styles.mobileFieldLabel
+                      }
+                      htmlFor={`unit-${member.id}`}
+                    >
+                      Measurement
+                    </label>
+
+                    <select
+                      id={`unit-${member.id}`}
+                      name={`unit-${member.id}`}
+                      value={draft.unit}
+                      onChange={(event) =>
+                        updateDraft(
+                          member.id,
+                          "unit",
+                          event.target
+                            .value as OutcomeUnit
+                        )
+                      }
+                      aria-label={`Measurement unit for ${member.name}`}
+                      aria-describedby={
+                        unitError
+                          ? `unit-error-${member.id}`
+                          : undefined
+                      }
+                      aria-invalid={
+                        unitError
+                          ? true
+                          : undefined
+                      }
+                      className={`${styles.unitSelect} ${
+                        unitError
+                          ? styles.inputError
+                          : ""
+                      }`}
+                    >
+                      {OUTCOME_PRODUCT_ALLOWED_UNITS[
+                        product
+                      ].map(
+                        (unit) => (
+                          <option
+                            key={unit}
+                            value={unit}
+                          >
+                            {getUnitLabel(
+                              unit
+                            )}
+                          </option>
+                        )
+                      )}
+                    </select>
+
+                    {unitError && (
+                      <span
+                        id={`unit-error-${member.id}`}
+                        className={
+                          styles.fieldError
+                        }
+                      >
+                        {unitError}
+                      </span>
+                    )}
+                  </div>
+
+                  <div
+                    className={
+                      styles.previewField
+                    }
+                  >
+                    <span
+                      className={
+                        styles.mobileFieldLabel
+                      }
+                    >
+                      Calculated target value
                     </span>
-                  )}
+
+                    {preview !== null ? (
+                      <>
+                        <strong
+                          className={
+                            styles.previewValue
+                          }
+                        >
+                          {formatMoney(
+                            preview
+                          )}
+                        </strong>
+
+                        <span
+                          className={
+                            styles.previewEquation
+                          }
+                        >
+                          {formatNumberForDisplay(
+                            draft.quantity
+                          )}{" "}
+                          {unitShort} × ₦
+                          {formatNumberForDisplay(
+                            draft.margin
+                          )}
+                          /{unitShort} ={" "}
+                          {formatMoney(
+                            preview
+                          )}
+                        </span>
+                      </>
+                    ) : (
+                      <span
+                        className={
+                          styles.previewEmpty
+                        }
+                      >
+                        Enter quantity and
+                        margin to calculate
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            }
+          )}
         </div>
 
-        <div className={styles.consoleFooter}>
-          <div className={styles.footerNote}>
-            <span className={styles.lockMark}>●</span>
+        <div
+          className={
+            styles.consoleFooter
+          }
+        >
+          <div
+            className={
+              styles.footerNote
+            }
+          >
+            <span
+              className={
+                styles.lockMark
+              }
+              aria-hidden="true"
+            >
+              ●
+            </span>
 
             <p>
-              Only Administrators can change monthly targets.
-              Blank rows are left unconfigured and do not create
-              zero-value targets.
+              Only Administrators can change
+              monthly targets. Blank rows are
+              left unconfigured and do not create
+              zero-value targets. The calculated
+              target value shown above is a
+              preview; the server recalculates the
+              authoritative value when saved.
             </p>
           </div>
 
           <button
             type="submit"
             disabled={isPending}
-            className={styles.saveButton}
+            className={
+              styles.saveButton
+            }
           >
             <span>
               {isPending
@@ -296,7 +845,12 @@ export function OutcomeTargetConsole({
             </span>
 
             {!isPending && (
-              <span className={styles.buttonArrow}>
+              <span
+                className={
+                  styles.buttonArrow
+                }
+                aria-hidden="true"
+              >
                 →
               </span>
             )}
@@ -307,7 +861,9 @@ export function OutcomeTargetConsole({
   );
 }
 
-function monthName(month: number): string {
+function monthName(
+  month: number
+): string {
   return [
     "January",
     "February",
@@ -324,11 +880,15 @@ function monthName(month: number): string {
   ][month - 1] ?? "Unknown month";
 }
 
-function formatRole(role: string): string {
+function formatRole(
+  role: string
+): string {
   return role
     .toLowerCase()
     .replaceAll("_", " ")
-    .replace(/\b\w/g, (letter) =>
-      letter.toUpperCase()
+    .replace(
+      /\b\w/g,
+      (letter) =>
+        letter.toUpperCase()
     );
 }

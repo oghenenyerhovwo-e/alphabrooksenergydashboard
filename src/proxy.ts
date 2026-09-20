@@ -26,7 +26,11 @@ export function proxy(req: NextRequest) {
     req.cookies.get(SESSION_COOKIE_NAME)?.value
   );
 
-  if (hasSessionCookie || pathname === "/login") {
+  const isZohoTestRoute =
+  pathname === "/api/zoho/test" ||
+  pathname === "/api/zoho/organization-test";
+  
+  if (hasSessionCookie || pathname === "/login" || isZohoTestRoute) {
     return NextResponse.next({
       request: {
         headers: requestHeaders,

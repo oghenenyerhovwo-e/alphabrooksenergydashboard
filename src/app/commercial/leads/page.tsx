@@ -50,8 +50,7 @@ export default async function LeadsPage() {
                   <th>Contact</th>
                   <th>Source</th>
                   <th>Product Interest</th>
-                  <th>Qualification</th>
-                  <th>Status</th>
+                  <th>Lead Status</th>
                   <th>Quote Requests</th>
                   <th>Created</th>
                 </tr>
@@ -74,13 +73,8 @@ export default async function LeadsPage() {
                     <td>{lead.source.replace("_", " ")}</td>
                     <td>{lead.productInterest ? lead.productInterest.replace("_", " ") : "—"}</td>
                     <td>
-                      <span className={styles.badge} data-tone={lead.qualificationState}>
-                        {lead.qualificationState}
-                      </span>
-                    </td>
-                    <td>
                       <span className={styles.statusPill} data-status={lead.status}>
-                        {lead.status}
+                        {lead.status.replace("_", " ")}
                       </span>
                     </td>
                     <td>{lead.quoteRequests.length}</td>

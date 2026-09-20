@@ -1,86 +1,170 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { qualifyLeadAction } from "@/lib/commercial/actions";
+import { transitionLeadAction } from "@/lib/commercial/actions";
 import styles from "./LeadQualificationPanel.module.css";
+
+type LeadStatus =
+  | "NEW"
+  | "FOLLOW_UP"
+  | "PROSPECT"
+  | "CUSTOMER"
+  | "LOST"
+  | "UNQUALIFIED"
+  | "NOT_INTERESTED";
 
 export function LeadQualificationPanel({
   leadId,
-  qualificationState,
+  status,
 }: {
   leadId: string;
-  qualificationState: "PENDING" | "QUALIFIED" | "DISQUALIFIED";
+  status: LeadStatus;
 }) {
   const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [showReasonField, setShowReasonField] = useState(false);
+  const [pendingOutcome, setPendingOutcome] = useState<
+    "LOST" | "UNQUALIFIED" | "NOT_INTERESTED" | null
+  >(null);
+
   const [isPending, startTransition] = useTransition();
 
-  if (qualificationState !== "PENDING") {
-    return null;
-  }
+  function transition(nextStatus: LeadStatus) {
+    const requiresReason =
+      nextStatus === "LOST" ||
+      nextStatus === "UNQUALIFIED" ||
+      nextStatus === "NOT_INTERESTED";
 
-  function handleDecision(decision: "QUALIFIED" | "DISQUALIFIED") {
-    if (decision === "DISQUALIFIED" && !showReasonField) {
-      setShowReasonField(true);
+    if (requiresReason && pendingOutcome !== nextStatus) {
+      setPendingOutcome(nextStatus);
       return;
     }
 
     setError(null);
+
     startTransition(async () => {
-      const result = await qualifyLeadAction(
+      const result = await transitionLeadAction(
         leadId,
-        decision,
-        decision === "DISQUALIFIED" ? reason : undefined
+        nextStatus as
+          | "FOLLOW_UP"
+          | "PROSPECT"
+          | "LOST"
+          | "UNQUALIFIED"
+          | "NOT_INTERESTED",
+        requiresReason ? reason : undefined
       );
 
       if (result?.error) {
         setError(result.error);
-      } else {
-        window.location.reload();
+        return;
       }
+
+      window.location.reload();
     });
+  }
+
+  if (
+    status === "LOST" ||
+    status === "UNQUALIFIED" ||
+    status === "NOT_INTERESTED"
+  ) {
+    return null;
   }
 
   return (
     <section className={styles.panel}>
-      <h2 className={styles.title}>Qualification</h2>
+      <h2 className={styles.title}>Lead Progression</h2>
+
       <p className={styles.subtitle}>
-        Decide whether this lead is worth progressing.
+        Move this lead through the commercial qualification lifecycle.
       </p>
 
       {error && <div className={styles.error}>{error}</div>}
 
-      {showReasonField && (
+      {pendingOutcome && (
         <label className={styles.reasonField}>
-          <span className={styles.reasonLabel}>Disqualification reason</span>
+          <span className={styles.reasonLabel}>Outcome reason</span>
+
           <textarea
             value={reason}
-            onChange={(e) => setReason(e.target.value)}
+            onChange={(event) => setReason(event.target.value)}
             rows={3}
             className={styles.textarea}
-            placeholder="Explain why this lead is being disqualified…"
+            placeholder="Record why this lead reached this outcome…"
           />
         </label>
       )}
 
       <div className={styles.actions}>
-        <button
-          type="button"
-          disabled={isPending}
-          onClick={() => handleDecision("QUALIFIED")}
-          className={styles.qualifyBtn}
-        >
-          {isPending ? "Working…" : "Qualify"}
-        </button>
-        <button
-          type="button"
-          disabled={isPending}
-          onClick={() => handleDecision("DISQUALIFIED")}
-          className={styles.disqualifyBtn}
-        >
-          {showReasonField ? "Confirm Disqualify" : "Disqualify"}
-        </button>
+        {status === "NEW" && (
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={() => transition("FOLLOW_UP")}
+            className={styles.qualifyBtn}
+          >
+            {isPending ? "Working…" : "Start Follow-up"}
+          </button>
+        )}
+
+        {(status === "NEW" || status === "FOLLOW_UP") && (
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={() => transition("PROSPECT")}
+            className={styles.qualifyBtn}
+          >
+            {isPending ? "Working…" : "Mark Prospect"}
+          </button>
+        )}
+
+        {status === "NEW" || status === "FOLLOW_UP" || status === "PROSPECT" ? (
+          <>
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={() => transition("NOT_INTERESTED")}
+              className={styles.disqualifyBtn}
+            >
+              Not Interested
+            </button>
+
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={() => transition("UNQUALIFIED")}
+              className={styles.disqualifyBtn}
+            >
+              Unqualified
+            </button>
+
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={() => transition("LOST")}
+              className={styles.disqualifyBtn}
+            >
+              Lost
+            </button>
+          </>
+        ) : null}
+
+        {pendingOutcome && (
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={() => {
+              if (reason.trim().length === 0) {
+                setError("A reason is required.");
+                return;
+              }
+
+              transition(pendingOutcome);
+            }}
+            className={styles.disqualifyBtn}
+          >
+            {isPending ? "Saving…" : "Confirm Outcome"}
+          </button>
+        )}
       </div>
     </section>
   );

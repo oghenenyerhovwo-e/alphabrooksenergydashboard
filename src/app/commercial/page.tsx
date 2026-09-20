@@ -30,9 +30,12 @@ export default async function CommercialDashboardPage() {
 
       <section className={styles.stats}>
         <Stat label="Total Leads" value={data.totalLeads} />
-        <Stat label="Pending" value={data.pendingLeads} />
-        <Stat label="Qualified" value={data.qualifiedLeads} />
-        <Stat label="Disqualified" value={data.disqualifiedLeads} />
+        <Stat label="New" value={data.newLeads} />
+        <Stat label="Follow-up" value={data.followUpLeads} />
+        <Stat label="Prospects" value={data.prospects} />
+        <Stat label="Lost" value={data.lostLeads} />
+        <Stat label="Unqualified" value={data.unqualifiedLeads} />
+        <Stat label="Not Interested" value={data.notInterestedLeads} />
         <Stat label="Open Quote Requests" value={data.openQuoteRequests} />
       </section>
 
@@ -68,9 +71,9 @@ export default async function CommercialDashboardPage() {
                     <div className={styles.listMeta}>
                       <span
                         className={styles.badge}
-                        data-tone={lead.qualificationState}
+                        data-tone={lead.status}
                       >
-                        {lead.qualificationState}
+                        {lead.status.replace("_", " ")}
                       </span>
                       <span className={styles.listDate}>{formatDate(lead.createdAt)}</span>
                     </div>

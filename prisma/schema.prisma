@@ -239,6 +239,8 @@ model User {
 
   sessions Session[]
 
+  notifications Notification[]
+
   // --- Outcomes (added Phase 1) ---
   outcomeTargetsAsStaff      OutcomeTarget[]      @relation("OutcomeTargetStaff")
   outcomeTargetsCreated      OutcomeTarget[]      @relation("OutcomeTargetCreatedBy")
@@ -248,12 +250,40 @@ model User {
   outcomeAchievementsUpdated OutcomeAchievement[] @relation("OutcomeAchievementUpdatedBy")
 
   createdLeads           Lead[]         @relation("LeadCreatedBy")
-  qualifiedLeads         Lead[]         @relation("LeadQualifiedBy")
+  outcomeLeads           Lead[]         @relation("LeadOutcomeBy")
   createdQuoteRequests   QuoteRequest[] @relation("QuoteRequestCreatedBy")
   qualifiedQuoteRequests QuoteRequest[] @relation("QuoteRequestQualifiedBy")
+  createdInternalOrders InternalOrder[] @relation("InternalOrderCreatedBy")
 
   @@index([role])
   @@index([status])
+}
+
+model Notification {
+  id String @id @default(cuid())
+
+  recipientId String
+  recipient   User   @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  leadId String?
+  lead   Lead? @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  title   String
+  message String
+
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  internalOrderId String?
+  internalOrder   InternalOrder? @relation(fields: [internalOrderId], references: [id], onDelete: Cascade)
+
+  link String?
+
+  escalationSentAt DateTime?
+
+  @@index([recipientId, readAt])
+  @@index([createdAt])
+  @@index([leadId])
 }
 
 /// Server-side session record. The cookie holds only a random opaque
@@ -290,8 +320,13 @@ enum LeadSource {
 }
 
 enum LeadStatus {
-  ACTIVE
-  CLOSED
+  NEW
+  FOLLOW_UP
+  PROSPECT
+  CUSTOMER
+  LOST
+  UNQUALIFIED
+  NOT_INTERESTED
 }
 
 enum QualificationState {
@@ -315,6 +350,11 @@ model QuoteRequestReferenceCounter {
   lastSequence Int @default(0)
 }
 
+model InternalOrderReferenceCounter {
+  year         Int @id
+  lastSequence Int @default(0)
+}
+
 model Lead {
   id              String @id @default(cuid())
   referenceNumber String @unique
@@ -329,29 +369,31 @@ model Lead {
   productInterest DeliveryProduct?
   notes           String?
 
-  status              LeadStatus         @default(ACTIVE)
-  qualificationState  QualificationState @default(PENDING)
-  qualificationReason String?
-  qualifiedAt         DateTime?
+  status          LeadStatus @default(NEW)
 
-  qualifiedById String?
-  qualifiedBy   User?   @relation("LeadQualifiedBy", fields: [qualifiedById], references: [id], onDelete: SetNull)
+  zohoCustomerId String? @unique
 
-  createdById String
-  createdBy   User   @relation("LeadCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  outcomeReason String?
+  outcomeAt     DateTime?
+
+  outcomeById String?
+  outcomeBy   User? @relation("LeadOutcomeBy", fields: [outcomeById], references: [id], onDelete: SetNull)
+
+  createdById String?
+  createdBy   User?  @relation("LeadCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   quoteRequests QuoteRequest[]
   auditLogs     CommercialAuditLog[]
+  notifications Notification[]
 
   @@index([status])
-  @@index([qualificationState])
   @@index([source])
   @@index([createdAt])
   @@index([createdById])
-  @@index([qualifiedById])
+  @@index([outcomeById])
 }
 
 model QuoteRequest {
@@ -392,6 +434,35 @@ model QuoteRequest {
   @@index([createdAt])
   @@index([createdById])
   @@index([qualifiedById])
+}
+
+model InternalOrder {
+  id String @id @default(cuid())
+
+  referenceNumber String @unique
+
+  zohoCustomerId String
+  customerName   String
+
+  product DeliveryProduct
+  quantity Float
+
+  deliveryLocation String
+
+  customerReference String?
+  notes              String?
+
+  createdById String
+  createdBy   User   @relation("InternalOrderCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notifications Notification[]
+
+  @@index([zohoCustomerId])
+  @@index([createdAt])
+  @@index([createdById])
 }
 
 model CommercialAuditLog {

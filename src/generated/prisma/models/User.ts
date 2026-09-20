@@ -209,6 +209,7 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   sessions?: Prisma.SessionListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetListRelationFilter
   outcomeTargetsCreated?: Prisma.OutcomeTargetListRelationFilter
   outcomeTargetsUpdated?: Prisma.OutcomeTargetListRelationFilter
@@ -216,9 +217,10 @@ export type UserWhereInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementListRelationFilter
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementListRelationFilter
   createdLeads?: Prisma.LeadListRelationFilter
-  qualifiedLeads?: Prisma.LeadListRelationFilter
+  outcomeLeads?: Prisma.LeadListRelationFilter
   createdQuoteRequests?: Prisma.QuoteRequestListRelationFilter
   qualifiedQuoteRequests?: Prisma.QuoteRequestListRelationFilter
+  createdInternalOrders?: Prisma.InternalOrderListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -231,6 +233,7 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   sessions?: Prisma.SessionOrderByRelationAggregateInput
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetOrderByRelationAggregateInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetOrderByRelationAggregateInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetOrderByRelationAggregateInput
@@ -238,9 +241,10 @@ export type UserOrderByWithRelationInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementOrderByRelationAggregateInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementOrderByRelationAggregateInput
   createdLeads?: Prisma.LeadOrderByRelationAggregateInput
-  qualifiedLeads?: Prisma.LeadOrderByRelationAggregateInput
+  outcomeLeads?: Prisma.LeadOrderByRelationAggregateInput
   createdQuoteRequests?: Prisma.QuoteRequestOrderByRelationAggregateInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestOrderByRelationAggregateInput
+  createdInternalOrders?: Prisma.InternalOrderOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -256,6 +260,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   sessions?: Prisma.SessionListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetListRelationFilter
   outcomeTargetsCreated?: Prisma.OutcomeTargetListRelationFilter
   outcomeTargetsUpdated?: Prisma.OutcomeTargetListRelationFilter
@@ -263,9 +268,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementListRelationFilter
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementListRelationFilter
   createdLeads?: Prisma.LeadListRelationFilter
-  qualifiedLeads?: Prisma.LeadListRelationFilter
+  outcomeLeads?: Prisma.LeadListRelationFilter
   createdQuoteRequests?: Prisma.QuoteRequestListRelationFilter
   qualifiedQuoteRequests?: Prisma.QuoteRequestListRelationFilter
+  createdInternalOrders?: Prisma.InternalOrderListRelationFilter
 }, "id" | "entraId" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -306,6 +312,7 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
@@ -313,9 +320,10 @@ export type UserCreateInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -328,6 +336,7 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
@@ -335,9 +344,10 @@ export type UserUncheckedCreateInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUpdateInput = {
@@ -350,6 +360,7 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
@@ -357,9 +368,10 @@ export type UserUpdateInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -372,6 +384,7 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
@@ -379,9 +392,10 @@ export type UserUncheckedUpdateInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -468,6 +482,20 @@ export type EnumUserStatusFieldUpdateOperationsInput = {
   set?: $Enums.UserStatus
 }
 
+export type UserCreateNestedOneWithoutNotificationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNotificationsInput, Prisma.UserUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotificationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNotificationsInput, Prisma.UserUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotificationsInput
+  upsert?: Prisma.UserUpsertWithoutNotificationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationsInput, Prisma.UserUpdateWithoutNotificationsInput>, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
+}
+
 export type UserCreateNestedOneWithoutSessionsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutSessionsInput, Prisma.UserUncheckedCreateWithoutSessionsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutSessionsInput
@@ -482,9 +510,9 @@ export type UserUpdateOneRequiredWithoutSessionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSessionsInput, Prisma.UserUpdateWithoutSessionsInput>, Prisma.UserUncheckedUpdateWithoutSessionsInput>
 }
 
-export type UserCreateNestedOneWithoutQualifiedLeadsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutQualifiedLeadsInput, Prisma.UserUncheckedCreateWithoutQualifiedLeadsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutQualifiedLeadsInput
+export type UserCreateNestedOneWithoutOutcomeLeadsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOutcomeLeadsInput, Prisma.UserUncheckedCreateWithoutOutcomeLeadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOutcomeLeadsInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
@@ -494,20 +522,22 @@ export type UserCreateNestedOneWithoutCreatedLeadsInput = {
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneWithoutQualifiedLeadsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutQualifiedLeadsInput, Prisma.UserUncheckedCreateWithoutQualifiedLeadsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutQualifiedLeadsInput
-  upsert?: Prisma.UserUpsertWithoutQualifiedLeadsInput
+export type UserUpdateOneWithoutOutcomeLeadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOutcomeLeadsInput, Prisma.UserUncheckedCreateWithoutOutcomeLeadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOutcomeLeadsInput
+  upsert?: Prisma.UserUpsertWithoutOutcomeLeadsInput
   disconnect?: Prisma.UserWhereInput | boolean
   delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutQualifiedLeadsInput, Prisma.UserUpdateWithoutQualifiedLeadsInput>, Prisma.UserUncheckedUpdateWithoutQualifiedLeadsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOutcomeLeadsInput, Prisma.UserUpdateWithoutOutcomeLeadsInput>, Prisma.UserUncheckedUpdateWithoutOutcomeLeadsInput>
 }
 
-export type UserUpdateOneRequiredWithoutCreatedLeadsNestedInput = {
+export type UserUpdateOneWithoutCreatedLeadsNestedInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedLeadsInput, Prisma.UserUncheckedCreateWithoutCreatedLeadsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedLeadsInput
   upsert?: Prisma.UserUpsertWithoutCreatedLeadsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedLeadsInput, Prisma.UserUpdateWithoutCreatedLeadsInput>, Prisma.UserUncheckedUpdateWithoutCreatedLeadsInput>
 }
@@ -540,6 +570,20 @@ export type UserUpdateOneRequiredWithoutCreatedQuoteRequestsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutCreatedQuoteRequestsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedQuoteRequestsInput, Prisma.UserUpdateWithoutCreatedQuoteRequestsInput>, Prisma.UserUncheckedUpdateWithoutCreatedQuoteRequestsInput>
+}
+
+export type UserCreateNestedOneWithoutCreatedInternalOrdersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedInternalOrdersInput, Prisma.UserUncheckedCreateWithoutCreatedInternalOrdersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedInternalOrdersInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCreatedInternalOrdersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedInternalOrdersInput, Prisma.UserUncheckedCreateWithoutCreatedInternalOrdersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedInternalOrdersInput
+  upsert?: Prisma.UserUpsertWithoutCreatedInternalOrdersInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedInternalOrdersInput, Prisma.UserUpdateWithoutCreatedInternalOrdersInput>, Prisma.UserUncheckedUpdateWithoutCreatedInternalOrdersInput>
 }
 
 export type UserCreateNestedOneWithoutOutcomeTargetsAsStaffInput = {
@@ -630,6 +674,114 @@ export type UserUpdateOneWithoutOutcomeAchievementsUpdatedNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOutcomeAchievementsUpdatedInput, Prisma.UserUpdateWithoutOutcomeAchievementsUpdatedInput>, Prisma.UserUncheckedUpdateWithoutOutcomeAchievementsUpdatedInput>
 }
 
+export type UserCreateWithoutNotificationsInput = {
+  id?: string
+  entraId: string
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutNotificationsInput = {
+  id?: string
+  entraId: string
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutNotificationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutNotificationsInput, Prisma.UserUncheckedCreateWithoutNotificationsInput>
+}
+
+export type UserUpsertWithoutNotificationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutNotificationsInput, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutNotificationsInput, Prisma.UserUncheckedCreateWithoutNotificationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutNotificationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutNotificationsInput, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type UserUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
 export type UserCreateWithoutSessionsInput = {
   id?: string
   entraId: string
@@ -639,6 +791,7 @@ export type UserCreateWithoutSessionsInput = {
   status?: $Enums.UserStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
@@ -646,9 +799,10 @@ export type UserCreateWithoutSessionsInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -660,6 +814,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   status?: $Enums.UserStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
@@ -667,9 +822,10 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -697,6 +853,7 @@ export type UserUpdateWithoutSessionsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
@@ -704,9 +861,10 @@ export type UserUpdateWithoutSessionsInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -718,6 +876,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
@@ -725,12 +884,13 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
-export type UserCreateWithoutQualifiedLeadsInput = {
+export type UserCreateWithoutOutcomeLeadsInput = {
   id?: string
   entraId: string
   email?: string | null
@@ -740,6 +900,7 @@ export type UserCreateWithoutQualifiedLeadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
@@ -749,9 +910,10 @@ export type UserCreateWithoutQualifiedLeadsInput = {
   createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
 }
 
-export type UserUncheckedCreateWithoutQualifiedLeadsInput = {
+export type UserUncheckedCreateWithoutOutcomeLeadsInput = {
   id?: string
   entraId: string
   email?: string | null
@@ -761,6 +923,7 @@ export type UserUncheckedCreateWithoutQualifiedLeadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
@@ -770,11 +933,12 @@ export type UserUncheckedCreateWithoutQualifiedLeadsInput = {
   createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
-export type UserCreateOrConnectWithoutQualifiedLeadsInput = {
+export type UserCreateOrConnectWithoutOutcomeLeadsInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutQualifiedLeadsInput, Prisma.UserUncheckedCreateWithoutQualifiedLeadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOutcomeLeadsInput, Prisma.UserUncheckedCreateWithoutOutcomeLeadsInput>
 }
 
 export type UserCreateWithoutCreatedLeadsInput = {
@@ -787,15 +951,17 @@ export type UserCreateWithoutCreatedLeadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
-  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedLeadsInput = {
@@ -808,15 +974,17 @@ export type UserUncheckedCreateWithoutCreatedLeadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
-  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedLeadsInput = {
@@ -824,18 +992,18 @@ export type UserCreateOrConnectWithoutCreatedLeadsInput = {
   create: Prisma.XOR<Prisma.UserCreateWithoutCreatedLeadsInput, Prisma.UserUncheckedCreateWithoutCreatedLeadsInput>
 }
 
-export type UserUpsertWithoutQualifiedLeadsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutQualifiedLeadsInput, Prisma.UserUncheckedUpdateWithoutQualifiedLeadsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutQualifiedLeadsInput, Prisma.UserUncheckedCreateWithoutQualifiedLeadsInput>
+export type UserUpsertWithoutOutcomeLeadsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOutcomeLeadsInput, Prisma.UserUncheckedUpdateWithoutOutcomeLeadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOutcomeLeadsInput, Prisma.UserUncheckedCreateWithoutOutcomeLeadsInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutQualifiedLeadsInput = {
+export type UserUpdateToOneWithWhereWithoutOutcomeLeadsInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutQualifiedLeadsInput, Prisma.UserUncheckedUpdateWithoutQualifiedLeadsInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOutcomeLeadsInput, Prisma.UserUncheckedUpdateWithoutOutcomeLeadsInput>
 }
 
-export type UserUpdateWithoutQualifiedLeadsInput = {
+export type UserUpdateWithoutOutcomeLeadsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   entraId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -845,6 +1013,7 @@ export type UserUpdateWithoutQualifiedLeadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
@@ -854,9 +1023,10 @@ export type UserUpdateWithoutQualifiedLeadsInput = {
   createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
 }
 
-export type UserUncheckedUpdateWithoutQualifiedLeadsInput = {
+export type UserUncheckedUpdateWithoutOutcomeLeadsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   entraId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -866,6 +1036,7 @@ export type UserUncheckedUpdateWithoutQualifiedLeadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
@@ -875,6 +1046,7 @@ export type UserUncheckedUpdateWithoutQualifiedLeadsInput = {
   createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUpsertWithoutCreatedLeadsInput = {
@@ -898,15 +1070,17 @@ export type UserUpdateWithoutCreatedLeadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedLeadsInput = {
@@ -919,15 +1093,17 @@ export type UserUncheckedUpdateWithoutCreatedLeadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutQualifiedQuoteRequestsInput = {
@@ -940,6 +1116,7 @@ export type UserCreateWithoutQualifiedQuoteRequestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
@@ -947,8 +1124,9 @@ export type UserCreateWithoutQualifiedQuoteRequestsInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutQualifiedQuoteRequestsInput = {
@@ -961,6 +1139,7 @@ export type UserUncheckedCreateWithoutQualifiedQuoteRequestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
@@ -968,8 +1147,9 @@ export type UserUncheckedCreateWithoutQualifiedQuoteRequestsInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutQualifiedQuoteRequestsInput = {
@@ -987,6 +1167,7 @@ export type UserCreateWithoutCreatedQuoteRequestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
@@ -994,8 +1175,9 @@ export type UserCreateWithoutCreatedQuoteRequestsInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedQuoteRequestsInput = {
@@ -1008,6 +1190,7 @@ export type UserUncheckedCreateWithoutCreatedQuoteRequestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
@@ -1015,8 +1198,9 @@ export type UserUncheckedCreateWithoutCreatedQuoteRequestsInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedQuoteRequestsInput = {
@@ -1045,6 +1229,7 @@ export type UserUpdateWithoutQualifiedQuoteRequestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
@@ -1052,8 +1237,9 @@ export type UserUpdateWithoutQualifiedQuoteRequestsInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutQualifiedQuoteRequestsInput = {
@@ -1066,6 +1252,7 @@ export type UserUncheckedUpdateWithoutQualifiedQuoteRequestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
@@ -1073,8 +1260,9 @@ export type UserUncheckedUpdateWithoutQualifiedQuoteRequestsInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUpsertWithoutCreatedQuoteRequestsInput = {
@@ -1098,6 +1286,7 @@ export type UserUpdateWithoutCreatedQuoteRequestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
@@ -1105,8 +1294,9 @@ export type UserUpdateWithoutCreatedQuoteRequestsInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedQuoteRequestsInput = {
@@ -1119,6 +1309,7 @@ export type UserUncheckedUpdateWithoutCreatedQuoteRequestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
@@ -1126,7 +1317,116 @@ export type UserUncheckedUpdateWithoutCreatedQuoteRequestsInput = {
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutCreatedInternalOrdersInput = {
+  id?: string
+  entraId: string
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+}
+
+export type UserUncheckedCreateWithoutCreatedInternalOrdersInput = {
+  id?: string
+  entraId: string
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+}
+
+export type UserCreateOrConnectWithoutCreatedInternalOrdersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedInternalOrdersInput, Prisma.UserUncheckedCreateWithoutCreatedInternalOrdersInput>
+}
+
+export type UserUpsertWithoutCreatedInternalOrdersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedInternalOrdersInput, Prisma.UserUncheckedUpdateWithoutCreatedInternalOrdersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedInternalOrdersInput, Prisma.UserUncheckedCreateWithoutCreatedInternalOrdersInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedInternalOrdersInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedInternalOrdersInput, Prisma.UserUncheckedUpdateWithoutCreatedInternalOrdersInput>
+}
+
+export type UserUpdateWithoutCreatedInternalOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedInternalOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
 }
 
@@ -1140,15 +1440,17 @@ export type UserCreateWithoutOutcomeTargetsAsStaffInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeTargetsAsStaffInput = {
@@ -1161,15 +1463,17 @@ export type UserUncheckedCreateWithoutOutcomeTargetsAsStaffInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeTargetsAsStaffInput = {
@@ -1187,15 +1491,17 @@ export type UserCreateWithoutOutcomeTargetsCreatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeTargetsCreatedInput = {
@@ -1208,15 +1514,17 @@ export type UserUncheckedCreateWithoutOutcomeTargetsCreatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeTargetsCreatedInput = {
@@ -1234,15 +1542,17 @@ export type UserCreateWithoutOutcomeTargetsUpdatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeTargetsUpdatedInput = {
@@ -1255,15 +1565,17 @@ export type UserUncheckedCreateWithoutOutcomeTargetsUpdatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeTargetsUpdatedInput = {
@@ -1292,15 +1604,17 @@ export type UserUpdateWithoutOutcomeTargetsAsStaffInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeTargetsAsStaffInput = {
@@ -1313,15 +1627,17 @@ export type UserUncheckedUpdateWithoutOutcomeTargetsAsStaffInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUpsertWithoutOutcomeTargetsCreatedInput = {
@@ -1345,15 +1661,17 @@ export type UserUpdateWithoutOutcomeTargetsCreatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeTargetsCreatedInput = {
@@ -1366,15 +1684,17 @@ export type UserUncheckedUpdateWithoutOutcomeTargetsCreatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUpsertWithoutOutcomeTargetsUpdatedInput = {
@@ -1398,15 +1718,17 @@ export type UserUpdateWithoutOutcomeTargetsUpdatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeTargetsUpdatedInput = {
@@ -1419,15 +1741,17 @@ export type UserUncheckedUpdateWithoutOutcomeTargetsUpdatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutOutcomeAchievementsAsStaffInput = {
@@ -1440,15 +1764,17 @@ export type UserCreateWithoutOutcomeAchievementsAsStaffInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeAchievementsAsStaffInput = {
@@ -1461,15 +1787,17 @@ export type UserUncheckedCreateWithoutOutcomeAchievementsAsStaffInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeAchievementsAsStaffInput = {
@@ -1487,15 +1815,17 @@ export type UserCreateWithoutOutcomeAchievementsCreatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeAchievementsCreatedInput = {
@@ -1508,15 +1838,17 @@ export type UserUncheckedCreateWithoutOutcomeAchievementsCreatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
   createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeAchievementsCreatedInput = {
@@ -1534,15 +1866,17 @@ export type UserCreateWithoutOutcomeAchievementsUpdatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
   createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeAchievementsUpdatedInput = {
@@ -1555,15 +1889,17 @@ export type UserUncheckedCreateWithoutOutcomeAchievementsUpdatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
   createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
-  qualifiedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutQualifiedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeAchievementsUpdatedInput = {
@@ -1592,15 +1928,17 @@ export type UserUpdateWithoutOutcomeAchievementsAsStaffInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeAchievementsAsStaffInput = {
@@ -1613,15 +1951,17 @@ export type UserUncheckedUpdateWithoutOutcomeAchievementsAsStaffInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUpsertWithoutOutcomeAchievementsCreatedInput = {
@@ -1645,15 +1985,17 @@ export type UserUpdateWithoutOutcomeAchievementsCreatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeAchievementsCreatedInput = {
@@ -1666,15 +2008,17 @@ export type UserUncheckedUpdateWithoutOutcomeAchievementsCreatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
   outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
   createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUpsertWithoutOutcomeAchievementsUpdatedInput = {
@@ -1698,15 +2042,17 @@ export type UserUpdateWithoutOutcomeAchievementsUpdatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
   createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeAchievementsUpdatedInput = {
@@ -1719,15 +2065,17 @@ export type UserUncheckedUpdateWithoutOutcomeAchievementsUpdatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
   outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
   outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
   outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
   outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
   createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
-  qualifiedLeads?: Prisma.LeadUncheckedUpdateManyWithoutQualifiedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 
@@ -1737,6 +2085,7 @@ export type UserUncheckedUpdateWithoutOutcomeAchievementsUpdatedInput = {
 
 export type UserCountOutputType = {
   sessions: number
+  notifications: number
   outcomeTargetsAsStaff: number
   outcomeTargetsCreated: number
   outcomeTargetsUpdated: number
@@ -1744,13 +2093,15 @@ export type UserCountOutputType = {
   outcomeAchievementsCreated: number
   outcomeAchievementsUpdated: number
   createdLeads: number
-  qualifiedLeads: number
+  outcomeLeads: number
   createdQuoteRequests: number
   qualifiedQuoteRequests: number
+  createdInternalOrders: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
+  notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   outcomeTargetsAsStaff?: boolean | UserCountOutputTypeCountOutcomeTargetsAsStaffArgs
   outcomeTargetsCreated?: boolean | UserCountOutputTypeCountOutcomeTargetsCreatedArgs
   outcomeTargetsUpdated?: boolean | UserCountOutputTypeCountOutcomeTargetsUpdatedArgs
@@ -1758,9 +2109,10 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   outcomeAchievementsCreated?: boolean | UserCountOutputTypeCountOutcomeAchievementsCreatedArgs
   outcomeAchievementsUpdated?: boolean | UserCountOutputTypeCountOutcomeAchievementsUpdatedArgs
   createdLeads?: boolean | UserCountOutputTypeCountCreatedLeadsArgs
-  qualifiedLeads?: boolean | UserCountOutputTypeCountQualifiedLeadsArgs
+  outcomeLeads?: boolean | UserCountOutputTypeCountOutcomeLeadsArgs
   createdQuoteRequests?: boolean | UserCountOutputTypeCountCreatedQuoteRequestsArgs
   qualifiedQuoteRequests?: boolean | UserCountOutputTypeCountQualifiedQuoteRequestsArgs
+  createdInternalOrders?: boolean | UserCountOutputTypeCountCreatedInternalOrdersArgs
 }
 
 /**
@@ -1778,6 +2130,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.SessionWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
 }
 
 /**
@@ -1832,7 +2191,7 @@ export type UserCountOutputTypeCountCreatedLeadsArgs<ExtArgs extends runtime.Typ
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountQualifiedLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type UserCountOutputTypeCountOutcomeLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.LeadWhereInput
 }
 
@@ -1850,6 +2209,13 @@ export type UserCountOutputTypeCountQualifiedQuoteRequestsArgs<ExtArgs extends r
   where?: Prisma.QuoteRequestWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreatedInternalOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InternalOrderWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1861,6 +2227,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
+  notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   outcomeTargetsAsStaff?: boolean | Prisma.User$outcomeTargetsAsStaffArgs<ExtArgs>
   outcomeTargetsCreated?: boolean | Prisma.User$outcomeTargetsCreatedArgs<ExtArgs>
   outcomeTargetsUpdated?: boolean | Prisma.User$outcomeTargetsUpdatedArgs<ExtArgs>
@@ -1868,9 +2235,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   outcomeAchievementsCreated?: boolean | Prisma.User$outcomeAchievementsCreatedArgs<ExtArgs>
   outcomeAchievementsUpdated?: boolean | Prisma.User$outcomeAchievementsUpdatedArgs<ExtArgs>
   createdLeads?: boolean | Prisma.User$createdLeadsArgs<ExtArgs>
-  qualifiedLeads?: boolean | Prisma.User$qualifiedLeadsArgs<ExtArgs>
+  outcomeLeads?: boolean | Prisma.User$outcomeLeadsArgs<ExtArgs>
   createdQuoteRequests?: boolean | Prisma.User$createdQuoteRequestsArgs<ExtArgs>
   qualifiedQuoteRequests?: boolean | Prisma.User$qualifiedQuoteRequestsArgs<ExtArgs>
+  createdInternalOrders?: boolean | Prisma.User$createdInternalOrdersArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1910,6 +2278,7 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "entraId" | "email" | "name" | "role" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
+  notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   outcomeTargetsAsStaff?: boolean | Prisma.User$outcomeTargetsAsStaffArgs<ExtArgs>
   outcomeTargetsCreated?: boolean | Prisma.User$outcomeTargetsCreatedArgs<ExtArgs>
   outcomeTargetsUpdated?: boolean | Prisma.User$outcomeTargetsUpdatedArgs<ExtArgs>
@@ -1917,9 +2286,10 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   outcomeAchievementsCreated?: boolean | Prisma.User$outcomeAchievementsCreatedArgs<ExtArgs>
   outcomeAchievementsUpdated?: boolean | Prisma.User$outcomeAchievementsUpdatedArgs<ExtArgs>
   createdLeads?: boolean | Prisma.User$createdLeadsArgs<ExtArgs>
-  qualifiedLeads?: boolean | Prisma.User$qualifiedLeadsArgs<ExtArgs>
+  outcomeLeads?: boolean | Prisma.User$outcomeLeadsArgs<ExtArgs>
   createdQuoteRequests?: boolean | Prisma.User$createdQuoteRequestsArgs<ExtArgs>
   qualifiedQuoteRequests?: boolean | Prisma.User$qualifiedQuoteRequestsArgs<ExtArgs>
+  createdInternalOrders?: boolean | Prisma.User$createdInternalOrdersArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1929,6 +2299,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     sessions: Prisma.$SessionPayload<ExtArgs>[]
+    notifications: Prisma.$NotificationPayload<ExtArgs>[]
     outcomeTargetsAsStaff: Prisma.$OutcomeTargetPayload<ExtArgs>[]
     outcomeTargetsCreated: Prisma.$OutcomeTargetPayload<ExtArgs>[]
     outcomeTargetsUpdated: Prisma.$OutcomeTargetPayload<ExtArgs>[]
@@ -1936,9 +2307,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     outcomeAchievementsCreated: Prisma.$OutcomeAchievementPayload<ExtArgs>[]
     outcomeAchievementsUpdated: Prisma.$OutcomeAchievementPayload<ExtArgs>[]
     createdLeads: Prisma.$LeadPayload<ExtArgs>[]
-    qualifiedLeads: Prisma.$LeadPayload<ExtArgs>[]
+    outcomeLeads: Prisma.$LeadPayload<ExtArgs>[]
     createdQuoteRequests: Prisma.$QuoteRequestPayload<ExtArgs>[]
     qualifiedQuoteRequests: Prisma.$QuoteRequestPayload<ExtArgs>[]
+    createdInternalOrders: Prisma.$InternalOrderPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2344,6 +2716,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   outcomeTargetsAsStaff<T extends Prisma.User$outcomeTargetsAsStaffArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$outcomeTargetsAsStaffArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutcomeTargetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   outcomeTargetsCreated<T extends Prisma.User$outcomeTargetsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$outcomeTargetsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutcomeTargetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   outcomeTargetsUpdated<T extends Prisma.User$outcomeTargetsUpdatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$outcomeTargetsUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutcomeTargetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2351,9 +2724,10 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   outcomeAchievementsCreated<T extends Prisma.User$outcomeAchievementsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$outcomeAchievementsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutcomeAchievementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   outcomeAchievementsUpdated<T extends Prisma.User$outcomeAchievementsUpdatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$outcomeAchievementsUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutcomeAchievementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdLeads<T extends Prisma.User$createdLeadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdLeadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  qualifiedLeads<T extends Prisma.User$qualifiedLeadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$qualifiedLeadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  outcomeLeads<T extends Prisma.User$outcomeLeadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$outcomeLeadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdQuoteRequests<T extends Prisma.User$createdQuoteRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdQuoteRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuoteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   qualifiedQuoteRequests<T extends Prisma.User$qualifiedQuoteRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$qualifiedQuoteRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuoteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdInternalOrders<T extends Prisma.User$createdInternalOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdInternalOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InternalOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2808,6 +3182,30 @@ export type User$sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 }
 
 /**
+ * User.notifications
+ */
+export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
  * User.outcomeTargetsAsStaff
  */
 export type User$outcomeTargetsAsStaffArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2976,9 +3374,9 @@ export type User$createdLeadsArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * User.qualifiedLeads
+ * User.outcomeLeads
  */
-export type User$qualifiedLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$outcomeLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Lead
    */
@@ -3045,6 +3443,30 @@ export type User$qualifiedQuoteRequestsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.QuoteRequestScalarFieldEnum | Prisma.QuoteRequestScalarFieldEnum[]
+}
+
+/**
+ * User.createdInternalOrders
+ */
+export type User$createdInternalOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InternalOrder
+   */
+  select?: Prisma.InternalOrderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InternalOrder
+   */
+  omit?: Prisma.InternalOrderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InternalOrderInclude<ExtArgs> | null
+  where?: Prisma.InternalOrderWhereInput
+  orderBy?: Prisma.InternalOrderOrderByWithRelationInput | Prisma.InternalOrderOrderByWithRelationInput[]
+  cursor?: Prisma.InternalOrderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InternalOrderScalarFieldEnum | Prisma.InternalOrderScalarFieldEnum[]
 }
 
 /**
