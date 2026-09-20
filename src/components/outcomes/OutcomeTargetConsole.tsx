@@ -9,9 +9,11 @@ import {
 import type {
   OutcomeProduct,
   OutcomeUnit,
-  User,
-} from "@/generated/prisma/client";
+} from "@/generated/prisma/enums";
 
+import type {
+  User,
+} from "@/generated/prisma/browser";
 import {
   OUTCOME_PRODUCT_ALLOWED_UNITS,
 } from "@/config/outcomeProducts";

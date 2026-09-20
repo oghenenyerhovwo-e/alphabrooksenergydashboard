@@ -1,6 +1,8 @@
-import { Prisma } from "@/generated/prisma/client";
+import { Prisma } from "@/generated/prisma/browser";
+
 import {
   type DecimalInput,
+  type OutcomeDecimal,
   toOutcomeDecimal,
   toOutcomeNumber,
 } from "@/lib/outcomes/decimal";
@@ -70,7 +72,7 @@ function roundToTwoDecimals(value: number): number {
 export function deriveOutcomeValue(
   quantity: DecimalInput,
   margin: DecimalInput
-): Prisma.Decimal {
+): OutcomeDecimal {
   const decimalQuantity = toOutcomeDecimal(quantity);
   const decimalMargin = toOutcomeDecimal(margin);
 

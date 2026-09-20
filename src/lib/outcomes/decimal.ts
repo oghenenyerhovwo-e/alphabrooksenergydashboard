@@ -1,14 +1,15 @@
-import { Prisma } from "@/generated/prisma/client";
+import { Prisma } from "@/generated/prisma/browser";
+
+/**
+ * TypeScript representation of the Prisma Decimal class exposed
+ * by the browser-safe Prisma namespace.
+ */
+export type OutcomeDecimal = InstanceType<typeof Prisma.Decimal>;
 
 /**
  * Decimal inputs accepted by the Outcomes calculation layer.
- *
- * Prisma Decimal is the authoritative representation for financial
- * calculations. Numbers and strings are accepted at input boundaries
- * so callers can work with form values, persisted Prisma values, or
- * already-normalized values without introducing another decimal type.
  */
-export type DecimalInput = Prisma.Decimal | number | string;
+export type DecimalInput = OutcomeDecimal | number | string;
 
 /**
  * Convert a supported input into a Prisma Decimal.
@@ -23,7 +24,7 @@ export type DecimalInput = Prisma.Decimal | number | string;
  * - Non-finite JavaScript numbers are rejected because Decimal cannot
  *   represent NaN or Infinity as valid business values.
  */
-export function toOutcomeDecimal(value: DecimalInput): Prisma.Decimal {
+export function toOutcomeDecimal(value: DecimalInput): OutcomeDecimal {
   if (value instanceof Prisma.Decimal) {
     return value;
   }
@@ -46,10 +47,6 @@ export function toOutcomeDecimal(value: DecimalInput): Prisma.Decimal {
 /**
  * Converts a DB Decimal (or already-plain number/string) to a plain JS
  * number.
- *
- * Use this only at a boundary where the existing Outcomes calculation
- * layer requires a JavaScript number or where data is being prepared
- * for display/serialization.
  */
 export function toOutcomeNumber(value: DecimalInput): number {
   return toOutcomeDecimal(value).toNumber();

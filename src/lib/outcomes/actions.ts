@@ -25,7 +25,7 @@ import {
 import type {
   OutcomeProduct,
   OutcomeUnit,
-} from "@/generated/prisma/client";
+} from "@/generated/prisma/enums";
 
 /* =========================================================
    TARGET ACTION STATE

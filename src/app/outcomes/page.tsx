@@ -7,7 +7,7 @@ import {
 } from "@/components/outcomes/OutcomeAchievementEntry";
 import type {
   OutcomeProduct,
-} from "@/generated/prisma/client";
+} from "@/generated/prisma/enums";
 
 import { prisma } from "@/lib/prisma";
 

@@ -1,7 +1,9 @@
 import type {
   OutcomeProduct,
   OutcomeUnit,
-} from "@/generated/prisma/client";
+} from "@/generated/prisma/enums";
+
+import { Prisma } from "@/generated/prisma/browser";
 
 import {
   isValidOutcomeMonth,
@@ -12,9 +14,12 @@ import {
   isUnitAllowedForProduct,
 } from "@/config/outcomeProducts";
 
-import {
-  Prisma,
-} from "@/generated/prisma/client";
+/**
+ * Prisma.Decimal is exposed as a runtime value by the browser-safe
+ * Prisma client. Derive its TypeScript instance type from the
+ * constructor instead of using Prisma.Decimal directly as a type.
+ */
+type OutcomeDecimal = InstanceType<typeof Prisma.Decimal>;
 
 /* =========================================================
    VALID OUTCOMES ENUM VALUES
@@ -53,9 +58,7 @@ export function isValidOutcomeProduct(
 ): value is OutcomeProduct {
   return (
     typeof value === "string" &&
-    (
-      VALID_OUTCOME_PRODUCTS as readonly string[]
-    ).includes(value)
+    (VALID_OUTCOME_PRODUCTS as readonly string[]).includes(value)
   );
 }
 
@@ -72,9 +75,7 @@ export function isValidOutcomeUnit(
 ): value is OutcomeUnit {
   return (
     typeof value === "string" &&
-    (
-      VALID_OUTCOME_UNITS as readonly string[]
-    ).includes(value)
+    (VALID_OUTCOME_UNITS as readonly string[]).includes(value)
   );
 }
 
@@ -89,7 +90,7 @@ export function isValidOutcomeUnit(
  * code may already have numbers or Prisma Decimal instances.
  */
 export type OutcomeNumericInput =
-  | Prisma.Decimal
+  | OutcomeDecimal
   | number
   | string;
 
@@ -269,8 +270,7 @@ function validateRequiredQuantity(
       value.trim().length === 0
     )
   ) {
-    errors.quantity =
-      "Quantity is required.";
+    errors.quantity = "Quantity is required.";
 
     return;
   }

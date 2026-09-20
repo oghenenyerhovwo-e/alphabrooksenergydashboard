@@ -1,4 +1,7 @@
-import type { OutcomeProduct, OutcomeUnit } from "@/generated/prisma/client";
+import type {
+  OutcomeProduct,
+  OutcomeUnit,
+} from "@/generated/prisma/enums";
 
 /**
  * Central switch for which Outcomes products are live. Flipping CNG or
