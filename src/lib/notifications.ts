@@ -53,7 +53,7 @@ export async function createSalesProfitabilityNotification({
   const salesExecutive = await prisma.user.findFirst({
     where: {
       role: "SALES",
-      isActive: true,
+      status: "ACTIVE",
     },
     orderBy: {
       id: "asc",

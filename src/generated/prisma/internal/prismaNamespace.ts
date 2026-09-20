@@ -2021,7 +2021,8 @@ export const NotificationScalarFieldEnum = {
   readAt: 'readAt',
   createdAt: 'createdAt',
   internalOrderId: 'internalOrderId',
-  link: 'link'
+  link: 'link',
+  escalationSentAt: 'escalationSentAt'
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
