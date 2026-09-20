@@ -11,10 +11,6 @@
     {
       "path": "/api/operations/reports/capture",
       "schedule": "0 22 * * 1-5"
-    },
-    {
-      "path": "/api/aria/internal-orders/escalate",
-      "schedule": "* * * * *"
     }
   ]
 }
