@@ -36,7 +36,6 @@ interface TargetWithStaff {
   userId: string;
   targetQuantity: number;
   targetMarginPerUnit: number | null;
-  targetValue: number;
   unit: OutcomeUnit;
 }
 

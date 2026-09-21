@@ -12,7 +12,8 @@ type StaffPerformance = {
 
   target: {
     userId: string;
-    targetValue: number;
+    targetQuantity: number;
+    targetMarginPerUnit: number | null;
     unit: string;
   } | null;
 
@@ -70,7 +71,7 @@ export function OutcomePerformancePanel({
      * Extract the person's actual target.
      */
     const targetValue =
-      currentStaff?.target?.targetValue ?? 0;
+      currentStaff?.target?.targetQuantity ?? 0;
 
     /*
      * Extract the person's actual achievement.
@@ -120,7 +121,7 @@ export function OutcomePerformancePanel({
         (total, staff) => {
           const value =
             Number(
-              staff.target?.targetValue ?? 0
+              staff.target?.targetQuantity ?? 0
             );
 
           return (

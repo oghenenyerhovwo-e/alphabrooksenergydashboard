@@ -187,26 +187,22 @@ export default async function OutcomesPage({
               userId: true,
               targetQuantity: true,
               targetMarginPerUnit: true,
-              targetValue: true,
               unit: true,
             },
           })
         ).map((target) => ({
-          userId: target.userId,
-          targetQuantity: toOutcomeNumber(
-            target.targetQuantity
-          ),
-          targetMarginPerUnit:
-            target.targetMarginPerUnit === null
-              ? null
-              : toOutcomeNumber(
-                  target.targetMarginPerUnit
-                ),
-          targetValue: toOutcomeNumber(
-            target.targetQuantity
-          ),
-          unit: target.unit,
-        }))
+            userId: target.userId,
+            targetQuantity: toOutcomeNumber(
+              target.targetQuantity
+            ),
+            targetMarginPerUnit:
+              target.targetMarginPerUnit === null
+                ? null
+                : toOutcomeNumber(
+                    target.targetMarginPerUnit
+                  ),
+            unit: target.unit,
+          }))
       : [];
 
   /*
