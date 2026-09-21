@@ -58,10 +58,7 @@ export const config = {
      * - /api/auth/*
      *   The login flow itself must remain reachable without a session.
      *
-     * - /api/aria/report/send
-     * - /api/aria/report/main/send
-     * - /api/aria/team-intro/send
-     * - /api/aria/test-mail
+     * - ARIA cron/internal routes
      *   These are protected separately by CRON_SECRET /
      *   ARIA_INTERNAL_TOKEN and therefore do not have a session cookie.
      *
@@ -71,6 +68,6 @@ export const config = {
      *
      * - Next.js internals and static assets.
      */
-    "/((?!api/auth|api/aria/report/send|api/aria/report/main/send|api/aria/team-intro/send|api/aria/test-mail|api/operations/reports/capture|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/auth|api/aria/report/send|api/aria/report/main/send|api/aria/team-intro/send|api/aria/test-mail|api/aria/work-plan/send|api/operations/reports/capture|_next/static|_next/image|favicon.ico).*)",
   ],
 };
