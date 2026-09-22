@@ -38,7 +38,7 @@ import {
 import { resolveUserName, resolveUserRole } from "@/config/users";
 import { OPERATIONS_BUCKET_CONFIG } from "@/config/buckets";
 import { extractBlockers, parseNoteSections } from "./notes";
-
+import { getLagosReportDate } from "./report-date";
 import type {
   RawPlannerTask,
   RawPlannerBucket,
@@ -309,6 +309,59 @@ function summarizeEmployeeTasks(
 }
 
 /* ============================================================
+   DAILY REPORT TASK FILTERING
+   ============================================================ */
+
+/**
+ * Returns the Africa/Lagos calendar date for a Planner timestamp.
+ *
+ * Planner timestamps are instants in time. Daily Operations reports,
+ * however, are based on the Lagos calendar date. Keeping this conversion
+ * in one place prevents UTC/server-timezone drift.
+ */
+function getLagosTaskDate(value: string | undefined): string | null {
+  if (!value) return null;
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+
+  return getLagosReportDate(parsed);
+}
+
+/**
+ * Determines whether a Planner task belongs in a particular daily report.
+ *
+ * Rules:
+ *
+ * 1. Completed tasks belong to the report date on which they were
+ *    actually completed.
+ *
+ * 2. Incomplete tasks belong to the report date of their due date.
+ *
+ * 3. Therefore, an overdue incomplete task stays attached to its original
+ *    due date and is not incorrectly counted as a new task for today.
+ *
+ * 4. This also correctly handles Planner recurring tasks:
+ *    when today's occurrence is completed and Planner creates tomorrow's
+ *    occurrence, the completed occurrence belongs to today's report while
+ *    the new occurrence belongs to tomorrow's report.
+ */
+function taskBelongsToReportDate(
+  task: RawPlannerTask,
+  reportDate: string
+): boolean {
+  const percentComplete = task.percentComplete ?? 0;
+  const isCompleted = percentComplete >= 100;
+
+  if (isCompleted) {
+    return getLagosTaskDate(task.completedDateTime) === reportDate;
+  }
+
+  return getLagosTaskDate(task.dueDateTime) === reportDate;
+}
+
+
+/* ============================================================
    BUILD NORMALIZED MAIN OPERATIONS DATA
    ============================================================ */
 
@@ -319,10 +372,17 @@ export function buildOperationsTeamData(
     users: RawGraphUser[];
     taskNotesById: Map<string, string | undefined>;
   },
-  now: Date = new Date()
+  now: Date = new Date(),
+  reportDate?: string
 ): Omit<OperationsTeamData, "status" | "message"> {
   try {
     const nowMs = now.getTime();
+
+    const effectiveReportDate = reportDate ?? getLagosReportDate(now);
+
+  const reportTasks = raw.tasks.filter((task) =>
+    taskBelongsToReportDate(task, effectiveReportDate)
+  );
 
     const graphUsersById = new Map(raw.users.map((user) => [user.id, user]));
 
@@ -360,7 +420,7 @@ export function buildOperationsTeamData(
     /**
      * Normalize EVERY Planner task.
      */
-    const tasks = raw.tasks.map((task) =>
+    const tasks = reportTasks.map((task) =>
       normalizeOperationsTask(
         task,
         bucketsById,
@@ -444,10 +504,12 @@ export function buildOperationsTeamData(
  *
  * This is the Main Operations equivalent of the CNG data pipeline.
  */
-export async function getOperationsTeamData(): Promise<OperationsTeamData> {
+export async function getOperationsTeamData(
+  reportDate?: string
+): Promise<OperationsTeamData> {
   try {
     const raw = await fetchRawOperationsPlannerData();
-    const data = buildOperationsTeamData(raw);
+    const data = buildOperationsTeamData(raw, new Date(), reportDate);
 
     return {
       status: "connected",

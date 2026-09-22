@@ -65,9 +65,13 @@ export async function GET(req: Request) {
       // Today is always live — never read from the (possibly missing or
       // stale) stored row. Every other date is the frozen archive, as before.
       if (date === today) {
-        const liveData = await getOperationsTeamData();
-        const liveSnapshot = buildOperationsDailyReportSnapshot(liveData);
-        return NextResponse.json({ reportDate: date, snapshot: liveSnapshot }, { status: 200 });
+        const liveData = await getOperationsTeamData(date);
+        const liveSnapshot = buildOperationsDailyReportSnapshot(liveData, new Date());
+
+        return NextResponse.json(
+          { reportDate: date, snapshot: liveSnapshot },
+          { status: 200 }
+        );
       }
 
       const snapshot = await getOperationsDailyReportSnapshot(date);
