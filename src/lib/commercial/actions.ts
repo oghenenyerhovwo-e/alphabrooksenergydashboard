@@ -1,5 +1,6 @@
 "use server";
 
+import { sendAriaMail } from "@/lib/graph/mail";
 import {
   createSalesProfitabilityNotification,
 } from "@/lib/notifications";
@@ -14,11 +15,15 @@ import {
   canCreateLead,
   canMakeCustomer,
   canManageLeads,
+  canSendDailyPrice,
   canTransitionLead,
   canUpdateLead,
   canViewLeads,
 } from "@/lib/commercial/permissions";
-import { createZohoCustomer } from "@/lib/zoho/books";
+import {
+  createZohoCustomer,
+  listZohoCustomers,
+} from "@/lib/zoho/books";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth/session";
 import { revalidatePath } from "next/cache";
@@ -50,6 +55,7 @@ import {
 export interface CommercialActionState {
   success?: boolean;
   error?: string;
+  message?: string;
   fieldErrors?: Record<string, string>;
 }
 
@@ -1114,3 +1120,207 @@ export async function makeCustomerAction(
   };
 }
 
+
+function buildDailyPriceEmail(
+  customerName: string,
+  price: number,
+  salesPersonName: string
+): string {
+  const formattedPrice = new Intl.NumberFormat("en-NG", {
+    maximumFractionDigits: 2,
+  }).format(price);
+
+  const safeCustomerName = customerName || "Customer";
+
+  return `
+<!DOCTYPE html>
+<html>
+  <body style="margin:0;padding:0;background:#f3f7f4;font-family:Arial,Helvetica,sans-serif;color:#17251d;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f3f7f4;padding:32px 12px;">
+      <tr>
+        <td align="center">
+
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:620px;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 8px 30px rgba(20,50,35,0.10);">
+
+            <tr>
+              <td style="background:linear-gradient(135deg,#0c3b2e,#17624b);padding:30px 34px;text-align:center;">
+                <div style="font-size:13px;letter-spacing:3px;font-weight:bold;color:#d9b85c;">
+                  ALPHA BROOKS ENERGY
+                </div>
+
+                <div style="margin-top:12px;font-size:28px;line-height:1.2;font-weight:700;color:#ffffff;">
+                  AGO PRICE UPDATE
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:36px 38px 30px;">
+
+                <div style="font-size:17px;margin-bottom:18px;">
+                  Hello ${safeCustomerName},
+                </div>
+
+                <div style="font-size:15px;line-height:1.6;color:#5b675f;margin-bottom:24px;">
+                  Here is today's AGO price from Alpha Brooks Energy.
+                </div>
+
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td align="center" style="background:#f7f2df;border:1px solid #eadcae;border-radius:16px;padding:25px 15px;">
+                      <div style="font-size:12px;letter-spacing:2px;font-weight:bold;color:#806b25;">
+                        TODAY'S PRICE
+                      </div>
+
+                      <div style="font-size:40px;line-height:1.2;font-weight:800;color:#0c3b2e;margin-top:8px;">
+                        ₦${formattedPrice}
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+
+                <div style="font-size:14px;line-height:1.6;color:#5b675f;text-align:center;margin-top:24px;">
+                  Ready to order? Reply to this email and our team will assist.
+                </div>
+
+              </td>
+            </tr>
+
+            <tr>
+              <td style="border-top:1px solid #edf0ed;padding:20px 30px;text-align:center;">
+                <div style="font-size:13px;color:#718078;">
+                  Sent by ${salesPersonName}
+                </div>
+
+                <div style="font-size:12px;color:#9aa59f;margin-top:6px;">
+                  Alpha Brooks Energy
+                </div>
+              </td>
+            </tr>
+
+          </table>
+
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+`;
+}
+
+export async function sendDailyPriceAction(
+  _prevState: CommercialActionState,
+  formData: FormData
+): Promise<CommercialActionState> {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    return {
+      error: "You must be signed in to do this.",
+    };
+  }
+
+  if (!canSendDailyPrice(currentUser.role)) {
+    return {
+      error: "Only Sales can send today's price.",
+    };
+  }
+
+  const priceRaw = formData.get("price");
+
+  if (typeof priceRaw !== "string" || !priceRaw.trim()) {
+    return {
+      error: "Enter today's price.",
+    };
+  }
+
+  const price = Number(priceRaw);
+
+  if (!Number.isFinite(price) || price <= 0) {
+    return {
+      error: "Enter a valid price greater than zero.",
+    };
+  }
+
+  if (!currentUser.email) {
+    return {
+      error: "Your Sales account does not have an email address.",
+    };
+  }
+
+  try {
+    const customers = await listZohoCustomers();
+
+    const customersWithEmail = customers.filter(
+      (customer) => customer.email?.trim()
+    );
+
+    if (customersWithEmail.length === 0) {
+      return {
+        error: "No customers with email addresses were found.",
+      };
+    }
+
+    let sentCount = 0;
+    let failedCount = 0;
+
+    for (const customer of customersWithEmail) {
+      try {
+        const customerName =
+          customer.companyName?.trim() ||
+          customer.contactName?.trim() ||
+          "Customer";
+
+        const bodyHtml = buildDailyPriceEmail(
+          customerName,
+          price,
+          currentUser.name
+        );
+
+        await sendAriaMail({
+          from: currentUser.email,
+          to: customer.email!.trim(),
+          subject: "Today's AGO Price | Alpha Brooks Energy",
+          bodyHtml,
+        });
+
+        sentCount++;
+      } catch (error) {
+        failedCount++;
+
+        console.error(
+          "[sendDailyPriceAction] Failed to send to customer:",
+          customer.email,
+          error
+        );
+      }
+    }
+
+    if (sentCount === 0) {
+      return {
+        error: "The price could not be sent to any customer.",
+      };
+    }
+
+    if (failedCount > 0) {
+      return {
+        success: true,
+        message: `Today's price was sent to ${sentCount} customer${sentCount === 1 ? "" : "s"}. ${failedCount} customer${failedCount === 1 ? "" : "s"} could not be reached.`,
+      };
+    }
+
+    return {
+      success: true,
+      message: `Today's price was sent to ${sentCount} customer${sentCount === 1 ? "" : "s"}.`,
+    };
+  } catch (error) {
+    console.error("[sendDailyPriceAction]", error);
+
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while sending today's price.",
+    };
+  }
+}

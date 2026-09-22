@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCommercialDashboardData } from "@/lib/commercial/actions";
+import SendDailyPriceForm from "@/components/commercial/SendDailyPriceForm";
 import styles from "./page.module.css";
 
 function formatDate(value: Date) {
@@ -27,7 +28,7 @@ export default async function CommercialDashboardPage() {
           + New Lead
         </Link>
       </header>
-
+      <SendDailyPriceForm />
       <section className={styles.stats}>
         <Stat label="Total Leads" value={data.totalLeads} />
         <Stat label="New" value={data.newLeads} />

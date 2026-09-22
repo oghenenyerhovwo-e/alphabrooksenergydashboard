@@ -65,3 +65,7 @@ export function canTransitionLead(role: UserRole): boolean {
 export function canMakeCustomer(role: UserRole): boolean {
   return role === UserRole.OPERATIONS;
 }
+
+export function canSendDailyPrice(role: UserRole): boolean {
+  return role === UserRole.SALES;
+}

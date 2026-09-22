@@ -1,0 +1,296 @@
+.card {
+  position: relative;
+  padding: 28px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid #e5ebe7;
+  box-shadow: 0 8px 28px rgba(20, 50, 35, 0.07);
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #9a7a20;
+}
+
+.title {
+  margin: 7px 0 5px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #173c2f;
+}
+
+.subtitle {
+  margin: 0;
+  color: #68756e;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.form {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.field {
+  flex: 1;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #31463b;
+}
+
+.field input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid #d8e1db;
+  border-radius: 10px;
+  outline: none;
+  font-size: 15px;
+  color: #173c2f;
+  background: #ffffff;
+}
+
+.field input:focus {
+  border-color: #17624b;
+  box-shadow: 0 0 0 3px rgba(23, 98, 75, 0.1);
+}
+
+.button,
+.sendButton {
+  border: 0;
+  border-radius: 10px;
+  padding: 0 20px;
+  height: 46px;
+  background: #17624b;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.button:hover,
+.sendButton:hover {
+  background: #0c3b2e;
+}
+
+.button:disabled,
+.sendButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.error {
+  margin: 14px 0 0;
+  color: #b42318;
+  font-size: 13px;
+}
+
+.success {
+  margin: 14px 0 0;
+  color: #17624b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Preview */
+
+.previewOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(12, 25, 19, 0.58);
+}
+
+.previewModal {
+  width: min(720px, 100%);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
+}
+
+.previewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px;
+  border-bottom: 1px solid #e8ece9;
+}
+
+.previewEyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #9a7a20;
+}
+
+.previewTitle {
+  margin: 5px 0 0;
+  font-size: 20px;
+  color: #173c2f;
+}
+
+.closeButton {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: #f0f3f1;
+  color: #31463b;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.emailPreview {
+  margin: 24px;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid #e0e7e2;
+  background: #ffffff;
+  box-shadow: 0 8px 25px rgba(20, 50, 35, 0.08);
+}
+
+.emailTop {
+  padding: 30px;
+  text-align: center;
+  background: linear-gradient(135deg, #0c3b2e, #17624b);
+}
+
+.emailBrand {
+  color: #d9b85c;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.emailHeading {
+  margin-top: 10px;
+  color: #ffffff;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.emailBody {
+  padding: 30px;
+}
+
+.emailGreeting {
+  margin: 0 0 16px;
+  color: #17251d;
+  font-size: 16px;
+}
+
+.emailIntro {
+  margin: 0 0 22px;
+  color: #5b675f;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.priceBox {
+  padding: 24px 16px;
+  text-align: center;
+  border-radius: 14px;
+  border: 1px solid #eadcae;
+  background: #f7f2df;
+}
+
+.priceLabel {
+  color: #806b25;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.priceValue {
+  margin-top: 7px;
+  color: #0c3b2e;
+  font-size: 38px;
+  font-weight: 800;
+}
+
+.emailCta {
+  margin: 22px 0 0;
+  color: #5b675f;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.emailFooter {
+  padding: 18px 24px;
+  border-top: 1px solid #edf0ed;
+  color: #718078;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.previewActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0 24px 24px;
+}
+
+.cancelButton {
+  height: 44px;
+  padding: 0 18px;
+  border: 1px solid #d8e1db;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #31463b;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sendButton {
+  height: 44px;
+}
+
+@media (max-width: 640px) {
+  .form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .button {
+    width: 100%;
+  }
+
+  .previewOverlay {
+    padding: 10px;
+  }
+
+  .emailPreview {
+    margin: 16px;
+  }
+
+  .emailTop,
+  .emailBody {
+    padding: 24px 20px;
+  }
+
+  .previewActions {
+    flex-direction: column-reverse;
+  }
+
+  .cancelButton,
+  .sendButton {
+    width: 100%;
+  }
+}

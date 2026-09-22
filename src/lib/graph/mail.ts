@@ -21,6 +21,7 @@ interface SendAriaMailOptions {
   cc?: string | string[];
   subject: string;
   bodyHtml: string;
+  from?: string;
 }
 
 /**
@@ -34,8 +35,9 @@ export async function sendAriaMail({
   cc,
   subject,
   bodyHtml,
+  from,
 }: SendAriaMailOptions): Promise<void> {
-  const senderMailbox = process.env.ARIA_SENDER_EMAIL;
+  const senderMailbox = from || process.env.ARIA_SENDER_EMAIL;
 
   if (!senderMailbox) {
     throw new CngMailConfigError(
