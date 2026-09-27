@@ -163,7 +163,8 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
             status={lead.status}
           />
           {lead.status === "PROSPECT" &&
-            currentUser?.role === UserRole.OPERATIONS && (
+            (currentUser?.role === UserRole.ADMIN ||
+              currentUser?.role === UserRole.OPERATIONS) && (
               <MakeCustomerPanel
                 leadId={lead.id}
                 companyName={lead.companyName}

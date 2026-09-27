@@ -415,7 +415,8 @@ export const ModelName = {
   CommercialAuditLog: 'CommercialAuditLog',
   OperationsDailyReport: 'OperationsDailyReport',
   OutcomeTarget: 'OutcomeTarget',
-  OutcomeAchievement: 'OutcomeAchievement'
+  OutcomeAchievement: 'OutcomeAchievement',
+  DailyPriceUnsubscribe: 'DailyPriceUnsubscribe'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -431,7 +432,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "deliveryNoteCounter" | "driver" | "vehicle" | "delivery" | "deliveryAuditLog" | "vehiclePreTripInspection" | "user" | "notification" | "session" | "leadReferenceCounter" | "quoteRequestReferenceCounter" | "internalOrderReferenceCounter" | "lead" | "quoteRequest" | "internalOrder" | "commercialAuditLog" | "operationsDailyReport" | "outcomeTarget" | "outcomeAchievement"
+    modelProps: "deliveryNoteCounter" | "driver" | "vehicle" | "delivery" | "deliveryAuditLog" | "vehiclePreTripInspection" | "user" | "notification" | "session" | "leadReferenceCounter" | "quoteRequestReferenceCounter" | "internalOrderReferenceCounter" | "lead" | "quoteRequest" | "internalOrder" | "commercialAuditLog" | "operationsDailyReport" | "outcomeTarget" | "outcomeAchievement" | "dailyPriceUnsubscribe"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1841,6 +1842,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DailyPriceUnsubscribe: {
+      payload: Prisma.$DailyPriceUnsubscribePayload<ExtArgs>
+      fields: Prisma.DailyPriceUnsubscribeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DailyPriceUnsubscribeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyPriceUnsubscribePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DailyPriceUnsubscribeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyPriceUnsubscribePayload>
+        }
+        findFirst: {
+          args: Prisma.DailyPriceUnsubscribeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyPriceUnsubscribePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DailyPriceUnsubscribeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyPriceUnsubscribePayload>
+        }
+        findMany: {
+          args: Prisma.DailyPriceUnsubscribeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyPriceUnsubscribePayload>[]
+        }
+        create: {
+          args: Prisma.DailyPriceUnsubscribeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyPriceUnsubscribePayload>
+        }
+        createMany: {
+          args: Prisma.DailyPriceUnsubscribeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DailyPriceUnsubscribeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyPriceUnsubscribePayload>[]
+        }
+        delete: {
+          args: Prisma.DailyPriceUnsubscribeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyPriceUnsubscribePayload>
+        }
+        update: {
+          args: Prisma.DailyPriceUnsubscribeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyPriceUnsubscribePayload>
+        }
+        deleteMany: {
+          args: Prisma.DailyPriceUnsubscribeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DailyPriceUnsubscribeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DailyPriceUnsubscribeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyPriceUnsubscribePayload>[]
+        }
+        upsert: {
+          args: Prisma.DailyPriceUnsubscribeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyPriceUnsubscribePayload>
+        }
+        aggregate: {
+          args: Prisma.DailyPriceUnsubscribeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDailyPriceUnsubscribe>
+        }
+        groupBy: {
+          args: Prisma.DailyPriceUnsubscribeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DailyPriceUnsubscribeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DailyPriceUnsubscribeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DailyPriceUnsubscribeCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2005,6 +2080,8 @@ export const UserScalarFieldEnum = {
   name: 'name',
   role: 'role',
   status: 'status',
+  jobTitle: 'jobTitle',
+  phone: 'phone',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2202,6 +2279,15 @@ export const OutcomeAchievementScalarFieldEnum = {
 } as const
 
 export type OutcomeAchievementScalarFieldEnum = (typeof OutcomeAchievementScalarFieldEnum)[keyof typeof OutcomeAchievementScalarFieldEnum]
+
+
+export const DailyPriceUnsubscribeScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  unsubscribedAt: 'unsubscribedAt'
+} as const
+
+export type DailyPriceUnsubscribeScalarFieldEnum = (typeof DailyPriceUnsubscribeScalarFieldEnum)[keyof typeof DailyPriceUnsubscribeScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2678,6 +2764,7 @@ export type GlobalOmitConfig = {
   operationsDailyReport?: Prisma.OperationsDailyReportOmit
   outcomeTarget?: Prisma.OutcomeTargetOmit
   outcomeAchievement?: Prisma.OutcomeAchievementOmit
+  dailyPriceUnsubscribe?: Prisma.DailyPriceUnsubscribeOmit
 }
 
 /* Types for Logging */

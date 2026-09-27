@@ -72,7 +72,7 @@ export async function createSalesProfitabilityNotification({
       title: "Profitability analysis required",
       message: `Internal order ${orderReference} requires profitability/sales analysis.`,
       internalOrderId,
-      link: `/commercial/orders/${internalOrderId}/profitability`,
+            link: `/commercial/orders/profitability?orderId=${internalOrderId}`,
     },
   });
 }

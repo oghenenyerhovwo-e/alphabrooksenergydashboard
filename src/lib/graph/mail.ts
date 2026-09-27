@@ -22,6 +22,7 @@ interface SendAriaMailOptions {
   subject: string;
   bodyHtml: string;
   from?: string;
+  listUnsubscribeUrl?: string;
 }
 
 /**
@@ -36,6 +37,7 @@ export async function sendAriaMail({
   subject,
   bodyHtml,
   from,
+  listUnsubscribeUrl,
 }: SendAriaMailOptions): Promise<void> {
   const senderMailbox = from || process.env.ARIA_SENDER_EMAIL;
 
@@ -65,7 +67,23 @@ export async function sendAriaMail({
     );
   }
 
-  const client = getGraphClient();
+    const client = getGraphClient();
+
+  // "String 0x1045" is the MAPI property ID Outlook/Exchange use for the
+  // List-Unsubscribe header. Setting it here is what makes Gmail (and some
+  // other clients) show the native "Unsubscribe" link beside the sender
+  // name. It opens the link in a browser tab (our confirmation page) rather
+  // than unsubscribing silently — true one-click silent unsubscribe needs
+  // a second header (List-Unsubscribe-Post) that Graph's JSON sendMail API
+  // can't set at all; only raw MIME sending supports it.
+  const singleValueExtendedProperties = listUnsubscribeUrl
+    ? [
+        {
+          id: "String 0x1045",
+          value: `<${listUnsubscribeUrl}>`,
+        },
+      ]
+    : undefined;
 
   try {
     await client.api(`/users/${senderMailbox}/sendMail`).post({
@@ -79,9 +97,21 @@ export async function sendAriaMail({
         ...(ccRecipients.length > 0
           ? { ccRecipients }
           : {}),
+        ...(singleValueExtendedProperties
+          ? { singleValueExtendedProperties }
+          : {}),
       },
       saveToSentItems: true,
     });
+
+    // Graph's /sendMail returns 202 Accepted with an empty body, so a
+    // resolved promise (no throw) is the confirmation signal — there's no
+    // message ID to log. This line, plus the message showing up in
+    // senderMailbox's Sent Items folder, is how to verify a send actually
+    // went out.
+    console.log(
+      `[ARIA Mail] sendMail accepted — from ${senderMailbox} to ${toRecipients.map((r) => r.emailAddress.address).join(", ")} — "${subject}"`
+    );
   } catch (e) {
     console.error("[ARIA Mail] sendMail failed:", e);
 

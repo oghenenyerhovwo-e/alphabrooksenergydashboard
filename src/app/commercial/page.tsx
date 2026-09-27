@@ -24,9 +24,21 @@ export default async function CommercialDashboardPage() {
           </p>
         </div>
 
-        <Link href="/commercial/leads/new" className={styles.primaryButton}>
-          + New Lead
-        </Link>
+        <div className={styles.headerActions}>
+          <Link
+            href="/commercial/leads/new"
+            className={styles.secondaryButton}
+          >
+            + New Lead
+          </Link>
+
+          <Link
+            href="/commercial/orders/new"
+            className={styles.primaryButton}
+          >
+            + New Order
+          </Link>
+        </div>
       </header>
       <SendDailyPriceForm />
       <section className={styles.stats}>
@@ -38,6 +50,37 @@ export default async function CommercialDashboardPage() {
         <Stat label="Unqualified" value={data.unqualifiedLeads} />
         <Stat label="Not Interested" value={data.notInterestedLeads} />
         <Stat label="Open Quote Requests" value={data.openQuoteRequests} />
+      </section>
+
+      <section className={styles.moduleCard}>
+        <div>
+          <div className={styles.moduleEyebrow}>ORDER MANAGEMENT</div>
+
+          <h2 className={styles.moduleTitle}>
+            Customer Orders
+          </h2>
+
+          <p className={styles.moduleSubtitle}>
+            Record customer orders, review commercial requirements,
+            and hand them into the fulfilment workflow.
+          </p>
+        </div>
+
+        <div className={styles.moduleActions}>
+          <Link
+            href="/commercial/orders"
+            className={styles.secondaryButton}
+          >
+            View Orders
+          </Link>
+
+          <Link
+            href="/commercial/orders/new"
+            className={styles.primaryButton}
+          >
+            + Create Order
+          </Link>
+        </div>
       </section>
 
       <div className={styles.columns}>

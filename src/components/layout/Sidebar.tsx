@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NAV_SECTIONS } from "@/config/nav";
+import { NAV_SECTIONS, resolveActiveHref } from "@/config/nav";
 import styles from "./Sidebar.module.css";
 
 /**
@@ -17,22 +17,6 @@ import styles from "./Sidebar.module.css";
  * still highlights Main Operations, /cng/tasks still highlights CNG
  * Operations — while highlighting only the most specific entry.
  */
-function resolveActiveHref(pathname: string, hrefs: string[]): string | null {
-  let best: string | null = null;
-
-  for (const href of hrefs) {
-    const matches =
-      href === "/"
-        ? pathname === "/"
-        : pathname === href || pathname.startsWith(`${href}/`);
-
-    if (matches && (best === null || href.length > best.length)) {
-      best = href;
-    }
-  }
-
-  return best;
-}
 
 export function Sidebar({
   mobileOpen,

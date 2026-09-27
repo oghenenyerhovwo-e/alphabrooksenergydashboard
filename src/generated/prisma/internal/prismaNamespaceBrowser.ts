@@ -69,7 +69,8 @@ export const ModelName = {
   CommercialAuditLog: 'CommercialAuditLog',
   OperationsDailyReport: 'OperationsDailyReport',
   OutcomeTarget: 'OutcomeTarget',
-  OutcomeAchievement: 'OutcomeAchievement'
+  OutcomeAchievement: 'OutcomeAchievement',
+  DailyPriceUnsubscribe: 'DailyPriceUnsubscribe'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -213,6 +214,8 @@ export const UserScalarFieldEnum = {
   name: 'name',
   role: 'role',
   status: 'status',
+  jobTitle: 'jobTitle',
+  phone: 'phone',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -410,6 +413,15 @@ export const OutcomeAchievementScalarFieldEnum = {
 } as const
 
 export type OutcomeAchievementScalarFieldEnum = (typeof OutcomeAchievementScalarFieldEnum)[keyof typeof OutcomeAchievementScalarFieldEnum]
+
+
+export const DailyPriceUnsubscribeScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  unsubscribedAt: 'unsubscribedAt'
+} as const
+
+export type DailyPriceUnsubscribeScalarFieldEnum = (typeof DailyPriceUnsubscribeScalarFieldEnum)[keyof typeof DailyPriceUnsubscribeScalarFieldEnum]
 
 
 export const SortOrder = {

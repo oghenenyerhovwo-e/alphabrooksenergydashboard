@@ -19,12 +19,16 @@ import {
   canTransitionLead,
   canUpdateLead,
   canViewLeads,
+  canViewOrders,
+  canCreateOrder,
 } from "@/lib/commercial/permissions";
 import {
   createZohoCustomer,
   listZohoCustomers,
+  type ZohoCustomer,
 } from "@/lib/zoho/books";
 import { prisma } from "@/lib/prisma";
+import { buildUnsubscribeUrl, filterUnsubscribed } from "@/lib/commercial/unsubscribe";
 import { getCurrentUser } from "@/lib/auth/session";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -485,6 +489,12 @@ export async function createInternalOrderAction(
   if (!currentUser) {
     return {
       error: "You must be signed in to do this.",
+    };
+  }
+
+  if (!canCreateOrder(currentUser.role)) {
+    return {
+      error: "You do not have permission to create orders.",
     };
   }
 
@@ -1121,10 +1131,97 @@ export async function makeCustomerAction(
 }
 
 
+/**
+ * Public-facing links included in the daily price email footer.
+ * Keep these pointed at real, owned destinations only (company domain +
+ * verified social profiles) — plain https links to a company's own
+ * verified profiles do not pose a cybersecurity risk to the recipient's
+ * organization. Corporate mail gateways (Mimecast, Proofpoint, MS
+ * Defender, etc.) score outbound-looking links on reputation, not
+ * presence, so: use the full canonical URL for each (no link shorteners
+ * like bit.ly — those get flagged more often), keep the link count small,
+ * and don't attach files to this email. If a customer's IT team ever
+ * blocks it, it's almost always their gateway sandboxing an unfamiliar
+ * sending domain the first time, not something about the links.
+ */
+const COMPANY_WEBSITE_URL =
+  process.env.COMPANY_WEBSITE_URL || "https://alphabrooksenergy.com";
+
+const MAIL_LOGO_URL = `${(
+  process.env.NEXT_PUBLIC_APP_URL || "https://alphabrooksenergy.com"
+).replace(/\/$/, "")}/images/mail_logo.png`;
+
+const COMPANY_SOCIAL_LINKS: { label: string; url: string }[] = [
+  process.env.COMPANY_LINKEDIN_URL
+    ? { label: "LinkedIn", url: process.env.COMPANY_LINKEDIN_URL }
+    : null,
+  process.env.COMPANY_INSTAGRAM_URL
+    ? { label: "Instagram", url: process.env.COMPANY_INSTAGRAM_URL }
+    : null,
+  process.env.COMPANY_X_URL
+    ? { label: "X (Twitter)", url: process.env.COMPANY_X_URL }
+    : null,
+  process.env.COMPANY_FACEBOOK_URL
+    ? { label: "Facebook", url: process.env.COMPANY_FACEBOOK_URL }
+    : null,
+].filter((link): link is { label: string; url: string } => link !== null);
+
+export async function getDailyPriceRecipientsAction(): Promise<
+  { email: string; name: string }[]
+> {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    throw new Error("You must be signed in to do this.");
+  }
+
+  if (!canSendDailyPrice(currentUser.role)) {
+    throw new Error("Only Sales can send today's price.");
+  }
+
+    const customers = await listZohoCustomers();
+
+    const withEmail = customers
+      .filter((customer) => customer.email?.trim())
+      .map((customer) => ({
+        email: customer.email.trim(),
+        name:
+          customer.companyName?.trim() ||
+          customer.contactName?.trim() ||
+          "Customer",
+      }));
+
+        return filterUnsubscribed(dedupeCustomersByEmail(withEmail));
+  }
+
+function dedupeCustomersByEmail<T extends { email: string }>(
+  customers: T[]
+): T[] {
+  const seen = new Set<string>();
+  const deduped: T[] = [];
+
+  for (const customer of customers) {
+    const key = customer.email.trim().toLowerCase();
+
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    deduped.push(customer);
+  }
+
+  return deduped;
+}
+
 function buildDailyPriceEmail(
   customerName: string,
   price: number,
-  salesPersonName: string
+  salesPersonName: string,
+  salesPersonTitle: string | null,
+  salesPersonPhone: string | null,
+  salesPersonEmail: string,
+  unsubscribeUrl: string
 ): string {
   const formattedPrice = new Intl.NumberFormat("en-NG", {
     maximumFractionDigits: 2,
@@ -1135,74 +1232,86 @@ function buildDailyPriceEmail(
   return `
 <!DOCTYPE html>
 <html>
-  <body style="margin:0;padding:0;background:#f3f7f4;font-family:Arial,Helvetica,sans-serif;color:#17251d;">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f3f7f4;padding:32px 12px;">
-      <tr>
-        <td align="center">
+  <body style="margin:0;padding:0;background:#ffffff;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">
+    <div style="max-width:600px;margin:0 auto;padding:28px 20px;">
 
-          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:620px;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 8px 30px rgba(20,50,35,0.10);">
+      <p style="font-size:15px;line-height:1.6;margin:0 0 16px;">
+        Hello ${safeCustomerName},
+      </p>
 
-            <tr>
-              <td style="background:linear-gradient(135deg,#0c3b2e,#17624b);padding:30px 34px;text-align:center;">
-                <div style="font-size:13px;letter-spacing:3px;font-weight:bold;color:#d9b85c;">
-                  ALPHA BROOKS ENERGY
-                </div>
+      <p style="font-size:15px;line-height:1.6;margin:0 0 20px;">
+        Please find today's AGO price from AlphaBrooks Energy Limited below.
+      </p>
 
-                <div style="margin-top:12px;font-size:28px;line-height:1.2;font-weight:700;color:#ffffff;">
-                  AGO PRICE UPDATE
-                </div>
-              </td>
-            </tr>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;">
+        <tr>
+          <td align="center" style="background:#f7f2df;border:1px solid #eadcae;border-radius:12px;padding:22px 15px;">
+            <div style="font-size:12px;letter-spacing:2px;font-weight:bold;color:#806b25;">
+              TODAY'S PRICE
+            </div>
+            <div style="font-size:36px;font-weight:800;color:#17624b;margin-top:6px;">
+              ₦${formattedPrice}
+            </div>
+          </td>
+        </tr>
+      </table>
 
-            <tr>
-              <td style="padding:36px 38px 30px;">
+      <p style="font-size:14px;line-height:1.6;margin:0 0 20px;">
+        Ready to order? Reply to this email and our team will assist.
+      </p>
 
-                <div style="font-size:17px;margin-bottom:18px;">
-                  Hello ${safeCustomerName},
-                </div>
+      <p style="font-size:12.5px;line-height:1.6;color:#5b675f;border-top:1px dashed #e4e9e5;padding-top:14px;margin:0 0 24px;">
+        This price applies to <strong>cash (immediate) payment</strong> only.
+        Orders on credit days are subject to separate terms and conditions —
+        please contact our Sales team to discuss credit pricing.
+      </p>
 
-                <div style="font-size:15px;line-height:1.6;color:#5b675f;margin-bottom:24px;">
-                  Here is today's AGO price from Alpha Brooks Energy.
-                </div>
+      <p style="font-size:14px;line-height:1.7;margin:0 0 4px;">
+        Warm regards,<br />
+        <strong style="color:#5a9f35;">${salesPersonName}</strong><br />
+        ${
+          salesPersonTitle
+            ? `<em style="color:#5a9f35;">${salesPersonTitle}</em><br />`
+            : ""
+        }
+        <strong>AlphaBrooks Energy Limited</strong><br />
+        ${salesPersonPhone ? `📞 ${salesPersonPhone}<br />` : ""}
+        📧 ${salesPersonEmail}
+      </p>
 
-                <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                  <tr>
-                    <td align="center" style="background:#f7f2df;border:1px solid #eadcae;border-radius:16px;padding:25px 15px;">
-                      <div style="font-size:12px;letter-spacing:2px;font-weight:bold;color:#806b25;">
-                        TODAY'S PRICE
-                      </div>
+      <img
+        src="${MAIL_LOGO_URL}"
+        alt="AlphaBrooks Energy"
+        width="90"
+        style="margin-top:18px;display:block;"
+      />
 
-                      <div style="font-size:40px;line-height:1.2;font-weight:800;color:#0c3b2e;margin-top:8px;">
-                        ₦${formattedPrice}
-                      </div>
-                    </td>
-                  </tr>
-                </table>
+      <p style="font-size:12px;color:#9aa59f;margin-top:10px;">
+        Adeyemo Alakija, Victoria Island, Lagos
+      </p>
 
-                <div style="font-size:14px;line-height:1.6;color:#5b675f;text-align:center;margin-top:24px;">
-                  Ready to order? Reply to this email and our team will assist.
-                </div>
+      <p style="font-size:12px;color:#9aa59f;margin-top:16px;">
+        <a href="${COMPANY_WEBSITE_URL}" style="color:#17624b;text-decoration:none;">${COMPANY_WEBSITE_URL.replace(/^https?:\/\//, "")}</a>
+        ${
+          COMPANY_SOCIAL_LINKS.length > 0
+            ? " &nbsp;|&nbsp; " +
+              COMPANY_SOCIAL_LINKS.map(
+                (link) =>
+                  `<a href="${link.url}" style="color:#17624b;text-decoration:none;">${link.label}</a>`
+              ).join(" &nbsp;|&nbsp; ")
+            : ""
+        }
+      </p>
 
-              </td>
-            </tr>
+      <p style="font-size:11px;color:#b7c0ba;margin-top:10px;">
+        <a href="${unsubscribeUrl}" style="color:#b7c0ba;text-decoration:underline;">Unsubscribe from daily price emails</a>
+      </p>
 
-            <tr>
-              <td style="border-top:1px solid #edf0ed;padding:20px 30px;text-align:center;">
-                <div style="font-size:13px;color:#718078;">
-                  Sent by ${salesPersonName}
-                </div>
+      <p style="font-size:10.5px;line-height:1.6;color:#9aa59f;margin-top:26px;border-top:1px solid #edf0ed;padding-top:16px;">
+        The information in this e-mail is regarded as official, confidential, legally privileged and intended solely for the designated recipient(s). Any otherwise usage would be regarded as unauthorized. If this e-mail is received in error, please reply to the sender with the caption "Received in error," and immediately delete the e-mail and copies (if any). Unauthorized disclosure, copying, distribution or any dealings with the contents in this e-mail is prohibited, unlawful and actionable under our laws. Alpha Brooks Energy Limited hereby abdicates itself from any liability resulting from the unintended opinions, conclusions, interpretation of the information in this e-mail and any attachments thereto. Alpha Brooks Energy Limited cannot guarantee that e-mail communications are secure or error-free, as information could be intercepted, corrupted, amended, lost, destroyed, arrive late or incomplete, or contain viruses. Alpha Brooks Energy Limited is a licensed mid-downstream oil and gas company by the Nigerian Midstream and Downstream Petroleum Regulatory Authority registered and operates in accordance with all applicable Nigerian laws and regulations.
+      </p>
 
-                <div style="font-size:12px;color:#9aa59f;margin-top:6px;">
-                  Alpha Brooks Energy
-                </div>
-              </td>
-            </tr>
-
-          </table>
-
-        </td>
-      </tr>
-    </table>
+    </div>
   </body>
 </html>
 `;
@@ -1248,57 +1357,120 @@ export async function sendDailyPriceAction(
     };
   }
 
+  // Test mode: when the "Send a test to me only" box is checked on the form,
+  // the price email is sent ONLY to the current Sales user's own inbox
+  // instead of the full customer list. Use this to confirm the pipeline is
+  // actually delivering (check the inbox, check console output) before
+  // doing a real bulk send.
+  const isTestSend = formData.get("testOnly") === "on";
+
   try {
-    const customers = await listZohoCustomers();
+    const recipients: Pick<
+      ZohoCustomer,
+      "email" | "companyName" | "contactName"
+    >[] = isTestSend
+      ? [
+          {
+            email: currentUser.email,
+            companyName: currentUser.name,
+            contactName: currentUser.name,
+          },
+        ]
+          : await filterUnsubscribed(
+            dedupeCustomersByEmail(
+              (await listZohoCustomers()).filter((customer) =>
+                customer.email?.trim()
+              )
+            )
+          );
 
-    const customersWithEmail = customers.filter(
-      (customer) => customer.email?.trim()
-    );
-
-    if (customersWithEmail.length === 0) {
+    if (recipients.length === 0) {
       return {
         error: "No customers with email addresses were found.",
       };
     }
 
+    console.log(
+      `[sendDailyPriceAction] Starting ${isTestSend ? "TEST" : "bulk"} send — price ₦${price}, ${recipients.length} recipient(s), triggered by ${currentUser.email} at ${new Date().toISOString()}`
+    );
+
+    
+    const ccRecipients: string[] = isTestSend
+      ? []
+      : [process.env.ARIA_MD_EMAIL, process.env.ARIA_IT_HEAD_EMAIL].filter(
+          (email): email is string => !!email?.trim()
+        );
+
     let sentCount = 0;
     let failedCount = 0;
 
-    for (const customer of customersWithEmail) {
+    for (const customer of recipients) {
+      const recipientEmail = customer.email!.trim();
+
       try {
         const customerName =
           customer.companyName?.trim() ||
           customer.contactName?.trim() ||
           "Customer";
 
+                const unsubscribeUrl = buildUnsubscribeUrl(recipientEmail);
+
         const bodyHtml = buildDailyPriceEmail(
           customerName,
           price,
-          currentUser.name
+          currentUser.name,
+          currentUser.jobTitle,
+          currentUser.phone,
+          currentUser.email,
+          unsubscribeUrl
         );
 
         await sendAriaMail({
           from: currentUser.email,
-          to: customer.email!.trim(),
-          subject: "Today's AGO Price | Alpha Brooks Energy",
+          to: recipientEmail,
+          cc: ccRecipients.length > 0 ? ccRecipients : undefined,
+          listUnsubscribeUrl: unsubscribeUrl,
+          subject: isTestSend
+            ? "[TEST] Today's AGO Price | Alpha Brooks Energy"
+            : "Today's AGO Price | Alpha Brooks Energy",
           bodyHtml,
         });
 
         sentCount++;
+
+        // Confirms, per recipient, that the Graph sendMail call resolved
+        // without throwing. Graph's /sendMail returns 202 with no body, so
+        // this log line (plus the item landing in the Sent Items folder of
+        // ARIA_SENDER_EMAIL) is the actual proof of delivery hand-off —
+        // there's no message ID to check here.
+        console.log(
+          `[sendDailyPriceAction] ✓ sent to ${recipientEmail} (${customerName})`
+        );
       } catch (error) {
         failedCount++;
 
         console.error(
-          "[sendDailyPriceAction] Failed to send to customer:",
-          customer.email,
+          "[sendDailyPriceAction] ✗ Failed to send to customer:",
+          recipientEmail,
           error
         );
       }
     }
 
+    console.log(
+      `[sendDailyPriceAction] Finished ${isTestSend ? "TEST" : "bulk"} send — ${sentCount} sent, ${failedCount} failed.`
+    );
+
     if (sentCount === 0) {
       return {
         error: "The price could not be sent to any customer.",
+      };
+    }
+
+    if (isTestSend) {
+      return {
+        success: true,
+        message: `Test email sent to ${currentUser.email}. Check that inbox before sending to all customers.`,
       };
     }
 
@@ -1323,4 +1495,77 @@ export async function sendDailyPriceAction(
           : "Something went wrong while sending today's price.",
     };
   }
+}
+
+/* =========================================================
+   READ — INTERNAL ORDERS
+   ========================================================= */
+
+export async function getInternalOrders() {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    throw new Error(
+      "Unauthorized: you must be signed in to view Orders.",
+    );
+  }
+
+  if (!canViewOrders(currentUser.role)) {
+    throw new Error(
+      "Forbidden: you do not have permission to view Orders.",
+    );
+  }
+
+  return prisma.internalOrder.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      createdBy: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
+    },
+  });
+}
+
+export async function getInternalOrderDetail(orderId: string) {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    throw new Error(
+      "Unauthorized: you must be signed in to view Orders.",
+    );
+  }
+
+  if (!canViewOrders(currentUser.role)) {
+    throw new Error(
+      "Forbidden: you do not have permission to view Orders.",
+    );
+  }
+
+  return prisma.internalOrder.findUnique({
+    where: {
+      id: orderId,
+    },
+    include: {
+      createdBy: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
+      notifications: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
+  });
 }

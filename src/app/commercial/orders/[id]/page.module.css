@@ -1,0 +1,206 @@
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 32px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.back {
+  color: var(--grey-600);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--green-dark);
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--green-dark);
+}
+
+.title {
+  margin-top: 3px;
+  font-size: 25px;
+  font-weight: 850;
+  color: var(--ink);
+}
+
+.subtitle {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--grey-600);
+}
+
+.status {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--grey-100);
+  color: var(--grey-600);
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 18px 20px;
+}
+
+.cardTitle {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--grey-500);
+  margin-bottom: 12px;
+}
+
+.customer {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.customer strong {
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.customer span {
+  font-size: 11px;
+  color: var(--grey-600);
+}
+
+.details {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.details div {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.details div:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.details dt {
+  font-size: 11px;
+  color: var(--grey-500);
+}
+
+.details dd {
+  margin: 0;
+  text-align: right;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.notes {
+  min-height: 50px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.workflow {
+  display: flex;
+  flex-direction: column;
+}
+
+.workflowStep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.workflowStep > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.workflowStep strong {
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.workflowStep span:not(.step):not(.stepActive) {
+  font-size: 10.5px;
+  color: var(--grey-600);
+}
+
+.step,
+.stepActive {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.step {
+  background: var(--grey-100);
+  color: var(--grey-500);
+}
+
+.stepActive {
+  background: var(--green);
+  color: #fff;
+}
+
+.workflowLine {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin-left: 13px;
+}
+
+@media (max-width: 700px) {
+  .page {
+    padding: 22px 16px 40px;
+  }
+
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

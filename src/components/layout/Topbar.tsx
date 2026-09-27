@@ -2,18 +2,28 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { NAV_SECTIONS } from "@/config/nav";
+import { NAV_SECTIONS, resolveActiveHref } from "@/config/nav";
 import styles from "./Topbar.module.css";
 
 function currentTitle(pathname: string): { eyebrow: string; title: string } {
-  for (const section of NAV_SECTIONS) {
-    for (const item of section.items) {
-      if (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)) {
-        return { eyebrow: "Alpha Brooks Energy", title: item.label };
-      }
-    }
+  const hrefs = NAV_SECTIONS.flatMap((section) =>
+    section.items.map((item) => item.href)
+  );
+
+  const activeHref = resolveActiveHref(pathname, hrefs);
+
+  if (activeHref === null) {
+    return { eyebrow: "Alpha Brooks Energy", title: "Operations" };
   }
-  return { eyebrow: "Alpha Brooks Energy", title: "Operations" };
+
+  const activeItem = NAV_SECTIONS.flatMap((section) => section.items).find(
+    (item) => item.href === activeHref
+  );
+
+  return {
+    eyebrow: "Alpha Brooks Energy",
+    title: activeItem?.label ?? "Operations",
+  };
 }
 
 /** "BUSINESS_DEVELOPMENT" -> "Business Development" */
@@ -33,6 +43,8 @@ type NotificationItem = {
   leadId: string | null;
   internalOrderId: string | null;
   link: string | null;
+  isOwn: boolean;          // NEW
+  recipientName: string;   // NEW
   lead: {
     referenceNumber: string;
   } | null;
@@ -55,10 +67,6 @@ export function Topbar({
   const { eyebrow, title } = currentTitle(pathname);
 
   useEffect(() => {
-    if (user.role !== "OPERATIONS") {
-      return;
-    }
-
     let cancelled = false;
 
     async function loadNotifications() {
@@ -98,11 +106,64 @@ export function Topbar({
       cancelled = true;
       window.clearInterval(interval);
     };
-  }, [user.role]);
+  }, []);
+
+    function goToNotificationTarget(notification: NotificationItem) {
+    if (notification.link) {
+      router.push(notification.link);
+    } else if (notification.leadId) {
+      router.push(`/commercial/leads/${notification.leadId}`);
+    }
+  }
+
+  async function markAllNotificationsRead() {
+  try {
+    const response = await fetch("/api/notifications", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        markAll: true,
+      }),
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
+    setNotifications((current) =>
+      current.map((notification) => ({
+        ...notification,
+        readAt:
+          notification.readAt ??
+          new Date().toISOString(),
+      })),
+    );
+
+    setUnreadCount(0);
+  } catch (error) {
+    console.error(
+      "[Topbar] Failed to mark notifications as read:",
+      error,
+    );
+  }
+}
 
   async function openNotification(
     notification: NotificationItem
   ) {
+    /*
+     * A supervisor opening someone else's notification only navigates.
+     * It is NOT marked read: that would clear the recipient's own
+     * acknowledgement and switch off the 15-minute escalation.
+     */
+    if (!notification.isOwn) {
+      setNotificationsOpen(false);
+      goToNotificationTarget(notification);
+      return;
+    }
+
     try {
       const response = await fetch("/api/notifications", {
         method: "PATCH",
@@ -136,12 +197,7 @@ export function Topbar({
       );
 
       setNotificationsOpen(false);
-
-      if (notification.link) {
-        router.push(notification.link);
-      } else if (notification.leadId) {
-        router.push(`/commercial/leads/${notification.leadId}`);
-      }
+      goToNotificationTarget(notification);
     } catch (error) {
       console.error(
         "[Topbar] Failed to mark notification as read:",
@@ -162,7 +218,6 @@ export function Topbar({
       <div className={styles.meta}>
         <div className={styles.metaLabel}>Master Operations Platform</div>
         <div className={styles.userRow}>
-          {user.role === "OPERATIONS" && (
             <div className={styles.notificationWrap}>
               <button
                 type="button"
@@ -190,7 +245,17 @@ export function Topbar({
               {notificationsOpen && (
                 <div className={styles.notificationPanel}>
                   <div className={styles.notificationHeader}>
-                    Notifications
+                    <span>Notifications</span>
+
+                    {unreadCount > 0 && (
+                      <button
+                        type="button"
+                        className={styles.markAllButton}
+                        onClick={markAllNotificationsRead}
+                      >
+                        Mark all as read
+                      </button>
+                    )}
                   </div>
 
                   {notifications.length === 0 ? (
@@ -203,13 +268,11 @@ export function Topbar({
                         key={notification.id}
                         type="button"
                         className={`${styles.notificationItem} ${
-                          notification.readAt === null
+                          notification.isOwn && notification.readAt === null
                             ? styles.notificationUnread
                             : ""
                         }`}
-                        onClick={() =>
-                          openNotification(notification)
-                        }
+                        onClick={() => openNotification(notification)}
                       >
                         <div className={styles.notificationTitle}>
                           {notification.title}
@@ -218,6 +281,13 @@ export function Topbar({
                         <div className={styles.notificationMessage}>
                           {notification.message}
                         </div>
+
+                        {!notification.isOwn && (
+                          <div className={styles.notificationLead}>
+                            For: {notification.recipientName}
+                            {notification.readAt === null ? " · unread" : " · read"}
+                          </div>
+                        )}
 
                         {notification.lead && (
                           <div className={styles.notificationLead}>
@@ -230,7 +300,6 @@ export function Topbar({
                 </div>
               )}
             </div>
-          )}
 
           <span className={styles.userName}>{user.name}</span>
           <span className={styles.userRole}>{formatRoleLabel(user.role)}</span>

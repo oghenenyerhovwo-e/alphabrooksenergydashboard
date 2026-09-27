@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useActionState } from "react";
 import {
   sendDailyPriceAction,
+  getDailyPriceRecipientsAction,
   type CommercialActionState,
 } from "@/lib/commercial/actions";
 import styles from "./SendDailyPriceForm.module.css";
@@ -18,7 +19,14 @@ export default function SendDailyPriceForm() {
 
   const [price, setPrice] = useState("");
   const [showPreview, setShowPreview] = useState(false);
-
+  const [testOnly, setTestOnly] = useState(false);
+  const [recipients, setRecipients] = useState<
+    { email: string; name: string }[] | null
+  >(null);
+  const [loadingRecipients, setLoadingRecipients] = useState(false);
+  const [recipientsError, setRecipientsError] = useState<string | null>(
+    null
+  );
   function handlePreview(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -28,7 +36,24 @@ export default function SendDailyPriceForm() {
       return;
     }
 
-    setShowPreview(true);
+        setShowPreview(true);
+
+    if (!testOnly) {
+      setRecipients(null);
+      setRecipientsError(null);
+      setLoadingRecipients(true);
+
+      getDailyPriceRecipientsAction()
+        .then((list) => setRecipients(list))
+        .catch((error: unknown) => {
+          setRecipientsError(
+            error instanceof Error
+              ? error.message
+              : "Could not load the customer list."
+          );
+        })
+        .finally(() => setLoadingRecipients(false));
+    }
   }
 
   const formattedPrice = Number(price).toLocaleString("en-NG", {
@@ -63,6 +88,15 @@ export default function SendDailyPriceForm() {
             required
           />
         </div>
+
+        <label className={styles.checkboxRow}>
+          <input
+            type="checkbox"
+            checked={testOnly}
+            onChange={(event) => setTestOnly(event.target.checked)}
+          />
+          Send a test to my own email only (don&apos;t email customers)
+        </label>
 
         <button
           type="submit"
@@ -143,14 +177,67 @@ export default function SendDailyPriceForm() {
                   Ready to order? Reply to this email and our team will
                   assist.
                 </p>
+
+                <p className={styles.emailTerms}>
+                  This price applies to <strong>cash (immediate) payment</strong> only.
+                  Orders on credit days are subject to separate terms and
+                  conditions — please contact our Sales team to discuss
+                  credit pricing.
+                </p>
               </div>
 
               <div className={styles.emailFooter}>
                 Sent by your Sales representative
                 <br />
                 Alpha Brooks Energy
+                <br />
+                <span className={styles.emailFooterLinks}>
+                  alphabrooksenergy.com &nbsp;|&nbsp; social links
+                </span>
               </div>
             </div>
+
+                        {!testOnly && (
+              <div className={styles.recipientsBox}>
+                <div className={styles.recipientsHeading}>
+                  {loadingRecipients
+                    ? "Loading customer list..."
+                    : recipientsError
+                      ? "Could not load customer list"
+                      : `Will send to ${recipients?.length ?? 0} customer${
+                          (recipients?.length ?? 0) === 1 ? "" : "s"
+                        }`}
+                </div>
+
+                {recipientsError && (
+                  <p className={styles.error} role="alert">
+                    {recipientsError}
+                  </p>
+                )}
+
+                {recipients && recipients.length > 0 && (
+                  <ul className={styles.recipientsList}>
+                    {recipients.map((r) => (
+                      <li key={r.email}>
+                        {r.name} — {r.email}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+
+            {state.error && (
+              <p className={styles.error} role="alert">
+                {state.error}
+              </p>
+            )}
+
+            {state.success && (
+              <p className={styles.success} role="status">
+                {state.message}
+              </p>
+            )}
 
             <div className={styles.previewActions}>
               <button
@@ -159,18 +246,31 @@ export default function SendDailyPriceForm() {
                 onClick={() => setShowPreview(false)}
                 disabled={isPending}
               >
-                Back
+                {state.success || state.error ? "Close" : "Back"}
               </button>
 
               <form action={formAction}>
                 <input type="hidden" name="price" value={price} />
+                {testOnly && (
+                  <input type="hidden" name="testOnly" value="on" />
+                )}
 
                 <button
                   type="submit"
                   className={styles.sendButton}
-                  disabled={isPending}
+                  disabled={
+                    isPending ||
+                    (!testOnly &&
+                      (loadingRecipients ||
+                        !!recipientsError ||
+                        (recipients?.length ?? 0) === 0))
+                  }
                 >
-                  {isPending ? "Sending..." : "Send Today's Price"}
+                  {isPending
+                    ? "Sending..."
+                    : testOnly
+                      ? "Send Test to Me"
+                      : "Send Today's Price"}
                 </button>
               </form>
             </div>

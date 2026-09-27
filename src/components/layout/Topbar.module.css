@@ -206,3 +206,46 @@
   font-weight: 700;
   color: var(--green-dark);
 }
+
+.notificationHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.markAllButton {
+  border: none;
+  background: transparent;
+  color: var(--green-dark);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 0;
+  cursor: pointer;
+}
+
+.markAllButton:hover {
+  text-decoration: underline;
+}
+
+.notificationItem {
+  position: relative;
+}
+
+.notificationUnread {
+  background: #fff8f1;
+  box-shadow: inset 3px 0 0 var(--amber);
+}
+
+.notificationItem:not(.notificationUnread) {
+  opacity: 0.72;
+}
+
+.notificationItem:not(.notificationUnread) .notificationTitle {
+  font-weight: 650;
+}

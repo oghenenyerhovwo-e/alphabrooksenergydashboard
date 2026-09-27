@@ -205,22 +205,22 @@ export async function listZohoCustomers(): Promise<ZohoCustomer[]> {
       );
     }
 
-    if (Array.isArray(data?.contacts)) {
+        if (Array.isArray(data?.contacts)) {
       for (const customer of data.contacts as Array<{
-        contactId?: string | number;
-        contactName?: string;
-        companyName?: string;
+        contact_id?: string | number;
+        contact_name?: string;
+        company_name?: string;
         phone?: string;
         email?: string;
       }>) {
-        if (!customer.contactId) {
+        if (!customer.contact_id) {
           continue;
         }
 
         customers.push({
-          contactId: String(customer.contactId),
-          contactName: customer.contactName || "",
-          companyName: customer.companyName || "",
+          contactId: String(customer.contact_id),
+          contactName: customer.contact_name || "",
+          companyName: customer.company_name || "",
           phone: customer.phone || "",
           email: customer.email || "",
         });
@@ -374,9 +374,10 @@ export async function createZohoCustomer(
   const organizationId = getZohoBooksOrganizationId();
 
   const body: Record<string, unknown> = {
-    contactName: companyName,
-    companyName: companyName,
+    contact_name: companyName,
+    company_name: companyName,
     contact_type: "customer",
+    customer_sub_type: "business",
   };
 
   if (input.email?.trim()) {

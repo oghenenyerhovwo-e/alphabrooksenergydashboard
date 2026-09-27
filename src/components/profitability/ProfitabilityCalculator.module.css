@@ -1,0 +1,250 @@
+.grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.resultsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 18px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.cardTitle {
+  font-size: 15px;
+}
+
+.cardTitleSecondary {
+  font-size: 13px;
+  color: var(--grey-600);
+  margin: 18px 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.resetButton {
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--ink-soft);
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+}
+
+.resetButton:hover {
+  background: var(--grey-100);
+}
+
+.linkButton {
+  border: none;
+  background: none;
+  color: var(--green-dark);
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 0;
+}
+
+.linkButton:hover {
+  text-decoration: underline;
+}
+
+.fieldList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.fieldLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.cellTag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--grey-500);
+  background: var(--grey-100);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.followBadge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--green-dark);
+  background: var(--green-tint);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.fieldInputWrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  padding: 0 10px;
+}
+
+.fieldInputWrap:focus-within {
+  border-color: var(--green-dark);
+}
+
+.fieldPrefix,
+.fieldSuffix {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--grey-600);
+}
+
+.fieldInput {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 9px 6px;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  color: var(--ink);
+  min-width: 0;
+}
+
+.fieldInput:focus {
+  outline: none;
+}
+
+.fieldHint {
+  font-size: 11px;
+  color: var(--grey-500);
+}
+
+.errorBanner {
+  margin-top: 14px;
+  background: var(--red-bg);
+  color: var(--red);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--grey-500);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.table td {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.numCol {
+  text-align: right;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.summaryRow td {
+  font-weight: 800;
+  background: var(--grey-100);
+}
+
+.summaryRow td:first-child {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  padding-left: 8px;
+}
+
+.summaryRow td:last-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding-right: 8px;
+}
+
+.helperText {
+  font-size: 12.5px;
+  color: var(--grey-600);
+  margin-bottom: 14px;
+}
+
+.statRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--grey-100);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.statLabel {
+  font-size: 11px;
+  color: var(--grey-600);
+  font-weight: 700;
+}
+
+.statValue {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.warningBanner {
+  background: var(--red-bg);
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 4px;
+}

@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
-import { UserRole } from "@/generated/prisma/client";
+import { canSeeAllNotifications } from "@/lib/notificationAccess";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+const OWN_LIMIT = 20;
+const SUPERVISOR_LIMIT = 50;
 
 export async function GET() {
   const currentUser = await getCurrentUser();
@@ -17,41 +20,58 @@ export async function GET() {
     );
   }
 
-  if (currentUser.role !== UserRole.OPERATIONS) {
-    return NextResponse.json({
-      unreadCount: 0,
-      notifications: [],
-    });
-  }
+  const seesAll = canSeeAllNotifications(currentUser);
 
-  const notifications = await prisma.notification.findMany({
-    where: {
-      recipientId: currentUser.id,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 20,
-    select: {
-      id: true,
-      title: true,
-      message: true,
-      readAt: true,
-      createdAt: true,
-      leadId: true,
-      internalOrderId: true,
-      link: true,
-      lead: {
-        select: {
-          referenceNumber: true,
+  const [rows, unreadCount] = await Promise.all([
+    prisma.notification.findMany({
+      // Everyone sees the notifications addressed to them.
+      // Supervisors see all of them.
+      where: seesAll ? {} : { recipientId: currentUser.id },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: seesAll ? SUPERVISOR_LIMIT : OWN_LIMIT,
+      select: {
+        id: true,
+        title: true,
+        message: true,
+        readAt: true,
+        createdAt: true,
+        leadId: true,
+        internalOrderId: true,
+        link: true,
+        recipientId: true,
+        recipient: {
+          select: {
+            name: true,
+          },
+        },
+        lead: {
+          select: {
+            referenceNumber: true,
+          },
         },
       },
-    },
-  });
+    }),
+    // The badge always counts only the current user's OWN unread items.
+    // (Counting other people's unread items would leave a badge the
+    // supervisor can never clear, because only the recipient can mark
+    // a notification as read.)
+    prisma.notification.count({
+      where: {
+        recipientId: currentUser.id,
+        readAt: null,
+      },
+    }),
+  ]);
 
-  const unreadCount = notifications.filter(
-    (notification) => notification.readAt === null
-  ).length;
+  const notifications = rows.map(
+    ({ recipientId, recipient, ...notification }) => ({
+      ...notification,
+      isOwn: recipientId === currentUser.id,
+      recipientName: recipient.name,
+    })
+  );
 
   return NextResponse.json({
     unreadCount,
@@ -69,14 +89,10 @@ export async function PATCH(request: Request) {
     );
   }
 
-  if (currentUser.role !== UserRole.OPERATIONS) {
-    return NextResponse.json(
-      { error: "Forbidden." },
-      { status: 403 }
-    );
-  }
-
-  let body: { notificationId?: unknown };
+  let body: {
+  notificationId?: unknown;
+  markAll?: unknown;
+};
 
   try {
     body = await request.json();
@@ -97,6 +113,28 @@ export async function PATCH(request: Request) {
     );
   }
 
+  if (body.markAll === true) {
+    const result = await prisma.notification.updateMany({
+      where: {
+        recipientId: currentUser.id,
+        readAt: null,
+      },
+      data: {
+        readAt: new Date(),
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      markedRead: result.count,
+    });
+  }
+
+  /*
+   * Only the RECIPIENT can mark a notification as read, including for
+   * supervisors. Reading someone else's notification must never clear
+   * their acknowledgement / escalation clock.
+   */
   const notification = await prisma.notification.findFirst({
     where: {
       id: body.notificationId,

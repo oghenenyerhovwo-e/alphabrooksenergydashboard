@@ -179,3 +179,8 @@ export type OutcomeTarget = Prisma.OutcomeTargetModel
  * achievement has been entered yet.
  */
 export type OutcomeAchievement = Prisma.OutcomeAchievementModel
+/**
+ * Model DailyPriceUnsubscribe
+ * 
+ */
+export type DailyPriceUnsubscribe = Prisma.DailyPriceUnsubscribeModel
