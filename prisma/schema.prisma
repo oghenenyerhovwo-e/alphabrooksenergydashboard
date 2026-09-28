@@ -364,15 +364,18 @@ model Lead {
 
   companyName   String
   contactPerson String?
+  role          String?   // NEW — their job title/role at the org
   phone         String?
   email         String?
   location      String?
 
   source          LeadSource
   productInterest DeliveryProduct?
+  businessNeed    String?   // NEW — what they said they need, in their own words
   notes           String?
 
   status          LeadStatus @default(NEW)
+  nextAction      String?   // NEW — concrete next step + owner
 
   zohoCustomerId String? @unique
 

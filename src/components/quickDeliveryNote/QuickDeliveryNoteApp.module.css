@@ -1,0 +1,308 @@
+.screen {
+  min-height: 100dvh;
+  background: #f3f1ea;
+  font-family: var(--font-ui), -apple-system, sans-serif;
+  color: #14201b;
+  padding-bottom: 60px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: #10231c;
+  color: #f6f3ea;
+}
+
+.topbarBrand {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(246, 243, 234, 0.55);
+}
+
+.topbarTitle {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.lockButton {
+  border: 1px solid rgba(246, 243, 234, 0.25);
+  background: transparent;
+  color: rgba(246, 243, 234, 0.85);
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.progress {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  max-width: 860px;
+  margin: 22px auto 0;
+  padding: 0 24px;
+}
+
+.progressItem {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(16, 35, 28, 0.05);
+}
+
+.progressItem[data-state="active"] {
+  background: #10231c;
+}
+
+.progressItem[data-state="active"] .progressLabel {
+  color: #f6f3ea;
+}
+
+.progressItem[data-state="active"] .progressDot {
+  background: #e8a33d;
+  color: #1a1206;
+}
+
+.progressItem[data-state="done"] .progressDot {
+  background: #55a88b;
+  color: #06251b;
+}
+
+.progressDot {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border-radius: 999px;
+  background: rgba(16, 35, 28, 0.15);
+  color: #14201b;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progressLabel {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgba(20, 32, 27, 0.6);
+}
+
+.content {
+  max-width: 860px;
+  margin: 20px auto 0;
+  padding: 0 24px;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid rgba(16, 35, 28, 0.1);
+  border-radius: 16px;
+  padding: 28px 26px 26px;
+}
+
+.panelTitle {
+  margin: 0 0 6px;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.panelSubtitle {
+  margin: 0 0 24px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: rgba(20, 32, 27, 0.6);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(20, 32, 27, 0.65);
+}
+
+.input {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid rgba(16, 35, 28, 0.16);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  color: #14201b;
+  background: #fbfaf6;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.input:focus {
+  border-color: #e8a33d;
+  background: #fff;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.primaryButton {
+  border: none;
+  border-radius: 10px;
+  padding: 13px 22px;
+  background: #10231c;
+  color: #f6f3ea;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primaryButton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.secondaryButton {
+  border: 1px solid rgba(16, 35, 28, 0.18);
+  border-radius: 10px;
+  padding: 13px 22px;
+  background: transparent;
+  color: #14201b;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondaryButton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.sigGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+}
+
+@media (min-width: 720px) {
+  .sigGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.sigBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sigBlockTitle {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sigCanvasWrap {
+  border: 1.5px dashed rgba(16, 35, 28, 0.25);
+  border-radius: 12px;
+  background: #fbfaf6;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.sigCanvas {
+  width: 100%;
+  height: 180px;
+  display: block;
+}
+
+.clearButton {
+  align-self: flex-start;
+  border: none;
+  background: transparent;
+  color: #b3541f;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.previewWrap {
+  width: 100%;
+  padding: 18px 0;
+  background: rgba(16, 35, 28, 0.04);
+  border-radius: 12px;
+}
+
+.captureHost {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  pointer-events: none;
+}
+
+.sendError {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #b3261e;
+}
+
+.doneCard {
+  max-width: 420px;
+  margin: 14vh auto 0;
+  background: #fff;
+  border: 1px solid rgba(16, 35, 28, 0.1);
+  border-radius: 16px;
+  padding: 36px 30px;
+  text-align: center;
+}
+
+.doneMark {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 18px;
+  border-radius: 999px;
+  background: #55a88b;
+  color: #06251b;
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doneTitle {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.doneSubtitle {
+  margin: 0 0 22px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: rgba(20, 32, 27, 0.65);
+}

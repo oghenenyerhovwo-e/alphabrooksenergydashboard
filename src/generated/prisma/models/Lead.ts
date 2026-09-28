@@ -29,13 +29,16 @@ export type LeadMinAggregateOutputType = {
   referenceNumber: string | null
   companyName: string | null
   contactPerson: string | null
+  role: string | null
   phone: string | null
   email: string | null
   location: string | null
   source: $Enums.LeadSource | null
   productInterest: $Enums.DeliveryProduct | null
+  businessNeed: string | null
   notes: string | null
   status: $Enums.LeadStatus | null
+  nextAction: string | null
   zohoCustomerId: string | null
   outcomeReason: string | null
   outcomeAt: Date | null
@@ -50,13 +53,16 @@ export type LeadMaxAggregateOutputType = {
   referenceNumber: string | null
   companyName: string | null
   contactPerson: string | null
+  role: string | null
   phone: string | null
   email: string | null
   location: string | null
   source: $Enums.LeadSource | null
   productInterest: $Enums.DeliveryProduct | null
+  businessNeed: string | null
   notes: string | null
   status: $Enums.LeadStatus | null
+  nextAction: string | null
   zohoCustomerId: string | null
   outcomeReason: string | null
   outcomeAt: Date | null
@@ -71,13 +77,16 @@ export type LeadCountAggregateOutputType = {
   referenceNumber: number
   companyName: number
   contactPerson: number
+  role: number
   phone: number
   email: number
   location: number
   source: number
   productInterest: number
+  businessNeed: number
   notes: number
   status: number
+  nextAction: number
   zohoCustomerId: number
   outcomeReason: number
   outcomeAt: number
@@ -94,13 +103,16 @@ export type LeadMinAggregateInputType = {
   referenceNumber?: true
   companyName?: true
   contactPerson?: true
+  role?: true
   phone?: true
   email?: true
   location?: true
   source?: true
   productInterest?: true
+  businessNeed?: true
   notes?: true
   status?: true
+  nextAction?: true
   zohoCustomerId?: true
   outcomeReason?: true
   outcomeAt?: true
@@ -115,13 +127,16 @@ export type LeadMaxAggregateInputType = {
   referenceNumber?: true
   companyName?: true
   contactPerson?: true
+  role?: true
   phone?: true
   email?: true
   location?: true
   source?: true
   productInterest?: true
+  businessNeed?: true
   notes?: true
   status?: true
+  nextAction?: true
   zohoCustomerId?: true
   outcomeReason?: true
   outcomeAt?: true
@@ -136,13 +151,16 @@ export type LeadCountAggregateInputType = {
   referenceNumber?: true
   companyName?: true
   contactPerson?: true
+  role?: true
   phone?: true
   email?: true
   location?: true
   source?: true
   productInterest?: true
+  businessNeed?: true
   notes?: true
   status?: true
+  nextAction?: true
   zohoCustomerId?: true
   outcomeReason?: true
   outcomeAt?: true
@@ -230,13 +248,16 @@ export type LeadGroupByOutputType = {
   referenceNumber: string
   companyName: string
   contactPerson: string | null
+  role: string | null
   phone: string | null
   email: string | null
   location: string | null
   source: $Enums.LeadSource
   productInterest: $Enums.DeliveryProduct | null
+  businessNeed: string | null
   notes: string | null
   status: $Enums.LeadStatus
+  nextAction: string | null
   zohoCustomerId: string | null
   outcomeReason: string | null
   outcomeAt: Date | null
@@ -272,13 +293,16 @@ export type LeadWhereInput = {
   referenceNumber?: Prisma.StringFilter<"Lead"> | string
   companyName?: Prisma.StringFilter<"Lead"> | string
   contactPerson?: Prisma.StringNullableFilter<"Lead"> | string | null
+  role?: Prisma.StringNullableFilter<"Lead"> | string | null
   phone?: Prisma.StringNullableFilter<"Lead"> | string | null
   email?: Prisma.StringNullableFilter<"Lead"> | string | null
   location?: Prisma.StringNullableFilter<"Lead"> | string | null
   source?: Prisma.EnumLeadSourceFilter<"Lead"> | $Enums.LeadSource
   productInterest?: Prisma.EnumDeliveryProductNullableFilter<"Lead"> | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.StringNullableFilter<"Lead"> | string | null
   notes?: Prisma.StringNullableFilter<"Lead"> | string | null
   status?: Prisma.EnumLeadStatusFilter<"Lead"> | $Enums.LeadStatus
+  nextAction?: Prisma.StringNullableFilter<"Lead"> | string | null
   zohoCustomerId?: Prisma.StringNullableFilter<"Lead"> | string | null
   outcomeReason?: Prisma.StringNullableFilter<"Lead"> | string | null
   outcomeAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
@@ -298,13 +322,16 @@ export type LeadOrderByWithRelationInput = {
   referenceNumber?: Prisma.SortOrder
   companyName?: Prisma.SortOrder
   contactPerson?: Prisma.SortOrderInput | Prisma.SortOrder
+  role?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrderInput | Prisma.SortOrder
   source?: Prisma.SortOrder
   productInterest?: Prisma.SortOrderInput | Prisma.SortOrder
+  businessNeed?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  nextAction?: Prisma.SortOrderInput | Prisma.SortOrder
   zohoCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   outcomeReason?: Prisma.SortOrderInput | Prisma.SortOrder
   outcomeAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -328,13 +355,16 @@ export type LeadWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.LeadWhereInput | Prisma.LeadWhereInput[]
   companyName?: Prisma.StringFilter<"Lead"> | string
   contactPerson?: Prisma.StringNullableFilter<"Lead"> | string | null
+  role?: Prisma.StringNullableFilter<"Lead"> | string | null
   phone?: Prisma.StringNullableFilter<"Lead"> | string | null
   email?: Prisma.StringNullableFilter<"Lead"> | string | null
   location?: Prisma.StringNullableFilter<"Lead"> | string | null
   source?: Prisma.EnumLeadSourceFilter<"Lead"> | $Enums.LeadSource
   productInterest?: Prisma.EnumDeliveryProductNullableFilter<"Lead"> | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.StringNullableFilter<"Lead"> | string | null
   notes?: Prisma.StringNullableFilter<"Lead"> | string | null
   status?: Prisma.EnumLeadStatusFilter<"Lead"> | $Enums.LeadStatus
+  nextAction?: Prisma.StringNullableFilter<"Lead"> | string | null
   outcomeReason?: Prisma.StringNullableFilter<"Lead"> | string | null
   outcomeAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   outcomeById?: Prisma.StringNullableFilter<"Lead"> | string | null
@@ -353,13 +383,16 @@ export type LeadOrderByWithAggregationInput = {
   referenceNumber?: Prisma.SortOrder
   companyName?: Prisma.SortOrder
   contactPerson?: Prisma.SortOrderInput | Prisma.SortOrder
+  role?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrderInput | Prisma.SortOrder
   source?: Prisma.SortOrder
   productInterest?: Prisma.SortOrderInput | Prisma.SortOrder
+  businessNeed?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  nextAction?: Prisma.SortOrderInput | Prisma.SortOrder
   zohoCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   outcomeReason?: Prisma.SortOrderInput | Prisma.SortOrder
   outcomeAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -380,13 +413,16 @@ export type LeadScalarWhereWithAggregatesInput = {
   referenceNumber?: Prisma.StringWithAggregatesFilter<"Lead"> | string
   companyName?: Prisma.StringWithAggregatesFilter<"Lead"> | string
   contactPerson?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
+  role?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   location?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   source?: Prisma.EnumLeadSourceWithAggregatesFilter<"Lead"> | $Enums.LeadSource
   productInterest?: Prisma.EnumDeliveryProductNullableWithAggregatesFilter<"Lead"> | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   status?: Prisma.EnumLeadStatusWithAggregatesFilter<"Lead"> | $Enums.LeadStatus
+  nextAction?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   zohoCustomerId?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   outcomeReason?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   outcomeAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
@@ -401,13 +437,16 @@ export type LeadCreateInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -425,13 +464,16 @@ export type LeadUncheckedCreateInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -449,13 +491,16 @@ export type LeadUpdateInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -473,13 +518,16 @@ export type LeadUncheckedUpdateInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -497,13 +545,16 @@ export type LeadCreateManyInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -518,13 +569,16 @@ export type LeadUpdateManyMutationInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -537,13 +591,16 @@ export type LeadUncheckedUpdateManyInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -573,13 +630,16 @@ export type LeadCountOrderByAggregateInput = {
   referenceNumber?: Prisma.SortOrder
   companyName?: Prisma.SortOrder
   contactPerson?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   location?: Prisma.SortOrder
   source?: Prisma.SortOrder
   productInterest?: Prisma.SortOrder
+  businessNeed?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  nextAction?: Prisma.SortOrder
   zohoCustomerId?: Prisma.SortOrder
   outcomeReason?: Prisma.SortOrder
   outcomeAt?: Prisma.SortOrder
@@ -594,13 +654,16 @@ export type LeadMaxOrderByAggregateInput = {
   referenceNumber?: Prisma.SortOrder
   companyName?: Prisma.SortOrder
   contactPerson?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   location?: Prisma.SortOrder
   source?: Prisma.SortOrder
   productInterest?: Prisma.SortOrder
+  businessNeed?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  nextAction?: Prisma.SortOrder
   zohoCustomerId?: Prisma.SortOrder
   outcomeReason?: Prisma.SortOrder
   outcomeAt?: Prisma.SortOrder
@@ -615,13 +678,16 @@ export type LeadMinOrderByAggregateInput = {
   referenceNumber?: Prisma.SortOrder
   companyName?: Prisma.SortOrder
   contactPerson?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   location?: Prisma.SortOrder
   source?: Prisma.SortOrder
   productInterest?: Prisma.SortOrder
+  businessNeed?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  nextAction?: Prisma.SortOrder
   zohoCustomerId?: Prisma.SortOrder
   outcomeReason?: Prisma.SortOrder
   outcomeAt?: Prisma.SortOrder
@@ -783,13 +849,16 @@ export type LeadCreateWithoutCreatedByInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -806,13 +875,16 @@ export type LeadUncheckedCreateWithoutCreatedByInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -839,13 +911,16 @@ export type LeadCreateWithoutOutcomeByInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -862,13 +937,16 @@ export type LeadUncheckedCreateWithoutOutcomeByInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -914,13 +992,16 @@ export type LeadScalarWhereInput = {
   referenceNumber?: Prisma.StringFilter<"Lead"> | string
   companyName?: Prisma.StringFilter<"Lead"> | string
   contactPerson?: Prisma.StringNullableFilter<"Lead"> | string | null
+  role?: Prisma.StringNullableFilter<"Lead"> | string | null
   phone?: Prisma.StringNullableFilter<"Lead"> | string | null
   email?: Prisma.StringNullableFilter<"Lead"> | string | null
   location?: Prisma.StringNullableFilter<"Lead"> | string | null
   source?: Prisma.EnumLeadSourceFilter<"Lead"> | $Enums.LeadSource
   productInterest?: Prisma.EnumDeliveryProductNullableFilter<"Lead"> | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.StringNullableFilter<"Lead"> | string | null
   notes?: Prisma.StringNullableFilter<"Lead"> | string | null
   status?: Prisma.EnumLeadStatusFilter<"Lead"> | $Enums.LeadStatus
+  nextAction?: Prisma.StringNullableFilter<"Lead"> | string | null
   zohoCustomerId?: Prisma.StringNullableFilter<"Lead"> | string | null
   outcomeReason?: Prisma.StringNullableFilter<"Lead"> | string | null
   outcomeAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
@@ -951,13 +1032,16 @@ export type LeadCreateWithoutNotificationsInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -974,13 +1058,16 @@ export type LeadUncheckedCreateWithoutNotificationsInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -1013,13 +1100,16 @@ export type LeadUpdateWithoutNotificationsInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1036,13 +1126,16 @@ export type LeadUncheckedUpdateWithoutNotificationsInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1059,13 +1152,16 @@ export type LeadCreateWithoutQuoteRequestsInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -1082,13 +1178,16 @@ export type LeadUncheckedCreateWithoutQuoteRequestsInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -1121,13 +1220,16 @@ export type LeadUpdateWithoutQuoteRequestsInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1144,13 +1246,16 @@ export type LeadUncheckedUpdateWithoutQuoteRequestsInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1167,13 +1272,16 @@ export type LeadCreateWithoutAuditLogsInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -1190,13 +1298,16 @@ export type LeadUncheckedCreateWithoutAuditLogsInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -1229,13 +1340,16 @@ export type LeadUpdateWithoutAuditLogsInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1252,13 +1366,16 @@ export type LeadUncheckedUpdateWithoutAuditLogsInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1275,13 +1392,16 @@ export type LeadCreateManyCreatedByInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -1295,13 +1415,16 @@ export type LeadCreateManyOutcomeByInput = {
   referenceNumber: string
   companyName: string
   contactPerson?: string | null
+  role?: string | null
   phone?: string | null
   email?: string | null
   location?: string | null
   source: $Enums.LeadSource
   productInterest?: $Enums.DeliveryProduct | null
+  businessNeed?: string | null
   notes?: string | null
   status?: $Enums.LeadStatus
+  nextAction?: string | null
   zohoCustomerId?: string | null
   outcomeReason?: string | null
   outcomeAt?: Date | string | null
@@ -1315,13 +1438,16 @@ export type LeadUpdateWithoutCreatedByInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1338,13 +1464,16 @@ export type LeadUncheckedUpdateWithoutCreatedByInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1361,13 +1490,16 @@ export type LeadUncheckedUpdateManyWithoutCreatedByInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1381,13 +1513,16 @@ export type LeadUpdateWithoutOutcomeByInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1404,13 +1539,16 @@ export type LeadUncheckedUpdateWithoutOutcomeByInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1427,13 +1565,16 @@ export type LeadUncheckedUpdateManyWithoutOutcomeByInput = {
   referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   contactPerson?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.EnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource
   productInterest?: Prisma.NullableEnumDeliveryProductFieldUpdateOperationsInput | $Enums.DeliveryProduct | null
+  businessNeed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  nextAction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zohoCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   outcomeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1496,13 +1637,16 @@ export type LeadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   referenceNumber?: boolean
   companyName?: boolean
   contactPerson?: boolean
+  role?: boolean
   phone?: boolean
   email?: boolean
   location?: boolean
   source?: boolean
   productInterest?: boolean
+  businessNeed?: boolean
   notes?: boolean
   status?: boolean
+  nextAction?: boolean
   zohoCustomerId?: boolean
   outcomeReason?: boolean
   outcomeAt?: boolean
@@ -1523,13 +1667,16 @@ export type LeadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   referenceNumber?: boolean
   companyName?: boolean
   contactPerson?: boolean
+  role?: boolean
   phone?: boolean
   email?: boolean
   location?: boolean
   source?: boolean
   productInterest?: boolean
+  businessNeed?: boolean
   notes?: boolean
   status?: boolean
+  nextAction?: boolean
   zohoCustomerId?: boolean
   outcomeReason?: boolean
   outcomeAt?: boolean
@@ -1546,13 +1693,16 @@ export type LeadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   referenceNumber?: boolean
   companyName?: boolean
   contactPerson?: boolean
+  role?: boolean
   phone?: boolean
   email?: boolean
   location?: boolean
   source?: boolean
   productInterest?: boolean
+  businessNeed?: boolean
   notes?: boolean
   status?: boolean
+  nextAction?: boolean
   zohoCustomerId?: boolean
   outcomeReason?: boolean
   outcomeAt?: boolean
@@ -1569,13 +1719,16 @@ export type LeadSelectScalar = {
   referenceNumber?: boolean
   companyName?: boolean
   contactPerson?: boolean
+  role?: boolean
   phone?: boolean
   email?: boolean
   location?: boolean
   source?: boolean
   productInterest?: boolean
+  businessNeed?: boolean
   notes?: boolean
   status?: boolean
+  nextAction?: boolean
   zohoCustomerId?: boolean
   outcomeReason?: boolean
   outcomeAt?: boolean
@@ -1585,7 +1738,7 @@ export type LeadSelectScalar = {
   updatedAt?: boolean
 }
 
-export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "referenceNumber" | "companyName" | "contactPerson" | "phone" | "email" | "location" | "source" | "productInterest" | "notes" | "status" | "zohoCustomerId" | "outcomeReason" | "outcomeAt" | "outcomeById" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
+export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "referenceNumber" | "companyName" | "contactPerson" | "role" | "phone" | "email" | "location" | "source" | "productInterest" | "businessNeed" | "notes" | "status" | "nextAction" | "zohoCustomerId" | "outcomeReason" | "outcomeAt" | "outcomeById" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
 export type LeadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   outcomeBy?: boolean | Prisma.Lead$outcomeByArgs<ExtArgs>
   createdBy?: boolean | Prisma.Lead$createdByArgs<ExtArgs>
@@ -1617,13 +1770,16 @@ export type $LeadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     referenceNumber: string
     companyName: string
     contactPerson: string | null
+    role: string | null
     phone: string | null
     email: string | null
     location: string | null
     source: $Enums.LeadSource
     productInterest: $Enums.DeliveryProduct | null
+    businessNeed: string | null
     notes: string | null
     status: $Enums.LeadStatus
+    nextAction: string | null
     zohoCustomerId: string | null
     outcomeReason: string | null
     outcomeAt: Date | null
@@ -2063,13 +2219,16 @@ export interface LeadFieldRefs {
   readonly referenceNumber: Prisma.FieldRef<"Lead", 'String'>
   readonly companyName: Prisma.FieldRef<"Lead", 'String'>
   readonly contactPerson: Prisma.FieldRef<"Lead", 'String'>
+  readonly role: Prisma.FieldRef<"Lead", 'String'>
   readonly phone: Prisma.FieldRef<"Lead", 'String'>
   readonly email: Prisma.FieldRef<"Lead", 'String'>
   readonly location: Prisma.FieldRef<"Lead", 'String'>
   readonly source: Prisma.FieldRef<"Lead", 'LeadSource'>
   readonly productInterest: Prisma.FieldRef<"Lead", 'DeliveryProduct'>
+  readonly businessNeed: Prisma.FieldRef<"Lead", 'String'>
   readonly notes: Prisma.FieldRef<"Lead", 'String'>
   readonly status: Prisma.FieldRef<"Lead", 'LeadStatus'>
+  readonly nextAction: Prisma.FieldRef<"Lead", 'String'>
   readonly zohoCustomerId: Prisma.FieldRef<"Lead", 'String'>
   readonly outcomeReason: Prisma.FieldRef<"Lead", 'String'>
   readonly outcomeAt: Prisma.FieldRef<"Lead", 'DateTime'>

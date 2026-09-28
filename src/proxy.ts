@@ -29,8 +29,19 @@ export function proxy(req: NextRequest) {
   const isZohoTestRoute =
   pathname === "/api/zoho/test" ||
   pathname === "/api/zoho/organization-test";
-  
-  if (hasSessionCookie || pathname === "/login" || isZohoTestRoute) {
+
+  // Standalone, password-gated tool — intentionally independent of the
+  // staff ab_session system, so it must not be forced through /login.
+  const isQuickDeliveryNoteRoute =
+    pathname === "/quick-delivery-note" ||
+    pathname.startsWith("/api/quick-delivery-note");
+
+  if (
+    hasSessionCookie ||
+    pathname === "/login" ||
+    isZohoTestRoute ||
+    isQuickDeliveryNoteRoute
+  ) {
     return NextResponse.next({
       request: {
         headers: requestHeaders,

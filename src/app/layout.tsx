@@ -61,9 +61,18 @@ export default async function RootLayout({
   const isLoginRoute =
     pathname === "/login";
 
+  // This standalone tool has its own password gate (see
+  // src/lib/quickDeliveryNote/session.ts) and must not require a staff
+  // ab_session, and must not be wrapped in the operations AppShell.
+  const isQuickDeliveryNoteRoute = pathname.startsWith(
+    "/quick-delivery-note"
+  );
+
+  const isStandaloneRoute = isLoginRoute || isQuickDeliveryNoteRoute;
+
   const user = await getCurrentUser();
 
-  if (!user && !isLoginRoute) {
+  if (!user && !isStandaloneRoute) {
     redirect("/login");
   }
 
@@ -79,7 +88,7 @@ export default async function RootLayout({
         }}
       >
         <TeamsInitializer />
-        {isLoginRoute ? (
+        {isStandaloneRoute ? (
           children
         ) : (
           <CngDataProvider>

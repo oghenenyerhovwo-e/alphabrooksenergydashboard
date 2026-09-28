@@ -100,9 +100,14 @@ export default async function LeadsPage() {
           </p>
         </div>
 
-        <Link href="/commercial/leads/new" className={styles.primaryButton}>
-          + New Lead
-        </Link>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <Link href="/commercial/leads/list" className={styles.primaryButton}>
+            View as sheet
+          </Link>
+          <Link href="/commercial/leads/new" className={styles.primaryButton}>
+            + New Lead
+          </Link>
+        </div>
       </header>
 
       <section className={styles.overview}>

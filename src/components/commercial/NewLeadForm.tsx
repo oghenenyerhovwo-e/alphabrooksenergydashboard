@@ -35,6 +35,9 @@ export function NewLeadForm() {
           <Field label="Contact person" error={state.fieldErrors?.contactPerson}>
             <input name="contactPerson" type="text" className={styles.input} />
           </Field>
+          <Field label="Role" error={state.fieldErrors?.role}>
+            <input name="role" type="text" className={styles.input} placeholder="e.g. Procurement Manager" />
+          </Field>
           <Field label="Phone" error={state.fieldErrors?.phone}>
             <input name="phone" type="text" className={styles.input} />
           </Field>
@@ -78,6 +81,9 @@ export function NewLeadForm() {
       <section className={styles.section}>
         <div className={styles.sectionTitle}>Notes</div>
         <div className={styles.grid}>
+          <Field label="Business need (optional)" error={state.fieldErrors?.businessNeed} wide>
+            <textarea name="businessNeed" rows={2} className={styles.textarea} placeholder="What are they looking for, in their own words?" />
+          </Field>
           <Field label="Notes (optional)" error={state.fieldErrors?.notes} wide>
             <textarea name="notes" rows={3} className={styles.textarea} />
           </Field>

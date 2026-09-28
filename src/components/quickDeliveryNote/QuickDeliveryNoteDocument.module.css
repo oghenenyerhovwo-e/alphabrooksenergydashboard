@@ -1,0 +1,200 @@
+.page {
+  position: relative;
+  width: 794px;
+  height: 1123px;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: #fff;
+  color: #111;
+  font-family: "Times New Roman", Times, "Liberation Serif", serif;
+  font-size: 15.5px;
+}
+
+.watermark {
+  position: absolute;
+  left: 50%;
+  top: 600px;
+  transform: translate(-50%, -50%);
+  opacity: 0.14;
+  filter: grayscale(1);
+  pointer-events: none;
+}
+
+.headerLeft {
+  position: absolute;
+  left: 74px;
+  top: 172px;
+  width: 300px;
+}
+
+.dateRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.addressLine {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.headerRight {
+  position: absolute;
+  right: 62px;
+  top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.serial {
+  margin-top: 62px;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 19px;
+  letter-spacing: 1px;
+  color: #333;
+}
+
+.title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 366px;
+  margin: 0;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.body {
+  position: absolute;
+  left: 74px;
+  right: 62px;
+  top: 424px;
+}
+
+.row {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  min-height: 24px;
+  margin-bottom: 11px;
+  white-space: nowrap;
+}
+
+.printed {
+  white-space: nowrap;
+  line-height: 24px;
+}
+
+.blank {
+  display: block;
+  min-width: 40px;
+  min-height: 24px;
+  border-bottom: 1px solid #222;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+
+/* Filled-in values read as blue biro on the printed form. */
+.ink {
+  display: block;
+  font-size: 16.5px;
+  font-weight: 600;
+  line-height: 22px;
+  color: #1b2f8a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.declaration {
+  position: absolute;
+  left: 74px;
+  right: 92px;
+  top: 664px;
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 36px;
+}
+
+.signatures {
+  position: absolute;
+  left: 74px;
+  right: 62px;
+  top: 768px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 62px;
+}
+
+.sigBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.sigTitle {
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.sigRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 46px;
+}
+
+.sigLabel {
+  font-weight: 700;
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.sigImage {
+  position: absolute;
+  left: 8px;
+  bottom: 1px;
+  max-height: 46px;
+  max-width: calc(100% - 16px);
+  object-fit: contain;
+}
+
+.footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 66px;
+  background: #35993a;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px 0 58px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.footerItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: #1c1c1c;
+}
+
+.footerText {
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.3;
+}

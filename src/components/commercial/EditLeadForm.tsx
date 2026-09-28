@@ -24,11 +24,14 @@ interface EditLeadFormProps {
     id: string;
     companyName: string;
     contactPerson: string | null;
+    role: string | null;
     phone: string | null;
     email: string | null;
     location: string | null;
     source: string;
     productInterest: string | null;
+    businessNeed: string | null;
+    nextAction: string | null;
     notes: string | null;
   };
 }
@@ -59,6 +62,15 @@ export function EditLeadForm({ lead }: EditLeadFormProps) {
               type="text"
               defaultValue={lead.contactPerson ?? ""}
               className={styles.input}
+            />
+          </Field>
+          <Field label="Role" error={state.fieldErrors?.role}>
+            <input
+              name="role"
+              type="text"
+              defaultValue={lead.role ?? ""}
+              className={styles.input}
+              placeholder="e.g. Procurement Manager"
             />
           </Field>
           <Field label="Phone" error={state.fieldErrors?.phone}>
@@ -113,6 +125,29 @@ export function EditLeadForm({ lead }: EditLeadFormProps) {
                 </option>
               ))}
             </select>
+          </Field>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionTitle}>Engagement</div>
+        <div className={styles.grid}>
+          <Field label="Business need (optional)" error={state.fieldErrors?.businessNeed} wide>
+            <textarea
+              name="businessNeed"
+              rows={2}
+              defaultValue={lead.businessNeed ?? ""}
+              className={styles.textarea}
+            />
+          </Field>
+          <Field label="Next action (optional)" error={state.fieldErrors?.nextAction} wide>
+            <textarea
+              name="nextAction"
+              rows={2}
+              defaultValue={lead.nextAction ?? ""}
+              className={styles.textarea}
+              placeholder="e.g. Emakuneyi to send quote by Oct 2"
+            />
           </Field>
         </div>
       </section>

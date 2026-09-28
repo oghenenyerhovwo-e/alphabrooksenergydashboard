@@ -88,7 +88,8 @@ export async function createLeadAction(
     fieldErrors.companyName = "Company/lead name is required.";
   }
 
-  const contactPerson = optionalString(formData, "contactPerson");
+    const contactPerson = optionalString(formData, "contactPerson");
+  const role = optionalString(formData, "role");
   const phone = optionalString(formData, "phone");
   const email = optionalString(formData, "email");
 
@@ -97,6 +98,7 @@ export async function createLeadAction(
   }
 
   const location = optionalString(formData, "location");
+  const businessNeed = optionalString(formData, "businessNeed");
   const notes = optionalString(formData, "notes");
 
   const sourceRaw = requiredString(formData, "source");
@@ -119,14 +121,16 @@ export async function createLeadAction(
     const referenceNumber = await generateLeadReferenceNumber();
 
     lead = await prisma.$transaction(async (tx) => {
-      const created = await tx.lead.create({
+    const created = await tx.lead.create({
         data: {
           referenceNumber,
           companyName: companyName!,
           contactPerson,
+          role,
           phone,
           email,
           location,
+          businessNeed,
           notes,
           source: sourceRaw as LeadSource,
           productInterest: productInterestRaw
@@ -200,7 +204,8 @@ export async function updateLeadAction(
     fieldErrors.companyName = "Company/lead name is required.";
   }
 
-  const contactPerson = optionalString(formData, "contactPerson");
+    const contactPerson = optionalString(formData, "contactPerson");
+  const role = optionalString(formData, "role");
   const phone = optionalString(formData, "phone");
   const email = optionalString(formData, "email");
 
@@ -209,6 +214,8 @@ export async function updateLeadAction(
   }
 
   const location = optionalString(formData, "location");
+  const businessNeed = optionalString(formData, "businessNeed");
+  const nextAction = optionalString(formData, "nextAction");
   const notes = optionalString(formData, "notes");
 
   const sourceRaw = requiredString(formData, "source");
@@ -227,14 +234,17 @@ export async function updateLeadAction(
 
   try {
     await prisma.$transaction(async (tx) => {
-      await tx.lead.update({
+    await tx.lead.update({
         where: { id: leadId },
         data: {
           companyName: companyName!,
           contactPerson,
+          role,
           phone,
           email,
           location,
+          businessNeed,
+          nextAction,
           notes,
           source: sourceRaw as LeadSource,
           productInterest: productInterestRaw

@@ -16,6 +16,15 @@ export class CngMailApiError extends Error {
   }
 }
 
+interface SendAriaMailAttachment {
+  /** File name shown to the recipient, e.g. "Delivery-Note-QDN-1234.pdf". */
+  name: string;
+  /** MIME type, e.g. "application/pdf". */
+  contentType: string;
+  /** Base64-encoded file bytes (no "data:...;base64," prefix). */
+  contentBytes: string;
+}
+
 interface SendAriaMailOptions {
   to: string | string[];
   cc?: string | string[];
@@ -23,6 +32,7 @@ interface SendAriaMailOptions {
   bodyHtml: string;
   from?: string;
   listUnsubscribeUrl?: string;
+  attachments?: SendAriaMailAttachment[];
 }
 
 /**
@@ -38,6 +48,7 @@ export async function sendAriaMail({
   bodyHtml,
   from,
   listUnsubscribeUrl,
+  attachments,
 }: SendAriaMailOptions): Promise<void> {
   const senderMailbox = from || process.env.ARIA_SENDER_EMAIL;
 
@@ -85,6 +96,13 @@ export async function sendAriaMail({
       ]
     : undefined;
 
+  const graphAttachments = (attachments ?? []).map((attachment) => ({
+    "@odata.type": "#microsoft.graph.fileAttachment",
+    name: attachment.name,
+    contentType: attachment.contentType,
+    contentBytes: attachment.contentBytes,
+  }));
+
   try {
     await client.api(`/users/${senderMailbox}/sendMail`).post({
       message: {
@@ -99,6 +117,9 @@ export async function sendAriaMail({
           : {}),
         ...(singleValueExtendedProperties
           ? { singleValueExtendedProperties }
+          : {}),
+        ...(graphAttachments.length > 0
+          ? { attachments: graphAttachments }
           : {}),
       },
       saveToSentItems: true,
