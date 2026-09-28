@@ -77,8 +77,13 @@ export const config = {
      *   This endpoint is also intentionally handled by its own
      *   authentication mechanism and must not require ab_session.
      *
+     * - PWA files (manifest.webmanifest, sw.js, offline.html, icons/*)
+     *   Chrome fetches the manifest WITHOUT cookies, so if these were
+     *   gated they would redirect to /login and the app would not be
+     *   installable.
+     *
      * - Next.js internals and static assets.
      */
-    "/((?!api/auth|api/aria/report/send|api/aria/report/main/send|api/aria/team-intro/send|api/aria/test-mail|api/aria/work-plan/send|api/operations/reports/capture|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/auth|api/aria/report/send|api/aria/report/main/send|api/aria/team-intro/send|api/aria/test-mail|api/aria/work-plan/send|api/operations/reports/capture|_next/static|_next/image|favicon.ico|manifest.webmanifest|sw.js|offline.html|icons/).*)",
   ],
 };

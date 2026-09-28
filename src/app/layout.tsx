@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { TeamsInitializer } from "@/components/teams/TeamsInitializer";
+import { PwaRegister } from "@/components/pwa/PwaRegister";
 import {
   Manrope,
   JetBrains_Mono,
@@ -46,6 +47,19 @@ export const metadata: Metadata = {
     "Alpha Brooks Energy — Operations Platform",
   description:
     "Master operations command centre",
+  applicationName: "Alpha Brooks Energy",
+  icons: {
+    apple: "/icons/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Alpha Brooks",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#12190f",
 };
 
 export default async function RootLayout({
@@ -88,6 +102,7 @@ export default async function RootLayout({
         }}
       >
         <TeamsInitializer />
+        <PwaRegister />
         {isStandaloneRoute ? (
           children
         ) : (

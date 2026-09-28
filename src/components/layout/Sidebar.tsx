@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_SECTIONS, resolveActiveHref } from "@/config/nav";
+import { InstallAppButton } from "@/components/pwa/InstallAppButton";
 import styles from "./Sidebar.module.css";
 
 /**
@@ -64,6 +65,7 @@ export function Sidebar({
       </nav>
 
       <div className={styles.foot}>
+        <InstallAppButton />
         <div className={styles.footLabel}>Environment</div>
         <div className={styles.footRow}>
           <span>Graph</span>
