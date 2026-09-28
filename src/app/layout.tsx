@@ -7,6 +7,7 @@ import {
   Manrope,
   JetBrains_Mono,
 } from "next/font/google";
+import { DynamicManifest } from "@/components/pwa/DynamicManifest";
 
 import "./globals.css";
 
@@ -103,6 +104,7 @@ export default async function RootLayout({
       >
         <TeamsInitializer />
         <PwaRegister />
+        <DynamicManifest />
         {isStandaloneRoute ? (
           children
         ) : (
