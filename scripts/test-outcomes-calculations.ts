@@ -72,13 +72,13 @@ const decimalValue = deriveOutcomeValue("12345.678", "80.75");
 check(
   "decimal multiplication remains exact",
   decimalValue.toString(),
-  "997530.5229"
+  "996913.4985"
 );
 
 check(
   "decimal helper converts generated value correctly",
   toOutcomeNumber(decimalValue),
-  997530.5229
+  996913.4985
 );
 
 console.log("Zero generated-value inputs");

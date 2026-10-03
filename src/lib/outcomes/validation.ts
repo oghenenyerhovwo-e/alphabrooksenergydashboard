@@ -151,7 +151,9 @@ export function isValidNonNegativeDecimal(
   }
 
   try {
-    const decimal = new Prisma.Decimal(value);
+    const decimal = new Prisma.Decimal(
+      typeof value === "string" ? value.trim() : value
+    );
 
     return !decimal.isNegative();
   } catch {

@@ -31,3 +31,11 @@ Format: `- YYYY-MM-DD [Phase N] Decision. (supersedes: <earlier entry or documen
 - 2026-10-03 [Phase 1] `AuditEntityType` includes `OUTCOME_ACHIEVEMENT` from the first migration. (supersedes: plan §1.4 list)
 - 2026-10-03 [Phase 1] The Outcomes eligibility rule changes to `ACTIVE && role ≠ MANAGEMENT` in Phase 1, together with the role rename.
 - 2026-10-03 [Phase 1] Sale money fields (payment/invoice amounts for proportional AGO crediting) are deferred to slice 2 as an additive migration.
+- 2026-10-03 [Phase 2] Phase 2 is pure code with no DB access. `getAchievement` (DB loader) and `writeAuditEntry`/`audit.ts` move to Phase 3. Phase 2 provides the pure `computeAchievement`. (supersedes: master prompt Phase 2 `getAchievement`; plan §4 `audit.ts` in Phase 2)
+- 2026-10-03 [Phase 2] Achievement for a ledger month with no allocated sales is `0`, not `null`. Legacy months (before October 2026) return `null` when no `OutcomeAchievement` row exists. (supersedes: plan §7 "no rows → null")
+- 2026-10-03 [Phase 2] `test-outcomes-calculations.ts` had a wrong expected value (12,345.678 × 80.75 = 996,913.4985); the test is corrected, not the code. `isValidNonNegativeDecimal` is fixed to trim string input.
+- 2026-10-03 [Phase 2] Shares with more than 2 decimal places are rejected, not rounded.
+- 2026-10-03 [Phase 2] `instructionDate` after Lagos today is rejected. `setByInstructionOf` is free text (the instructing person's name, ≤ 120 chars), not a user id.
+- 2026-10-03 [Phase 2] Litre split: truncate each share to 3 dp, and give the whole remainder to the largest share, with ties going to the lowest `userId`. Generated values (targets and allocations) are rounded half-up to 2 dp. Achievement sums stored allocation values.
+- 2026-10-03 [Phase 2] Sale validation also rejects payment dates before 2026-10-01 (pre-ledger months use legacy rows, so such a sale would never count), sales for dormant products (CNG/LPG today), margins with more than 4 dp and quantities with more than 3 dp. *(Reviewer default; strike if not wanted.)*
+- 2026-10-03 [Phase 2] The commented-out `test-outcomes-domain.ts` / `test-outcomes-persistence.ts` stay commented in Phase 2; revisit in Phase 3. (supersedes: PHASE-1-SPEC §2 "reviving the commented-out tests (Phase 2)")
