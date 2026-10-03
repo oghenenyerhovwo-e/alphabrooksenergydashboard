@@ -1,11 +1,22 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# Alpha Brooks operating engine
 
-# This is NOT the Next.js you know
+Stack: Next.js 16, React 19, TypeScript, Prisma 7, CSS Modules. Internal operations dashboard for Alpha Brooks Energy.
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+## Document precedence (highest first)
+1. `docs/slice-1-decisions.md` — Yaroh's changes made during review. Overrides everything.
+2. The current phase prompt (`docs/slice-1/phase-N-*.md`).
+3. `docs/slice-1-master-prompt.md`.
+4. `docs/work-management-standard-v1.md`.
+If a change is requested in conversation, append it to `docs/slice-1-decisions.md` before building.
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+## How phases run
+Each phase has two steps: A) proposal only, no file changes; B) build, only after Yaroh replies starting with `APPROVED`. Build only what the approved proposal contains. Stop at the end of every phase.
 
-<!-- END:nextjs-agent-rules -->
-
-
+## Rules
+- Never run migrations or seeds against a production database. Check `DATABASE_URL` first and say which database it points to.
+- Money and litres use Decimal, never floats. Derived values are computed on the server only.
+- Every change to targets, sales or allocations writes an audit entry in the same transaction.
+- Check permissions on the server, not just in the UI.
+- Follow existing conventions (CSS Modules, file layout, migration naming, `scripts/test-*.ts` style).
+- Commit at the end of each phase on the slice branch. Never commit `.env` or secrets.
+- Keep changes small; don't refactor unrelated code.
