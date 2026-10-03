@@ -43,11 +43,13 @@ enum VehicleInspectionStatus {
 }
 
 enum UserRole {
-  ADMIN
+  IT
   BUSINESS_DEVELOPMENT
   SALES
   OPERATIONS
   FINANCE
+  MANAGEMENT
+  DRIVER
 }
 
 enum UserStatus {
@@ -71,6 +73,9 @@ model Driver {
 
   deliveries                Delivery[]
   vehiclePreTripInspections VehiclePreTripInspection[]
+
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([name])
   @@index([active])
@@ -224,10 +229,17 @@ model VehiclePreTripInspection {
 
 /// A staff member who can sign in. `entraId` is their Microsoft Entra ID
 /// (Azure AD) object ID — the same identifier already used informally in
-/// src/config/users.ts to label Planner task assignees.
+/// src/config/users.ts to label Planner task assignees. `entraId` is null
+/// for staff without Microsoft accounts.
 model User {
-  id      String @id @default(cuid())
-  entraId String @unique
+  id      String  @id @default(cuid())
+  entraId String? @unique
+
+  // Non-Microsoft sign-in (route built in Phase 3). Only for users with entraId = null.
+  username         String?   @unique // stored lowercase (enforced in Phase 3 code)
+  passwordHash     String? // "scrypt$<salt>$<hash>"; never logged or sent to the client
+  failedLoginCount Int       @default(0)
+  lockedUntil      DateTime?
 
   email  String? @unique
   name   String
@@ -257,6 +269,15 @@ model User {
   createdQuoteRequests   QuoteRequest[] @relation("QuoteRequestCreatedBy")
   qualifiedQuoteRequests QuoteRequest[] @relation("QuoteRequestQualifiedBy")
   createdInternalOrders InternalOrder[] @relation("InternalOrderCreatedBy")
+
+  // --- Sales ledger (slice 1) ---
+  driver                 Driver?
+  saleRecordsCreated     SaleRecord[]     @relation("SaleRecordCreatedBy")
+  saleRecordsUpdated     SaleRecord[]     @relation("SaleRecordUpdatedBy")
+  saleAllocations        SaleAllocation[] @relation("SaleAllocationStaff")
+  saleAllocationsCreated SaleAllocation[] @relation("SaleAllocationCreatedBy")
+  saleAllocationsUpdated SaleAllocation[] @relation("SaleAllocationUpdatedBy")
+  auditEntries           AuditEntry[]     @relation("AuditEntryActor")
 
   @@index([role])
   @@index([status])
@@ -628,6 +649,12 @@ model OutcomeTarget {
   /// Nullable temporarily for historical quantity-only records.
   targetGeneratedValue Decimal? @db.Decimal(30, 2)
 
+  /// Who instructed this target (free text, e.g. the boss's name). Required by
+  /// the slice-1 target flow; null on legacy rows.
+  setByInstructionOf String?
+  /// Africa/Lagos calendar date of the instruction. Null on legacy rows.
+  instructionDate    DateTime? @db.Date
+
   createdById String
   createdBy   User   @relation("OutcomeTargetCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
 
@@ -713,6 +740,130 @@ model OutcomeAchievement {
   @@index([product, year, month])
   @@index([userId])
   @@index([createdById])
+}
+
+enum SaleSource {
+  MANUAL
+  ZOHO
+}
+
+enum SaleStatus {
+  PENDING_ALLOCATION
+  ALLOCATED
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+enum AuditEntityType {
+  OUTCOME_TARGET
+  OUTCOME_ACHIEVEMENT
+  SALE_RECORD
+  SALE_ALLOCATION
+}
+
+/// SALES LEDGER — ONE RECEIVED PAYMENT (slice 1).
+model SaleRecord {
+  id String @id @default(cuid())
+
+  product OutcomeProduct
+  source  SaleSource     @default(MANUAL)
+
+  zohoPaymentId  String? @unique
+  invoiceNumber  String // not unique: partial payments
+  customerName   String
+  zohoCustomerId String?
+
+  /// Africa/Lagos calendar date the money arrived.
+  paymentDate DateTime @db.Date
+  /// Server-derived from paymentDate; recomputed whenever paymentDate changes.
+  periodYear  Int
+  periodMonth Int
+
+  totalQuantity Decimal     @db.Decimal(20, 3)
+  unit          OutcomeUnit
+
+  status SaleStatus @default(PENDING_ALLOCATION)
+
+  /// Reversal hook; unused in slice 1.
+  reversesSaleId String?
+  reversesSale   SaleRecord?  @relation("SaleReversal", fields: [reversesSaleId], references: [id], onDelete: Restrict)
+  reversedBy     SaleRecord[] @relation("SaleReversal")
+
+  notes String?
+
+  createdById String
+  createdBy   User    @relation("SaleRecordCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  updatedById String?
+  updatedBy   User?   @relation("SaleRecordUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt // optimistic-concurrency token in Phase 3
+
+  allocations SaleAllocation[]
+
+  @@index([product, periodYear, periodMonth, status])
+  @@index([status])
+  @@index([invoiceNumber])
+  @@index([createdById])
+}
+
+/// SALES LEDGER — ONE STAFF MEMBER'S SHARE OF A SALE (slice 1).
+model SaleAllocation {
+  id String @id @default(cuid())
+
+  saleRecordId String
+  saleRecord   SaleRecord @relation(fields: [saleRecordId], references: [id], onDelete: Restrict)
+
+  userId String
+  user   User   @relation("SaleAllocationStaff", fields: [userId], references: [id], onDelete: Restrict)
+
+  sharePercent   Decimal @db.Decimal(5, 2) // CHECK > 0 AND <= 100
+  quantity       Decimal @db.Decimal(20, 3) // server-derived
+  marginPerUnit  Decimal @db.Decimal(18, 4) // CHECK >= 0
+  generatedValue Decimal @db.Decimal(30, 2) // server-derived
+
+  createdById String
+  createdBy   User    @relation("SaleAllocationCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  updatedById String?
+  updatedBy   User?   @relation("SaleAllocationUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([saleRecordId, userId])
+  @@index([userId])
+}
+
+/// AUDIT TRAIL (slice 1). Append-only: a database trigger rejects
+/// UPDATE, DELETE and TRUNCATE.
+model AuditEntry {
+  id String @id @default(cuid())
+
+  entityType     AuditEntityType
+  entityId       String // no FK: entity may be deleted later
+  parentEntityId String? // allocations: the sale id
+  action         AuditAction
+
+  before Json? // null on CREATE; Decimals as strings
+  after  Json? // null on DELETE
+
+  actorUserId String
+  actor       User   @relation("AuditEntryActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+  actorName   String // snapshot
+  actorRole   String // snapshot
+
+  reason String?
+
+  createdAt DateTime @default(now())
+
+  @@index([entityType, entityId, createdAt])
+  @@index([parentEntityId])
+  @@index([actorUserId])
+  @@index([createdAt])
 }
 
 model DailyPriceUnsubscribe {

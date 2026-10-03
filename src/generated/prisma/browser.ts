@@ -51,7 +51,8 @@ export type VehiclePreTripInspection = Prisma.VehiclePreTripInspectionModel
  * Model User
  * A staff member who can sign in. `entraId` is their Microsoft Entra ID
  * (Azure AD) object ID — the same identifier already used informally in
- * src/config/users.ts to label Planner task assignees.
+ * src/config/users.ts to label Planner task assignees. `entraId` is null
+ * for staff without Microsoft accounts.
  */
 export type User = Prisma.UserModel
 /**
@@ -155,6 +156,22 @@ export type OutcomeTarget = Prisma.OutcomeTargetModel
  * achievement has been entered yet.
  */
 export type OutcomeAchievement = Prisma.OutcomeAchievementModel
+/**
+ * Model SaleRecord
+ * SALES LEDGER — ONE RECEIVED PAYMENT (slice 1).
+ */
+export type SaleRecord = Prisma.SaleRecordModel
+/**
+ * Model SaleAllocation
+ * SALES LEDGER — ONE STAFF MEMBER'S SHARE OF A SALE (slice 1).
+ */
+export type SaleAllocation = Prisma.SaleAllocationModel
+/**
+ * Model AuditEntry
+ * AUDIT TRAIL (slice 1). Append-only: a database trigger rejects
+ * UPDATE, DELETE and TRUNCATE.
+ */
+export type AuditEntry = Prisma.AuditEntryModel
 /**
  * Model DailyPriceUnsubscribe
  * 

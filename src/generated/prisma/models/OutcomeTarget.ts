@@ -66,6 +66,8 @@ export type OutcomeTargetMinAggregateOutputType = {
   unit: $Enums.OutcomeUnit | null
   targetMarginPerUnit: runtime.Decimal | null
   targetGeneratedValue: runtime.Decimal | null
+  setByInstructionOf: string | null
+  instructionDate: Date | null
   createdById: string | null
   updatedById: string | null
   createdAt: Date | null
@@ -82,6 +84,8 @@ export type OutcomeTargetMaxAggregateOutputType = {
   unit: $Enums.OutcomeUnit | null
   targetMarginPerUnit: runtime.Decimal | null
   targetGeneratedValue: runtime.Decimal | null
+  setByInstructionOf: string | null
+  instructionDate: Date | null
   createdById: string | null
   updatedById: string | null
   createdAt: Date | null
@@ -98,6 +102,8 @@ export type OutcomeTargetCountAggregateOutputType = {
   unit: number
   targetMarginPerUnit: number
   targetGeneratedValue: number
+  setByInstructionOf: number
+  instructionDate: number
   createdById: number
   updatedById: number
   createdAt: number
@@ -132,6 +138,8 @@ export type OutcomeTargetMinAggregateInputType = {
   unit?: true
   targetMarginPerUnit?: true
   targetGeneratedValue?: true
+  setByInstructionOf?: true
+  instructionDate?: true
   createdById?: true
   updatedById?: true
   createdAt?: true
@@ -148,6 +156,8 @@ export type OutcomeTargetMaxAggregateInputType = {
   unit?: true
   targetMarginPerUnit?: true
   targetGeneratedValue?: true
+  setByInstructionOf?: true
+  instructionDate?: true
   createdById?: true
   updatedById?: true
   createdAt?: true
@@ -164,6 +174,8 @@ export type OutcomeTargetCountAggregateInputType = {
   unit?: true
   targetMarginPerUnit?: true
   targetGeneratedValue?: true
+  setByInstructionOf?: true
+  instructionDate?: true
   createdById?: true
   updatedById?: true
   createdAt?: true
@@ -267,6 +279,8 @@ export type OutcomeTargetGroupByOutputType = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit: runtime.Decimal | null
   targetGeneratedValue: runtime.Decimal | null
+  setByInstructionOf: string | null
+  instructionDate: Date | null
   createdById: string
   updatedById: string | null
   createdAt: Date
@@ -306,6 +320,8 @@ export type OutcomeTargetWhereInput = {
   unit?: Prisma.EnumOutcomeUnitFilter<"OutcomeTarget"> | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.DecimalNullableFilter<"OutcomeTarget"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.DecimalNullableFilter<"OutcomeTarget"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.StringNullableFilter<"OutcomeTarget"> | string | null
+  instructionDate?: Prisma.DateTimeNullableFilter<"OutcomeTarget"> | Date | string | null
   createdById?: Prisma.StringFilter<"OutcomeTarget"> | string
   updatedById?: Prisma.StringNullableFilter<"OutcomeTarget"> | string | null
   createdAt?: Prisma.DateTimeFilter<"OutcomeTarget"> | Date | string
@@ -325,6 +341,8 @@ export type OutcomeTargetOrderByWithRelationInput = {
   unit?: Prisma.SortOrder
   targetMarginPerUnit?: Prisma.SortOrderInput | Prisma.SortOrder
   targetGeneratedValue?: Prisma.SortOrderInput | Prisma.SortOrder
+  setByInstructionOf?: Prisma.SortOrderInput | Prisma.SortOrder
+  instructionDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdById?: Prisma.SortOrder
   updatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -348,6 +366,8 @@ export type OutcomeTargetWhereUniqueInput = Prisma.AtLeast<{
   unit?: Prisma.EnumOutcomeUnitFilter<"OutcomeTarget"> | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.DecimalNullableFilter<"OutcomeTarget"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.DecimalNullableFilter<"OutcomeTarget"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.StringNullableFilter<"OutcomeTarget"> | string | null
+  instructionDate?: Prisma.DateTimeNullableFilter<"OutcomeTarget"> | Date | string | null
   createdById?: Prisma.StringFilter<"OutcomeTarget"> | string
   updatedById?: Prisma.StringNullableFilter<"OutcomeTarget"> | string | null
   createdAt?: Prisma.DateTimeFilter<"OutcomeTarget"> | Date | string
@@ -367,6 +387,8 @@ export type OutcomeTargetOrderByWithAggregationInput = {
   unit?: Prisma.SortOrder
   targetMarginPerUnit?: Prisma.SortOrderInput | Prisma.SortOrder
   targetGeneratedValue?: Prisma.SortOrderInput | Prisma.SortOrder
+  setByInstructionOf?: Prisma.SortOrderInput | Prisma.SortOrder
+  instructionDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdById?: Prisma.SortOrder
   updatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -391,6 +413,8 @@ export type OutcomeTargetScalarWhereWithAggregatesInput = {
   unit?: Prisma.EnumOutcomeUnitWithAggregatesFilter<"OutcomeTarget"> | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.DecimalNullableWithAggregatesFilter<"OutcomeTarget"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.DecimalNullableWithAggregatesFilter<"OutcomeTarget"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.StringNullableWithAggregatesFilter<"OutcomeTarget"> | string | null
+  instructionDate?: Prisma.DateTimeNullableWithAggregatesFilter<"OutcomeTarget"> | Date | string | null
   createdById?: Prisma.StringWithAggregatesFilter<"OutcomeTarget"> | string
   updatedById?: Prisma.StringNullableWithAggregatesFilter<"OutcomeTarget"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OutcomeTarget"> | Date | string
@@ -406,6 +430,8 @@ export type OutcomeTargetCreateInput = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: string | null
+  instructionDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOutcomeTargetsAsStaffInput
@@ -423,6 +449,8 @@ export type OutcomeTargetUncheckedCreateInput = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: string | null
+  instructionDate?: Date | string | null
   createdById: string
   updatedById?: string | null
   createdAt?: Date | string
@@ -438,6 +466,8 @@ export type OutcomeTargetUpdateInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOutcomeTargetsAsStaffNestedInput
@@ -455,6 +485,8 @@ export type OutcomeTargetUncheckedUpdateInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -471,6 +503,8 @@ export type OutcomeTargetCreateManyInput = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: string | null
+  instructionDate?: Date | string | null
   createdById: string
   updatedById?: string | null
   createdAt?: Date | string
@@ -486,6 +520,8 @@ export type OutcomeTargetUpdateManyMutationInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -500,6 +536,8 @@ export type OutcomeTargetUncheckedUpdateManyInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -533,6 +571,8 @@ export type OutcomeTargetCountOrderByAggregateInput = {
   unit?: Prisma.SortOrder
   targetMarginPerUnit?: Prisma.SortOrder
   targetGeneratedValue?: Prisma.SortOrder
+  setByInstructionOf?: Prisma.SortOrder
+  instructionDate?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   updatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -557,6 +597,8 @@ export type OutcomeTargetMaxOrderByAggregateInput = {
   unit?: Prisma.SortOrder
   targetMarginPerUnit?: Prisma.SortOrder
   targetGeneratedValue?: Prisma.SortOrder
+  setByInstructionOf?: Prisma.SortOrder
+  instructionDate?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   updatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -573,6 +615,8 @@ export type OutcomeTargetMinOrderByAggregateInput = {
   unit?: Prisma.SortOrder
   targetMarginPerUnit?: Prisma.SortOrder
   targetGeneratedValue?: Prisma.SortOrder
+  setByInstructionOf?: Prisma.SortOrder
+  instructionDate?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   updatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -746,6 +790,8 @@ export type OutcomeTargetCreateWithoutUserInput = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: string | null
+  instructionDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   createdBy: Prisma.UserCreateNestedOneWithoutOutcomeTargetsCreatedInput
@@ -761,6 +807,8 @@ export type OutcomeTargetUncheckedCreateWithoutUserInput = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: string | null
+  instructionDate?: Date | string | null
   createdById: string
   updatedById?: string | null
   createdAt?: Date | string
@@ -786,6 +834,8 @@ export type OutcomeTargetCreateWithoutCreatedByInput = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: string | null
+  instructionDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOutcomeTargetsAsStaffInput
@@ -802,6 +852,8 @@ export type OutcomeTargetUncheckedCreateWithoutCreatedByInput = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: string | null
+  instructionDate?: Date | string | null
   updatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -826,6 +878,8 @@ export type OutcomeTargetCreateWithoutUpdatedByInput = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: string | null
+  instructionDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOutcomeTargetsAsStaffInput
@@ -842,6 +896,8 @@ export type OutcomeTargetUncheckedCreateWithoutUpdatedByInput = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: string | null
+  instructionDate?: Date | string | null
   createdById: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -886,6 +942,8 @@ export type OutcomeTargetScalarWhereInput = {
   unit?: Prisma.EnumOutcomeUnitFilter<"OutcomeTarget"> | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.DecimalNullableFilter<"OutcomeTarget"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.DecimalNullableFilter<"OutcomeTarget"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.StringNullableFilter<"OutcomeTarget"> | string | null
+  instructionDate?: Prisma.DateTimeNullableFilter<"OutcomeTarget"> | Date | string | null
   createdById?: Prisma.StringFilter<"OutcomeTarget"> | string
   updatedById?: Prisma.StringNullableFilter<"OutcomeTarget"> | string | null
   createdAt?: Prisma.DateTimeFilter<"OutcomeTarget"> | Date | string
@@ -933,6 +991,8 @@ export type OutcomeTargetCreateManyUserInput = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: string | null
+  instructionDate?: Date | string | null
   createdById: string
   updatedById?: string | null
   createdAt?: Date | string
@@ -949,6 +1009,8 @@ export type OutcomeTargetCreateManyCreatedByInput = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: string | null
+  instructionDate?: Date | string | null
   updatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -964,6 +1026,8 @@ export type OutcomeTargetCreateManyUpdatedByInput = {
   unit: $Enums.OutcomeUnit
   targetMarginPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: string | null
+  instructionDate?: Date | string | null
   createdById: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -978,6 +1042,8 @@ export type OutcomeTargetUpdateWithoutUserInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.UserUpdateOneRequiredWithoutOutcomeTargetsCreatedNestedInput
@@ -993,6 +1059,8 @@ export type OutcomeTargetUncheckedUpdateWithoutUserInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1008,6 +1076,8 @@ export type OutcomeTargetUncheckedUpdateManyWithoutUserInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1023,6 +1093,8 @@ export type OutcomeTargetUpdateWithoutCreatedByInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOutcomeTargetsAsStaffNestedInput
@@ -1039,6 +1111,8 @@ export type OutcomeTargetUncheckedUpdateWithoutCreatedByInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1054,6 +1128,8 @@ export type OutcomeTargetUncheckedUpdateManyWithoutCreatedByInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1068,6 +1144,8 @@ export type OutcomeTargetUpdateWithoutUpdatedByInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOutcomeTargetsAsStaffNestedInput
@@ -1084,6 +1162,8 @@ export type OutcomeTargetUncheckedUpdateWithoutUpdatedByInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1099,6 +1179,8 @@ export type OutcomeTargetUncheckedUpdateManyWithoutUpdatedByInput = {
   unit?: Prisma.EnumOutcomeUnitFieldUpdateOperationsInput | $Enums.OutcomeUnit
   targetMarginPerUnit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   targetGeneratedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  setByInstructionOf?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instructionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1116,6 +1198,8 @@ export type OutcomeTargetSelect<ExtArgs extends runtime.Types.Extensions.Interna
   unit?: boolean
   targetMarginPerUnit?: boolean
   targetGeneratedValue?: boolean
+  setByInstructionOf?: boolean
+  instructionDate?: boolean
   createdById?: boolean
   updatedById?: boolean
   createdAt?: boolean
@@ -1135,6 +1219,8 @@ export type OutcomeTargetSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   unit?: boolean
   targetMarginPerUnit?: boolean
   targetGeneratedValue?: boolean
+  setByInstructionOf?: boolean
+  instructionDate?: boolean
   createdById?: boolean
   updatedById?: boolean
   createdAt?: boolean
@@ -1154,6 +1240,8 @@ export type OutcomeTargetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   unit?: boolean
   targetMarginPerUnit?: boolean
   targetGeneratedValue?: boolean
+  setByInstructionOf?: boolean
+  instructionDate?: boolean
   createdById?: boolean
   updatedById?: boolean
   createdAt?: boolean
@@ -1173,13 +1261,15 @@ export type OutcomeTargetSelectScalar = {
   unit?: boolean
   targetMarginPerUnit?: boolean
   targetGeneratedValue?: boolean
+  setByInstructionOf?: boolean
+  instructionDate?: boolean
   createdById?: boolean
   updatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OutcomeTargetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "product" | "year" | "month" | "targetQuantity" | "unit" | "targetMarginPerUnit" | "targetGeneratedValue" | "createdById" | "updatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["outcomeTarget"]>
+export type OutcomeTargetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "product" | "year" | "month" | "targetQuantity" | "unit" | "targetMarginPerUnit" | "targetGeneratedValue" | "setByInstructionOf" | "instructionDate" | "createdById" | "updatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["outcomeTarget"]>
 export type OutcomeTargetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1243,6 +1333,15 @@ export type $OutcomeTargetPayload<ExtArgs extends runtime.Types.Extensions.Inter
      * Nullable temporarily for historical quantity-only records.
      */
     targetGeneratedValue: runtime.Decimal | null
+    /**
+     * Who instructed this target (free text, e.g. the boss's name). Required by
+     * the slice-1 target flow; null on legacy rows.
+     */
+    setByInstructionOf: string | null
+    /**
+     * Africa/Lagos calendar date of the instruction. Null on legacy rows.
+     */
+    instructionDate: Date | null
     createdById: string
     updatedById: string | null
     createdAt: Date
@@ -1682,6 +1781,8 @@ export interface OutcomeTargetFieldRefs {
   readonly unit: Prisma.FieldRef<"OutcomeTarget", 'OutcomeUnit'>
   readonly targetMarginPerUnit: Prisma.FieldRef<"OutcomeTarget", 'Decimal'>
   readonly targetGeneratedValue: Prisma.FieldRef<"OutcomeTarget", 'Decimal'>
+  readonly setByInstructionOf: Prisma.FieldRef<"OutcomeTarget", 'String'>
+  readonly instructionDate: Prisma.FieldRef<"OutcomeTarget", 'DateTime'>
   readonly createdById: Prisma.FieldRef<"OutcomeTarget", 'String'>
   readonly updatedById: Prisma.FieldRef<"OutcomeTarget", 'String'>
   readonly createdAt: Prisma.FieldRef<"OutcomeTarget", 'DateTime'>

@@ -3,7 +3,7 @@ import { UserRole } from "@/generated/prisma/client";
 /**
  * Lead access
  *
- * ADMIN:
+ * IT:
  * Administrative oversight of Leads.
  *
  * OPERATIONS:
@@ -18,7 +18,7 @@ import { UserRole } from "@/generated/prisma/client";
  */
 export function canViewLeads(role: UserRole): boolean {
   return (
-    role === UserRole.ADMIN ||
+    role === UserRole.IT ||
     role === UserRole.OPERATIONS ||
     role === UserRole.SALES ||
     role === UserRole.BUSINESS_DEVELOPMENT
@@ -28,11 +28,11 @@ export function canViewLeads(role: UserRole): boolean {
 /**
  * Lead management actions.
  *
- * Lead lifecycle management remains with ADMIN and OPERATIONS.
+ * Lead lifecycle management remains with IT and OPERATIONS.
  */
 export function canManageLeads(role: UserRole): boolean {
   return (
-    role === UserRole.ADMIN ||
+    role === UserRole.IT ||
     role === UserRole.OPERATIONS
   );
 }
@@ -63,22 +63,22 @@ export function canTransitionLead(role: UserRole): boolean {
  * Operations Manager action.
  */
 export function canMakeCustomer(role: UserRole): boolean {
-  return role === UserRole.ADMIN || role === UserRole.OPERATIONS;
+  return role === UserRole.IT || role === UserRole.OPERATIONS;
 }
 
 export function canSendDailyPrice(role: UserRole): boolean {
-  return role === UserRole.ADMIN || role === UserRole.SALES;
+  return role === UserRole.IT || role === UserRole.SALES;
 }
 
 /**
  * Commercial Orders
  *
- * Orders are commercial records. Admin and Sales can create/manage them.
+ * Orders are commercial records. IT and Sales can create/manage them.
  * Operations can view them because they are required for fulfilment.
  */
 export function canViewOrders(role: UserRole): boolean {
   return (
-    role === UserRole.ADMIN ||
+    role === UserRole.IT ||
     role === UserRole.SALES ||
     role === UserRole.OPERATIONS ||
     role === UserRole.BUSINESS_DEVELOPMENT
@@ -87,7 +87,7 @@ export function canViewOrders(role: UserRole): boolean {
 
 export function canCreateOrder(role: UserRole): boolean {
   return (
-    role === UserRole.ADMIN ||
+    role === UserRole.IT ||
     role === UserRole.SALES ||
     role === UserRole.BUSINESS_DEVELOPMENT
   );

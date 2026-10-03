@@ -16,19 +16,34 @@ import type * as Prisma from "../internal/prismaNamespace"
  * Model User
  * A staff member who can sign in. `entraId` is their Microsoft Entra ID
  * (Azure AD) object ID — the same identifier already used informally in
- * src/config/users.ts to label Planner task assignees.
+ * src/config/users.ts to label Planner task assignees. `entraId` is null
+ * for staff without Microsoft accounts.
  */
 export type UserModel = runtime.Types.Result.DefaultSelection<Prisma.$UserPayload>
 
 export type AggregateUser = {
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
+}
+
+export type UserAvgAggregateOutputType = {
+  failedLoginCount: number | null
+}
+
+export type UserSumAggregateOutputType = {
+  failedLoginCount: number | null
 }
 
 export type UserMinAggregateOutputType = {
   id: string | null
   entraId: string | null
+  username: string | null
+  passwordHash: string | null
+  failedLoginCount: number | null
+  lockedUntil: Date | null
   email: string | null
   name: string | null
   role: $Enums.UserRole | null
@@ -42,6 +57,10 @@ export type UserMinAggregateOutputType = {
 export type UserMaxAggregateOutputType = {
   id: string | null
   entraId: string | null
+  username: string | null
+  passwordHash: string | null
+  failedLoginCount: number | null
+  lockedUntil: Date | null
   email: string | null
   name: string | null
   role: $Enums.UserRole | null
@@ -55,6 +74,10 @@ export type UserMaxAggregateOutputType = {
 export type UserCountAggregateOutputType = {
   id: number
   entraId: number
+  username: number
+  passwordHash: number
+  failedLoginCount: number
+  lockedUntil: number
   email: number
   name: number
   role: number
@@ -67,9 +90,21 @@ export type UserCountAggregateOutputType = {
 }
 
 
+export type UserAvgAggregateInputType = {
+  failedLoginCount?: true
+}
+
+export type UserSumAggregateInputType = {
+  failedLoginCount?: true
+}
+
 export type UserMinAggregateInputType = {
   id?: true
   entraId?: true
+  username?: true
+  passwordHash?: true
+  failedLoginCount?: true
+  lockedUntil?: true
   email?: true
   name?: true
   role?: true
@@ -83,6 +118,10 @@ export type UserMinAggregateInputType = {
 export type UserMaxAggregateInputType = {
   id?: true
   entraId?: true
+  username?: true
+  passwordHash?: true
+  failedLoginCount?: true
+  lockedUntil?: true
   email?: true
   name?: true
   role?: true
@@ -96,6 +135,10 @@ export type UserMaxAggregateInputType = {
 export type UserCountAggregateInputType = {
   id?: true
   entraId?: true
+  username?: true
+  passwordHash?: true
+  failedLoginCount?: true
+  lockedUntil?: true
   email?: true
   name?: true
   role?: true
@@ -145,6 +188,18 @@ export type UserAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserMinAggregateInputType
@@ -175,13 +230,19 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: UserCountAggregateInputType | true
+  _avg?: UserAvgAggregateInputType
+  _sum?: UserSumAggregateInputType
   _min?: UserMinAggregateInputType
   _max?: UserMaxAggregateInputType
 }
 
 export type UserGroupByOutputType = {
   id: string
-  entraId: string
+  entraId: string | null
+  username: string | null
+  passwordHash: string | null
+  failedLoginCount: number
+  lockedUntil: Date | null
   email: string | null
   name: string
   role: $Enums.UserRole
@@ -191,6 +252,8 @@ export type UserGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
@@ -215,7 +278,11 @@ export type UserWhereInput = {
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   id?: Prisma.StringFilter<"User"> | string
-  entraId?: Prisma.StringFilter<"User"> | string
+  entraId?: Prisma.StringNullableFilter<"User"> | string | null
+  username?: Prisma.StringNullableFilter<"User"> | string | null
+  passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
+  failedLoginCount?: Prisma.IntFilter<"User"> | number
+  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   email?: Prisma.StringNullableFilter<"User"> | string | null
   name?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
@@ -237,11 +304,22 @@ export type UserWhereInput = {
   createdQuoteRequests?: Prisma.QuoteRequestListRelationFilter
   qualifiedQuoteRequests?: Prisma.QuoteRequestListRelationFilter
   createdInternalOrders?: Prisma.InternalOrderListRelationFilter
+  driver?: Prisma.XOR<Prisma.DriverNullableScalarRelationFilter, Prisma.DriverWhereInput> | null
+  saleRecordsCreated?: Prisma.SaleRecordListRelationFilter
+  saleRecordsUpdated?: Prisma.SaleRecordListRelationFilter
+  saleAllocations?: Prisma.SaleAllocationListRelationFilter
+  saleAllocationsCreated?: Prisma.SaleAllocationListRelationFilter
+  saleAllocationsUpdated?: Prisma.SaleAllocationListRelationFilter
+  auditEntries?: Prisma.AuditEntryListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  entraId?: Prisma.SortOrder
+  entraId?: Prisma.SortOrderInput | Prisma.SortOrder
+  username?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedLoginCount?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
@@ -263,15 +341,26 @@ export type UserOrderByWithRelationInput = {
   createdQuoteRequests?: Prisma.QuoteRequestOrderByRelationAggregateInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestOrderByRelationAggregateInput
   createdInternalOrders?: Prisma.InternalOrderOrderByRelationAggregateInput
+  driver?: Prisma.DriverOrderByWithRelationInput
+  saleRecordsCreated?: Prisma.SaleRecordOrderByRelationAggregateInput
+  saleRecordsUpdated?: Prisma.SaleRecordOrderByRelationAggregateInput
+  saleAllocations?: Prisma.SaleAllocationOrderByRelationAggregateInput
+  saleAllocationsCreated?: Prisma.SaleAllocationOrderByRelationAggregateInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationOrderByRelationAggregateInput
+  auditEntries?: Prisma.AuditEntryOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   entraId?: string
+  username?: string
   email?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
+  passwordHash?: Prisma.StringNullableFilter<"User"> | string | null
+  failedLoginCount?: Prisma.IntFilter<"User"> | number
+  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   name?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
@@ -292,11 +381,22 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdQuoteRequests?: Prisma.QuoteRequestListRelationFilter
   qualifiedQuoteRequests?: Prisma.QuoteRequestListRelationFilter
   createdInternalOrders?: Prisma.InternalOrderListRelationFilter
-}, "id" | "entraId" | "email">
+  driver?: Prisma.XOR<Prisma.DriverNullableScalarRelationFilter, Prisma.DriverWhereInput> | null
+  saleRecordsCreated?: Prisma.SaleRecordListRelationFilter
+  saleRecordsUpdated?: Prisma.SaleRecordListRelationFilter
+  saleAllocations?: Prisma.SaleAllocationListRelationFilter
+  saleAllocationsCreated?: Prisma.SaleAllocationListRelationFilter
+  saleAllocationsUpdated?: Prisma.SaleAllocationListRelationFilter
+  auditEntries?: Prisma.AuditEntryListRelationFilter
+}, "id" | "entraId" | "username" | "email">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  entraId?: Prisma.SortOrder
+  entraId?: Prisma.SortOrderInput | Prisma.SortOrder
+  username?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedLoginCount?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
@@ -306,8 +406,10 @@ export type UserOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
+  _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
+  _sum?: Prisma.UserSumOrderByAggregateInput
 }
 
 export type UserScalarWhereWithAggregatesInput = {
@@ -315,7 +417,11 @@ export type UserScalarWhereWithAggregatesInput = {
   OR?: Prisma.UserScalarWhereWithAggregatesInput[]
   NOT?: Prisma.UserScalarWhereWithAggregatesInput | Prisma.UserScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"User"> | string
-  entraId?: Prisma.StringWithAggregatesFilter<"User"> | string
+  entraId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  username?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  passwordHash?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  failedLoginCount?: Prisma.IntWithAggregatesFilter<"User"> | number
+  lockedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"User"> | string
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
@@ -328,7 +434,11 @@ export type UserScalarWhereWithAggregatesInput = {
 
 export type UserCreateInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -350,11 +460,22 @@ export type UserCreateInput = {
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -376,11 +497,22 @@ export type UserUncheckedCreateInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -402,11 +534,22 @@ export type UserUpdateInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -428,11 +571,22 @@ export type UserUncheckedUpdateInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateManyInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -445,7 +599,11 @@ export type UserCreateManyInput = {
 
 export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -458,7 +616,11 @@ export type UserUpdateManyMutationInput = {
 
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -469,9 +631,18 @@ export type UserUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null
+  isNot?: Prisma.UserWhereInput | null
+}
+
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   entraId?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  passwordHash?: Prisma.SortOrder
+  failedLoginCount?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrder
   email?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
@@ -482,9 +653,17 @@ export type UserCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type UserAvgOrderByAggregateInput = {
+  failedLoginCount?: Prisma.SortOrder
+}
+
 export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   entraId?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  passwordHash?: Prisma.SortOrder
+  failedLoginCount?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrder
   email?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
@@ -498,6 +677,10 @@ export type UserMaxOrderByAggregateInput = {
 export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   entraId?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  passwordHash?: Prisma.SortOrder
+  failedLoginCount?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrder
   email?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
@@ -508,14 +691,29 @@ export type UserMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type UserSumOrderByAggregateInput = {
+  failedLoginCount?: Prisma.SortOrder
+}
+
 export type UserScalarRelationFilter = {
   is?: Prisma.UserWhereInput
   isNot?: Prisma.UserWhereInput
 }
 
-export type UserNullableScalarRelationFilter = {
-  is?: Prisma.UserWhereInput | null
-  isNot?: Prisma.UserWhereInput | null
+export type UserCreateNestedOneWithoutDriverInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDriverInput, Prisma.UserUncheckedCreateWithoutDriverInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDriverInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutDriverNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDriverInput, Prisma.UserUncheckedCreateWithoutDriverInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDriverInput
+  upsert?: Prisma.UserUpsertWithoutDriverInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDriverInput, Prisma.UserUpdateWithoutDriverInput>, Prisma.UserUncheckedUpdateWithoutDriverInput>
 }
 
 export type EnumUserRoleFieldUpdateOperationsInput = {
@@ -718,9 +916,261 @@ export type UserUpdateOneWithoutOutcomeAchievementsUpdatedNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOutcomeAchievementsUpdatedInput, Prisma.UserUpdateWithoutOutcomeAchievementsUpdatedInput>, Prisma.UserUncheckedUpdateWithoutOutcomeAchievementsUpdatedInput>
 }
 
+export type UserCreateNestedOneWithoutSaleRecordsCreatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSaleRecordsCreatedInput, Prisma.UserUncheckedCreateWithoutSaleRecordsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSaleRecordsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutSaleRecordsUpdatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSaleRecordsUpdatedInput, Prisma.UserUncheckedCreateWithoutSaleRecordsUpdatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSaleRecordsUpdatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSaleRecordsCreatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSaleRecordsCreatedInput, Prisma.UserUncheckedCreateWithoutSaleRecordsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSaleRecordsCreatedInput
+  upsert?: Prisma.UserUpsertWithoutSaleRecordsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSaleRecordsCreatedInput, Prisma.UserUpdateWithoutSaleRecordsCreatedInput>, Prisma.UserUncheckedUpdateWithoutSaleRecordsCreatedInput>
+}
+
+export type UserUpdateOneWithoutSaleRecordsUpdatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSaleRecordsUpdatedInput, Prisma.UserUncheckedCreateWithoutSaleRecordsUpdatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSaleRecordsUpdatedInput
+  upsert?: Prisma.UserUpsertWithoutSaleRecordsUpdatedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSaleRecordsUpdatedInput, Prisma.UserUpdateWithoutSaleRecordsUpdatedInput>, Prisma.UserUncheckedUpdateWithoutSaleRecordsUpdatedInput>
+}
+
+export type UserCreateNestedOneWithoutSaleAllocationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSaleAllocationsInput, Prisma.UserUncheckedCreateWithoutSaleAllocationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSaleAllocationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutSaleAllocationsCreatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSaleAllocationsCreatedInput, Prisma.UserUncheckedCreateWithoutSaleAllocationsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSaleAllocationsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutSaleAllocationsUpdatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSaleAllocationsUpdatedInput, Prisma.UserUncheckedCreateWithoutSaleAllocationsUpdatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSaleAllocationsUpdatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSaleAllocationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSaleAllocationsInput, Prisma.UserUncheckedCreateWithoutSaleAllocationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSaleAllocationsInput
+  upsert?: Prisma.UserUpsertWithoutSaleAllocationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSaleAllocationsInput, Prisma.UserUpdateWithoutSaleAllocationsInput>, Prisma.UserUncheckedUpdateWithoutSaleAllocationsInput>
+}
+
+export type UserUpdateOneRequiredWithoutSaleAllocationsCreatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSaleAllocationsCreatedInput, Prisma.UserUncheckedCreateWithoutSaleAllocationsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSaleAllocationsCreatedInput
+  upsert?: Prisma.UserUpsertWithoutSaleAllocationsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSaleAllocationsCreatedInput, Prisma.UserUpdateWithoutSaleAllocationsCreatedInput>, Prisma.UserUncheckedUpdateWithoutSaleAllocationsCreatedInput>
+}
+
+export type UserUpdateOneWithoutSaleAllocationsUpdatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSaleAllocationsUpdatedInput, Prisma.UserUncheckedCreateWithoutSaleAllocationsUpdatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSaleAllocationsUpdatedInput
+  upsert?: Prisma.UserUpsertWithoutSaleAllocationsUpdatedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSaleAllocationsUpdatedInput, Prisma.UserUpdateWithoutSaleAllocationsUpdatedInput>, Prisma.UserUncheckedUpdateWithoutSaleAllocationsUpdatedInput>
+}
+
+export type UserCreateNestedOneWithoutAuditEntriesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAuditEntriesInput, Prisma.UserUncheckedCreateWithoutAuditEntriesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuditEntriesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutAuditEntriesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAuditEntriesInput, Prisma.UserUncheckedCreateWithoutAuditEntriesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuditEntriesInput
+  upsert?: Prisma.UserUpsertWithoutAuditEntriesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAuditEntriesInput, Prisma.UserUpdateWithoutAuditEntriesInput>, Prisma.UserUncheckedUpdateWithoutAuditEntriesInput>
+}
+
+export type UserCreateWithoutDriverInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
+}
+
+export type UserUncheckedCreateWithoutDriverInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type UserCreateOrConnectWithoutDriverInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDriverInput, Prisma.UserUncheckedCreateWithoutDriverInput>
+}
+
+export type UserUpsertWithoutDriverInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDriverInput, Prisma.UserUncheckedUpdateWithoutDriverInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDriverInput, Prisma.UserUncheckedCreateWithoutDriverInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDriverInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDriverInput, Prisma.UserUncheckedUpdateWithoutDriverInput>
+}
+
+export type UserUpdateWithoutDriverInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDriverInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
+}
+
 export type UserCreateWithoutNotificationsInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -741,11 +1191,22 @@ export type UserCreateWithoutNotificationsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -766,6 +1227,13 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -786,7 +1254,11 @@ export type UserUpdateToOneWithWhereWithoutNotificationsInput = {
 
 export type UserUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -807,11 +1279,22 @@ export type UserUpdateWithoutNotificationsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -832,11 +1315,22 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -857,11 +1351,22 @@ export type UserCreateWithoutSessionsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -882,6 +1387,13 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -902,7 +1414,11 @@ export type UserUpdateToOneWithWhereWithoutSessionsInput = {
 
 export type UserUpdateWithoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -923,11 +1439,22 @@ export type UserUpdateWithoutSessionsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -948,11 +1475,22 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateWithoutOutcomeLeadsInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -973,11 +1511,22 @@ export type UserCreateWithoutOutcomeLeadsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeLeadsInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -998,6 +1547,13 @@ export type UserUncheckedCreateWithoutOutcomeLeadsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeLeadsInput = {
@@ -1007,7 +1563,11 @@ export type UserCreateOrConnectWithoutOutcomeLeadsInput = {
 
 export type UserCreateWithoutCreatedLeadsInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1028,11 +1588,22 @@ export type UserCreateWithoutCreatedLeadsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutCreatedLeadsInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1053,6 +1624,13 @@ export type UserUncheckedCreateWithoutCreatedLeadsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutCreatedLeadsInput = {
@@ -1073,7 +1651,11 @@ export type UserUpdateToOneWithWhereWithoutOutcomeLeadsInput = {
 
 export type UserUpdateWithoutOutcomeLeadsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1094,11 +1676,22 @@ export type UserUpdateWithoutOutcomeLeadsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeLeadsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1119,6 +1712,13 @@ export type UserUncheckedUpdateWithoutOutcomeLeadsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserUpsertWithoutCreatedLeadsInput = {
@@ -1134,7 +1734,11 @@ export type UserUpdateToOneWithWhereWithoutCreatedLeadsInput = {
 
 export type UserUpdateWithoutCreatedLeadsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1155,11 +1759,22 @@ export type UserUpdateWithoutCreatedLeadsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedLeadsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1180,11 +1795,22 @@ export type UserUncheckedUpdateWithoutCreatedLeadsInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateWithoutQualifiedQuoteRequestsInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1205,11 +1831,22 @@ export type UserCreateWithoutQualifiedQuoteRequestsInput = {
   outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutQualifiedQuoteRequestsInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1230,6 +1867,13 @@ export type UserUncheckedCreateWithoutQualifiedQuoteRequestsInput = {
   outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutQualifiedQuoteRequestsInput = {
@@ -1239,7 +1883,11 @@ export type UserCreateOrConnectWithoutQualifiedQuoteRequestsInput = {
 
 export type UserCreateWithoutCreatedQuoteRequestsInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1260,11 +1908,22 @@ export type UserCreateWithoutCreatedQuoteRequestsInput = {
   outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutCreatedQuoteRequestsInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1285,6 +1944,13 @@ export type UserUncheckedCreateWithoutCreatedQuoteRequestsInput = {
   outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutCreatedQuoteRequestsInput = {
@@ -1305,7 +1971,11 @@ export type UserUpdateToOneWithWhereWithoutQualifiedQuoteRequestsInput = {
 
 export type UserUpdateWithoutQualifiedQuoteRequestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1326,11 +1996,22 @@ export type UserUpdateWithoutQualifiedQuoteRequestsInput = {
   outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutQualifiedQuoteRequestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1351,6 +2032,13 @@ export type UserUncheckedUpdateWithoutQualifiedQuoteRequestsInput = {
   outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserUpsertWithoutCreatedQuoteRequestsInput = {
@@ -1366,7 +2054,11 @@ export type UserUpdateToOneWithWhereWithoutCreatedQuoteRequestsInput = {
 
 export type UserUpdateWithoutCreatedQuoteRequestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1387,11 +2079,22 @@ export type UserUpdateWithoutCreatedQuoteRequestsInput = {
   outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedQuoteRequestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1412,11 +2115,22 @@ export type UserUncheckedUpdateWithoutCreatedQuoteRequestsInput = {
   outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateWithoutCreatedInternalOrdersInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1437,11 +2151,22 @@ export type UserCreateWithoutCreatedInternalOrdersInput = {
   outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutCreatedInternalOrdersInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1462,6 +2187,13 @@ export type UserUncheckedCreateWithoutCreatedInternalOrdersInput = {
   outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutCreatedInternalOrdersInput = {
@@ -1482,7 +2214,11 @@ export type UserUpdateToOneWithWhereWithoutCreatedInternalOrdersInput = {
 
 export type UserUpdateWithoutCreatedInternalOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1503,11 +2239,22 @@ export type UserUpdateWithoutCreatedInternalOrdersInput = {
   outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedInternalOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1528,11 +2275,22 @@ export type UserUncheckedUpdateWithoutCreatedInternalOrdersInput = {
   outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateWithoutOutcomeTargetsAsStaffInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1553,11 +2311,22 @@ export type UserCreateWithoutOutcomeTargetsAsStaffInput = {
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeTargetsAsStaffInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1578,6 +2347,13 @@ export type UserUncheckedCreateWithoutOutcomeTargetsAsStaffInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeTargetsAsStaffInput = {
@@ -1587,7 +2363,11 @@ export type UserCreateOrConnectWithoutOutcomeTargetsAsStaffInput = {
 
 export type UserCreateWithoutOutcomeTargetsCreatedInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1608,11 +2388,22 @@ export type UserCreateWithoutOutcomeTargetsCreatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeTargetsCreatedInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1633,6 +2424,13 @@ export type UserUncheckedCreateWithoutOutcomeTargetsCreatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeTargetsCreatedInput = {
@@ -1642,7 +2440,11 @@ export type UserCreateOrConnectWithoutOutcomeTargetsCreatedInput = {
 
 export type UserCreateWithoutOutcomeTargetsUpdatedInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1663,11 +2465,22 @@ export type UserCreateWithoutOutcomeTargetsUpdatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeTargetsUpdatedInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1688,6 +2501,13 @@ export type UserUncheckedCreateWithoutOutcomeTargetsUpdatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeTargetsUpdatedInput = {
@@ -1708,7 +2528,11 @@ export type UserUpdateToOneWithWhereWithoutOutcomeTargetsAsStaffInput = {
 
 export type UserUpdateWithoutOutcomeTargetsAsStaffInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1729,11 +2553,22 @@ export type UserUpdateWithoutOutcomeTargetsAsStaffInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeTargetsAsStaffInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1754,6 +2589,13 @@ export type UserUncheckedUpdateWithoutOutcomeTargetsAsStaffInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserUpsertWithoutOutcomeTargetsCreatedInput = {
@@ -1769,7 +2611,11 @@ export type UserUpdateToOneWithWhereWithoutOutcomeTargetsCreatedInput = {
 
 export type UserUpdateWithoutOutcomeTargetsCreatedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1790,11 +2636,22 @@ export type UserUpdateWithoutOutcomeTargetsCreatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeTargetsCreatedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1815,6 +2672,13 @@ export type UserUncheckedUpdateWithoutOutcomeTargetsCreatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserUpsertWithoutOutcomeTargetsUpdatedInput = {
@@ -1830,7 +2694,11 @@ export type UserUpdateToOneWithWhereWithoutOutcomeTargetsUpdatedInput = {
 
 export type UserUpdateWithoutOutcomeTargetsUpdatedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1851,11 +2719,22 @@ export type UserUpdateWithoutOutcomeTargetsUpdatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeTargetsUpdatedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -1876,11 +2755,22 @@ export type UserUncheckedUpdateWithoutOutcomeTargetsUpdatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserCreateWithoutOutcomeAchievementsAsStaffInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1901,11 +2791,22 @@ export type UserCreateWithoutOutcomeAchievementsAsStaffInput = {
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeAchievementsAsStaffInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1926,6 +2827,13 @@ export type UserUncheckedCreateWithoutOutcomeAchievementsAsStaffInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeAchievementsAsStaffInput = {
@@ -1935,7 +2843,11 @@ export type UserCreateOrConnectWithoutOutcomeAchievementsAsStaffInput = {
 
 export type UserCreateWithoutOutcomeAchievementsCreatedInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1956,11 +2868,22 @@ export type UserCreateWithoutOutcomeAchievementsCreatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeAchievementsCreatedInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -1981,6 +2904,13 @@ export type UserUncheckedCreateWithoutOutcomeAchievementsCreatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeAchievementsCreatedInput = {
@@ -1990,7 +2920,11 @@ export type UserCreateOrConnectWithoutOutcomeAchievementsCreatedInput = {
 
 export type UserCreateWithoutOutcomeAchievementsUpdatedInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -2011,11 +2945,22 @@ export type UserCreateWithoutOutcomeAchievementsUpdatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
 }
 
 export type UserUncheckedCreateWithoutOutcomeAchievementsUpdatedInput = {
   id?: string
-  entraId: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
   email?: string | null
   name: string
   role: $Enums.UserRole
@@ -2036,6 +2981,13 @@ export type UserUncheckedCreateWithoutOutcomeAchievementsUpdatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
 }
 
 export type UserCreateOrConnectWithoutOutcomeAchievementsUpdatedInput = {
@@ -2056,7 +3008,11 @@ export type UserUpdateToOneWithWhereWithoutOutcomeAchievementsAsStaffInput = {
 
 export type UserUpdateWithoutOutcomeAchievementsAsStaffInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -2077,11 +3033,22 @@ export type UserUpdateWithoutOutcomeAchievementsAsStaffInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeAchievementsAsStaffInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -2102,6 +3069,13 @@ export type UserUncheckedUpdateWithoutOutcomeAchievementsAsStaffInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserUpsertWithoutOutcomeAchievementsCreatedInput = {
@@ -2117,7 +3091,11 @@ export type UserUpdateToOneWithWhereWithoutOutcomeAchievementsCreatedInput = {
 
 export type UserUpdateWithoutOutcomeAchievementsCreatedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -2138,11 +3116,22 @@ export type UserUpdateWithoutOutcomeAchievementsCreatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeAchievementsCreatedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -2163,6 +3152,13 @@ export type UserUncheckedUpdateWithoutOutcomeAchievementsCreatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
 }
 
 export type UserUpsertWithoutOutcomeAchievementsUpdatedInput = {
@@ -2178,7 +3174,11 @@ export type UserUpdateToOneWithWhereWithoutOutcomeAchievementsUpdatedInput = {
 
 export type UserUpdateWithoutOutcomeAchievementsUpdatedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -2199,11 +3199,22 @@ export type UserUpdateWithoutOutcomeAchievementsUpdatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutcomeAchievementsUpdatedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  entraId?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
@@ -2224,6 +3235,973 @@ export type UserUncheckedUpdateWithoutOutcomeAchievementsUpdatedInput = {
   createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
   qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
   createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UserCreateWithoutSaleRecordsCreatedInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
+}
+
+export type UserUncheckedCreateWithoutSaleRecordsCreatedInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type UserCreateOrConnectWithoutSaleRecordsCreatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSaleRecordsCreatedInput, Prisma.UserUncheckedCreateWithoutSaleRecordsCreatedInput>
+}
+
+export type UserCreateWithoutSaleRecordsUpdatedInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
+}
+
+export type UserUncheckedCreateWithoutSaleRecordsUpdatedInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type UserCreateOrConnectWithoutSaleRecordsUpdatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSaleRecordsUpdatedInput, Prisma.UserUncheckedCreateWithoutSaleRecordsUpdatedInput>
+}
+
+export type UserUpsertWithoutSaleRecordsCreatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSaleRecordsCreatedInput, Prisma.UserUncheckedUpdateWithoutSaleRecordsCreatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSaleRecordsCreatedInput, Prisma.UserUncheckedCreateWithoutSaleRecordsCreatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSaleRecordsCreatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSaleRecordsCreatedInput, Prisma.UserUncheckedUpdateWithoutSaleRecordsCreatedInput>
+}
+
+export type UserUpdateWithoutSaleRecordsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSaleRecordsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UserUpsertWithoutSaleRecordsUpdatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSaleRecordsUpdatedInput, Prisma.UserUncheckedUpdateWithoutSaleRecordsUpdatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSaleRecordsUpdatedInput, Prisma.UserUncheckedCreateWithoutSaleRecordsUpdatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSaleRecordsUpdatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSaleRecordsUpdatedInput, Prisma.UserUncheckedUpdateWithoutSaleRecordsUpdatedInput>
+}
+
+export type UserUpdateWithoutSaleRecordsUpdatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSaleRecordsUpdatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UserCreateWithoutSaleAllocationsInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
+}
+
+export type UserUncheckedCreateWithoutSaleAllocationsInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type UserCreateOrConnectWithoutSaleAllocationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSaleAllocationsInput, Prisma.UserUncheckedCreateWithoutSaleAllocationsInput>
+}
+
+export type UserCreateWithoutSaleAllocationsCreatedInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
+}
+
+export type UserUncheckedCreateWithoutSaleAllocationsCreatedInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type UserCreateOrConnectWithoutSaleAllocationsCreatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSaleAllocationsCreatedInput, Prisma.UserUncheckedCreateWithoutSaleAllocationsCreatedInput>
+}
+
+export type UserCreateWithoutSaleAllocationsUpdatedInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
+}
+
+export type UserUncheckedCreateWithoutSaleAllocationsUpdatedInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type UserCreateOrConnectWithoutSaleAllocationsUpdatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSaleAllocationsUpdatedInput, Prisma.UserUncheckedCreateWithoutSaleAllocationsUpdatedInput>
+}
+
+export type UserUpsertWithoutSaleAllocationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSaleAllocationsInput, Prisma.UserUncheckedUpdateWithoutSaleAllocationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSaleAllocationsInput, Prisma.UserUncheckedCreateWithoutSaleAllocationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSaleAllocationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSaleAllocationsInput, Prisma.UserUncheckedUpdateWithoutSaleAllocationsInput>
+}
+
+export type UserUpdateWithoutSaleAllocationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSaleAllocationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UserUpsertWithoutSaleAllocationsCreatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSaleAllocationsCreatedInput, Prisma.UserUncheckedUpdateWithoutSaleAllocationsCreatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSaleAllocationsCreatedInput, Prisma.UserUncheckedCreateWithoutSaleAllocationsCreatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSaleAllocationsCreatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSaleAllocationsCreatedInput, Prisma.UserUncheckedUpdateWithoutSaleAllocationsCreatedInput>
+}
+
+export type UserUpdateWithoutSaleAllocationsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSaleAllocationsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UserUpsertWithoutSaleAllocationsUpdatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSaleAllocationsUpdatedInput, Prisma.UserUncheckedUpdateWithoutSaleAllocationsUpdatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSaleAllocationsUpdatedInput, Prisma.UserUncheckedCreateWithoutSaleAllocationsUpdatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSaleAllocationsUpdatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSaleAllocationsUpdatedInput, Prisma.UserUncheckedUpdateWithoutSaleAllocationsUpdatedInput>
+}
+
+export type UserUpdateWithoutSaleAllocationsUpdatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSaleAllocationsUpdatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type UserCreateWithoutAuditEntriesInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationCreateNestedManyWithoutUpdatedByInput
+}
+
+export type UserUncheckedCreateWithoutAuditEntriesInput = {
+  id?: string
+  entraId?: string | null
+  username?: string | null
+  passwordHash?: string | null
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  email?: string | null
+  name: string
+  role: $Enums.UserRole
+  status?: $Enums.UserStatus
+  jobTitle?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUserInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedCreateNestedManyWithoutUpdatedByInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUserInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedCreateNestedManyWithoutUpdatedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  outcomeLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutOutcomeByInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedCreateNestedManyWithoutQualifiedByInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  driver?: Prisma.DriverUncheckedCreateNestedOneWithoutUserInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutCreatedByInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedCreateNestedManyWithoutUpdatedByInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUserInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutCreatedByInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedCreateNestedManyWithoutUpdatedByInput
+}
+
+export type UserCreateOrConnectWithoutAuditEntriesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAuditEntriesInput, Prisma.UserUncheckedCreateWithoutAuditEntriesInput>
+}
+
+export type UserUpsertWithoutAuditEntriesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAuditEntriesInput, Prisma.UserUncheckedUpdateWithoutAuditEntriesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAuditEntriesInput, Prisma.UserUncheckedCreateWithoutAuditEntriesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAuditEntriesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAuditEntriesInput, Prisma.UserUncheckedUpdateWithoutAuditEntriesInput>
+}
+
+export type UserUpdateWithoutAuditEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUpdateManyWithoutUpdatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAuditEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entraId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  jobTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
+  outcomeTargetsAsStaff?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUserNestedInput
+  outcomeTargetsCreated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeTargetsUpdated?: Prisma.OutcomeTargetUncheckedUpdateManyWithoutUpdatedByNestedInput
+  outcomeAchievementsAsStaff?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUserNestedInput
+  outcomeAchievementsCreated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeAchievementsUpdated?: Prisma.OutcomeAchievementUncheckedUpdateManyWithoutUpdatedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  outcomeLeads?: Prisma.LeadUncheckedUpdateManyWithoutOutcomeByNestedInput
+  createdQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  qualifiedQuoteRequests?: Prisma.QuoteRequestUncheckedUpdateManyWithoutQualifiedByNestedInput
+  createdInternalOrders?: Prisma.InternalOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  driver?: Prisma.DriverUncheckedUpdateOneWithoutUserNestedInput
+  saleRecordsCreated?: Prisma.SaleRecordUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleRecordsUpdated?: Prisma.SaleRecordUncheckedUpdateManyWithoutUpdatedByNestedInput
+  saleAllocations?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUserNestedInput
+  saleAllocationsCreated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+  saleAllocationsUpdated?: Prisma.SaleAllocationUncheckedUpdateManyWithoutUpdatedByNestedInput
 }
 
 
@@ -2245,6 +4223,12 @@ export type UserCountOutputType = {
   createdQuoteRequests: number
   qualifiedQuoteRequests: number
   createdInternalOrders: number
+  saleRecordsCreated: number
+  saleRecordsUpdated: number
+  saleAllocations: number
+  saleAllocationsCreated: number
+  saleAllocationsUpdated: number
+  auditEntries: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2261,6 +4245,12 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   createdQuoteRequests?: boolean | UserCountOutputTypeCountCreatedQuoteRequestsArgs
   qualifiedQuoteRequests?: boolean | UserCountOutputTypeCountQualifiedQuoteRequestsArgs
   createdInternalOrders?: boolean | UserCountOutputTypeCountCreatedInternalOrdersArgs
+  saleRecordsCreated?: boolean | UserCountOutputTypeCountSaleRecordsCreatedArgs
+  saleRecordsUpdated?: boolean | UserCountOutputTypeCountSaleRecordsUpdatedArgs
+  saleAllocations?: boolean | UserCountOutputTypeCountSaleAllocationsArgs
+  saleAllocationsCreated?: boolean | UserCountOutputTypeCountSaleAllocationsCreatedArgs
+  saleAllocationsUpdated?: boolean | UserCountOutputTypeCountSaleAllocationsUpdatedArgs
+  auditEntries?: boolean | UserCountOutputTypeCountAuditEntriesArgs
 }
 
 /**
@@ -2364,10 +4354,56 @@ export type UserCountOutputTypeCountCreatedInternalOrdersArgs<ExtArgs extends ru
   where?: Prisma.InternalOrderWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSaleRecordsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SaleRecordWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSaleRecordsUpdatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SaleRecordWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSaleAllocationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SaleAllocationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSaleAllocationsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SaleAllocationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSaleAllocationsUpdatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SaleAllocationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAuditEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AuditEntryWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   entraId?: boolean
+  username?: boolean
+  passwordHash?: boolean
+  failedLoginCount?: boolean
+  lockedUntil?: boolean
   email?: boolean
   name?: boolean
   role?: boolean
@@ -2389,12 +4425,23 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdQuoteRequests?: boolean | Prisma.User$createdQuoteRequestsArgs<ExtArgs>
   qualifiedQuoteRequests?: boolean | Prisma.User$qualifiedQuoteRequestsArgs<ExtArgs>
   createdInternalOrders?: boolean | Prisma.User$createdInternalOrdersArgs<ExtArgs>
+  driver?: boolean | Prisma.User$driverArgs<ExtArgs>
+  saleRecordsCreated?: boolean | Prisma.User$saleRecordsCreatedArgs<ExtArgs>
+  saleRecordsUpdated?: boolean | Prisma.User$saleRecordsUpdatedArgs<ExtArgs>
+  saleAllocations?: boolean | Prisma.User$saleAllocationsArgs<ExtArgs>
+  saleAllocationsCreated?: boolean | Prisma.User$saleAllocationsCreatedArgs<ExtArgs>
+  saleAllocationsUpdated?: boolean | Prisma.User$saleAllocationsUpdatedArgs<ExtArgs>
+  auditEntries?: boolean | Prisma.User$auditEntriesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   entraId?: boolean
+  username?: boolean
+  passwordHash?: boolean
+  failedLoginCount?: boolean
+  lockedUntil?: boolean
   email?: boolean
   name?: boolean
   role?: boolean
@@ -2408,6 +4455,10 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   entraId?: boolean
+  username?: boolean
+  passwordHash?: boolean
+  failedLoginCount?: boolean
+  lockedUntil?: boolean
   email?: boolean
   name?: boolean
   role?: boolean
@@ -2421,6 +4472,10 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type UserSelectScalar = {
   id?: boolean
   entraId?: boolean
+  username?: boolean
+  passwordHash?: boolean
+  failedLoginCount?: boolean
+  lockedUntil?: boolean
   email?: boolean
   name?: boolean
   role?: boolean
@@ -2431,7 +4486,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "entraId" | "email" | "name" | "role" | "status" | "jobTitle" | "phone" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "entraId" | "username" | "passwordHash" | "failedLoginCount" | "lockedUntil" | "email" | "name" | "role" | "status" | "jobTitle" | "phone" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
@@ -2446,6 +4501,13 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdQuoteRequests?: boolean | Prisma.User$createdQuoteRequestsArgs<ExtArgs>
   qualifiedQuoteRequests?: boolean | Prisma.User$qualifiedQuoteRequestsArgs<ExtArgs>
   createdInternalOrders?: boolean | Prisma.User$createdInternalOrdersArgs<ExtArgs>
+  driver?: boolean | Prisma.User$driverArgs<ExtArgs>
+  saleRecordsCreated?: boolean | Prisma.User$saleRecordsCreatedArgs<ExtArgs>
+  saleRecordsUpdated?: boolean | Prisma.User$saleRecordsUpdatedArgs<ExtArgs>
+  saleAllocations?: boolean | Prisma.User$saleAllocationsArgs<ExtArgs>
+  saleAllocationsCreated?: boolean | Prisma.User$saleAllocationsCreatedArgs<ExtArgs>
+  saleAllocationsUpdated?: boolean | Prisma.User$saleAllocationsUpdatedArgs<ExtArgs>
+  auditEntries?: boolean | Prisma.User$auditEntriesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2467,10 +4529,21 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     createdQuoteRequests: Prisma.$QuoteRequestPayload<ExtArgs>[]
     qualifiedQuoteRequests: Prisma.$QuoteRequestPayload<ExtArgs>[]
     createdInternalOrders: Prisma.$InternalOrderPayload<ExtArgs>[]
+    driver: Prisma.$DriverPayload<ExtArgs> | null
+    saleRecordsCreated: Prisma.$SaleRecordPayload<ExtArgs>[]
+    saleRecordsUpdated: Prisma.$SaleRecordPayload<ExtArgs>[]
+    saleAllocations: Prisma.$SaleAllocationPayload<ExtArgs>[]
+    saleAllocationsCreated: Prisma.$SaleAllocationPayload<ExtArgs>[]
+    saleAllocationsUpdated: Prisma.$SaleAllocationPayload<ExtArgs>[]
+    auditEntries: Prisma.$AuditEntryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    entraId: string
+    entraId: string | null
+    username: string | null
+    passwordHash: string | null
+    failedLoginCount: number
+    lockedUntil: Date | null
     email: string | null
     name: string
     role: $Enums.UserRole
@@ -2886,6 +4959,13 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   createdQuoteRequests<T extends Prisma.User$createdQuoteRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdQuoteRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuoteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   qualifiedQuoteRequests<T extends Prisma.User$qualifiedQuoteRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$qualifiedQuoteRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuoteRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdInternalOrders<T extends Prisma.User$createdInternalOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdInternalOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InternalOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  driver<T extends Prisma.User$driverArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$driverArgs<ExtArgs>>): Prisma.Prisma__DriverClient<runtime.Types.Result.GetResult<Prisma.$DriverPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  saleRecordsCreated<T extends Prisma.User$saleRecordsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$saleRecordsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SaleRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  saleRecordsUpdated<T extends Prisma.User$saleRecordsUpdatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$saleRecordsUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SaleRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  saleAllocations<T extends Prisma.User$saleAllocationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$saleAllocationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SaleAllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  saleAllocationsCreated<T extends Prisma.User$saleAllocationsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$saleAllocationsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SaleAllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  saleAllocationsUpdated<T extends Prisma.User$saleAllocationsUpdatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$saleAllocationsUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SaleAllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  auditEntries<T extends Prisma.User$auditEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2917,6 +4997,10 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
 export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
   readonly entraId: Prisma.FieldRef<"User", 'String'>
+  readonly username: Prisma.FieldRef<"User", 'String'>
+  readonly passwordHash: Prisma.FieldRef<"User", 'String'>
+  readonly failedLoginCount: Prisma.FieldRef<"User", 'Int'>
+  readonly lockedUntil: Prisma.FieldRef<"User", 'DateTime'>
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly name: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'UserRole'>
@@ -3627,6 +5711,169 @@ export type User$createdInternalOrdersArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.InternalOrderScalarFieldEnum | Prisma.InternalOrderScalarFieldEnum[]
+}
+
+/**
+ * User.driver
+ */
+export type User$driverArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Driver
+   */
+  select?: Prisma.DriverSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Driver
+   */
+  omit?: Prisma.DriverOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DriverInclude<ExtArgs> | null
+  where?: Prisma.DriverWhereInput
+}
+
+/**
+ * User.saleRecordsCreated
+ */
+export type User$saleRecordsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SaleRecord
+   */
+  select?: Prisma.SaleRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SaleRecord
+   */
+  omit?: Prisma.SaleRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SaleRecordInclude<ExtArgs> | null
+  where?: Prisma.SaleRecordWhereInput
+  orderBy?: Prisma.SaleRecordOrderByWithRelationInput | Prisma.SaleRecordOrderByWithRelationInput[]
+  cursor?: Prisma.SaleRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SaleRecordScalarFieldEnum | Prisma.SaleRecordScalarFieldEnum[]
+}
+
+/**
+ * User.saleRecordsUpdated
+ */
+export type User$saleRecordsUpdatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SaleRecord
+   */
+  select?: Prisma.SaleRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SaleRecord
+   */
+  omit?: Prisma.SaleRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SaleRecordInclude<ExtArgs> | null
+  where?: Prisma.SaleRecordWhereInput
+  orderBy?: Prisma.SaleRecordOrderByWithRelationInput | Prisma.SaleRecordOrderByWithRelationInput[]
+  cursor?: Prisma.SaleRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SaleRecordScalarFieldEnum | Prisma.SaleRecordScalarFieldEnum[]
+}
+
+/**
+ * User.saleAllocations
+ */
+export type User$saleAllocationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SaleAllocation
+   */
+  select?: Prisma.SaleAllocationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SaleAllocation
+   */
+  omit?: Prisma.SaleAllocationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SaleAllocationInclude<ExtArgs> | null
+  where?: Prisma.SaleAllocationWhereInput
+  orderBy?: Prisma.SaleAllocationOrderByWithRelationInput | Prisma.SaleAllocationOrderByWithRelationInput[]
+  cursor?: Prisma.SaleAllocationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SaleAllocationScalarFieldEnum | Prisma.SaleAllocationScalarFieldEnum[]
+}
+
+/**
+ * User.saleAllocationsCreated
+ */
+export type User$saleAllocationsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SaleAllocation
+   */
+  select?: Prisma.SaleAllocationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SaleAllocation
+   */
+  omit?: Prisma.SaleAllocationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SaleAllocationInclude<ExtArgs> | null
+  where?: Prisma.SaleAllocationWhereInput
+  orderBy?: Prisma.SaleAllocationOrderByWithRelationInput | Prisma.SaleAllocationOrderByWithRelationInput[]
+  cursor?: Prisma.SaleAllocationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SaleAllocationScalarFieldEnum | Prisma.SaleAllocationScalarFieldEnum[]
+}
+
+/**
+ * User.saleAllocationsUpdated
+ */
+export type User$saleAllocationsUpdatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SaleAllocation
+   */
+  select?: Prisma.SaleAllocationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SaleAllocation
+   */
+  omit?: Prisma.SaleAllocationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SaleAllocationInclude<ExtArgs> | null
+  where?: Prisma.SaleAllocationWhereInput
+  orderBy?: Prisma.SaleAllocationOrderByWithRelationInput | Prisma.SaleAllocationOrderByWithRelationInput[]
+  cursor?: Prisma.SaleAllocationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SaleAllocationScalarFieldEnum | Prisma.SaleAllocationScalarFieldEnum[]
+}
+
+/**
+ * User.auditEntries
+ */
+export type User$auditEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AuditEntry
+   */
+  select?: Prisma.AuditEntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AuditEntry
+   */
+  omit?: Prisma.AuditEntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AuditEntryInclude<ExtArgs> | null
+  where?: Prisma.AuditEntryWhereInput
+  orderBy?: Prisma.AuditEntryOrderByWithRelationInput | Prisma.AuditEntryOrderByWithRelationInput[]
+  cursor?: Prisma.AuditEntryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AuditEntryScalarFieldEnum | Prisma.AuditEntryScalarFieldEnum[]
 }
 
 /**

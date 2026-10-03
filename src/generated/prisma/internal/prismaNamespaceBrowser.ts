@@ -70,6 +70,9 @@ export const ModelName = {
   OperationsDailyReport: 'OperationsDailyReport',
   OutcomeTarget: 'OutcomeTarget',
   OutcomeAchievement: 'OutcomeAchievement',
+  SaleRecord: 'SaleRecord',
+  SaleAllocation: 'SaleAllocation',
+  AuditEntry: 'AuditEntry',
   DailyPriceUnsubscribe: 'DailyPriceUnsubscribe'
 } as const
 
@@ -103,7 +106,8 @@ export const DriverScalarFieldEnum = {
   phone: 'phone',
   active: 'active',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  userId: 'userId'
 } as const
 
 export type DriverScalarFieldEnum = (typeof DriverScalarFieldEnum)[keyof typeof DriverScalarFieldEnum]
@@ -210,6 +214,10 @@ export type VehiclePreTripInspectionScalarFieldEnum = (typeof VehiclePreTripInsp
 export const UserScalarFieldEnum = {
   id: 'id',
   entraId: 'entraId',
+  username: 'username',
+  passwordHash: 'passwordHash',
+  failedLoginCount: 'failedLoginCount',
+  lockedUntil: 'lockedUntil',
   email: 'email',
   name: 'name',
   role: 'role',
@@ -390,6 +398,8 @@ export const OutcomeTargetScalarFieldEnum = {
   unit: 'unit',
   targetMarginPerUnit: 'targetMarginPerUnit',
   targetGeneratedValue: 'targetGeneratedValue',
+  setByInstructionOf: 'setByInstructionOf',
+  instructionDate: 'instructionDate',
   createdById: 'createdById',
   updatedById: 'updatedById',
   createdAt: 'createdAt',
@@ -418,6 +428,66 @@ export const OutcomeAchievementScalarFieldEnum = {
 export type OutcomeAchievementScalarFieldEnum = (typeof OutcomeAchievementScalarFieldEnum)[keyof typeof OutcomeAchievementScalarFieldEnum]
 
 
+export const SaleRecordScalarFieldEnum = {
+  id: 'id',
+  product: 'product',
+  source: 'source',
+  zohoPaymentId: 'zohoPaymentId',
+  invoiceNumber: 'invoiceNumber',
+  customerName: 'customerName',
+  zohoCustomerId: 'zohoCustomerId',
+  paymentDate: 'paymentDate',
+  periodYear: 'periodYear',
+  periodMonth: 'periodMonth',
+  totalQuantity: 'totalQuantity',
+  unit: 'unit',
+  status: 'status',
+  reversesSaleId: 'reversesSaleId',
+  notes: 'notes',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SaleRecordScalarFieldEnum = (typeof SaleRecordScalarFieldEnum)[keyof typeof SaleRecordScalarFieldEnum]
+
+
+export const SaleAllocationScalarFieldEnum = {
+  id: 'id',
+  saleRecordId: 'saleRecordId',
+  userId: 'userId',
+  sharePercent: 'sharePercent',
+  quantity: 'quantity',
+  marginPerUnit: 'marginPerUnit',
+  generatedValue: 'generatedValue',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SaleAllocationScalarFieldEnum = (typeof SaleAllocationScalarFieldEnum)[keyof typeof SaleAllocationScalarFieldEnum]
+
+
+export const AuditEntryScalarFieldEnum = {
+  id: 'id',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  parentEntityId: 'parentEntityId',
+  action: 'action',
+  before: 'before',
+  after: 'after',
+  actorUserId: 'actorUserId',
+  actorName: 'actorName',
+  actorRole: 'actorRole',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditEntryScalarFieldEnum = (typeof AuditEntryScalarFieldEnum)[keyof typeof AuditEntryScalarFieldEnum]
+
+
 export const DailyPriceUnsubscribeScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -440,6 +510,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {

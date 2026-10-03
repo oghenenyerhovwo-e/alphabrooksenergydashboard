@@ -7,12 +7,12 @@ const INITIAL_USERS: { entraId: string; name: string; role: UserRole }[] = [
   {
     entraId: "68349eb7-ffbc-42f0-abd3-e9e6efddbb55",
     name: "IT Alphabrooks Energy",
-    role: "ADMIN",
+    role: "IT",
   },
   {
     entraId: "f8fc95e8-a5ff-4d4a-af9a-09a468931aed",
     name: "Eke Nwannediya Stephanie",
-    role: "ADMIN",
+    role: "MANAGEMENT",
   },
   {
     entraId: "1cf6c525-ba79-4a15-8bf1-7b0eab9437ea",

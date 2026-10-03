@@ -147,7 +147,7 @@ export async function saveOutcomeTargetsAction(
      ADMIN AUTHORIZATION
   ------------------------------------------------------- */
 
-  if (currentUser.role !== "ADMIN") {
+  if (currentUser.role !== "IT") {
     return {
       error:
         "Only Administrators can create or edit Outcomes targets.",

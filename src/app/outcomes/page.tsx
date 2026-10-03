@@ -341,7 +341,7 @@ export default async function OutcomesPage({
 
   const isAdmin =
     currentUser.role ===
-    "ADMIN";
+    "IT";
 
   return (
     <main className={styles.page}>

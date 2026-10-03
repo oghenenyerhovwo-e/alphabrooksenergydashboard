@@ -57,11 +57,13 @@ export type VehicleInspectionStatus = (typeof VehicleInspectionStatus)[keyof typ
 
 
 export const UserRole = {
-  ADMIN: 'ADMIN',
+  IT: 'IT',
   BUSINESS_DEVELOPMENT: 'BUSINESS_DEVELOPMENT',
   SALES: 'SALES',
   OPERATIONS: 'OPERATIONS',
-  FINANCE: 'FINANCE'
+  FINANCE: 'FINANCE',
+  MANAGEMENT: 'MANAGEMENT',
+  DRIVER: 'DRIVER'
 } as const
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
@@ -138,3 +140,38 @@ export const OutcomeUnit = {
 } as const
 
 export type OutcomeUnit = (typeof OutcomeUnit)[keyof typeof OutcomeUnit]
+
+
+export const SaleSource = {
+  MANUAL: 'MANUAL',
+  ZOHO: 'ZOHO'
+} as const
+
+export type SaleSource = (typeof SaleSource)[keyof typeof SaleSource]
+
+
+export const SaleStatus = {
+  PENDING_ALLOCATION: 'PENDING_ALLOCATION',
+  ALLOCATED: 'ALLOCATED'
+} as const
+
+export type SaleStatus = (typeof SaleStatus)[keyof typeof SaleStatus]
+
+
+export const AuditAction = {
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  DELETE: 'DELETE'
+} as const
+
+export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
+
+
+export const AuditEntityType = {
+  OUTCOME_TARGET: 'OUTCOME_TARGET',
+  OUTCOME_ACHIEVEMENT: 'OUTCOME_ACHIEVEMENT',
+  SALE_RECORD: 'SALE_RECORD',
+  SALE_ALLOCATION: 'SALE_ALLOCATION'
+} as const
+
+export type AuditEntityType = (typeof AuditEntityType)[keyof typeof AuditEntityType]
